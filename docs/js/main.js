@@ -1,4 +1,4 @@
-const GITHUB_URL = "https://github.com/your-org/your-repo";
+const GITHUB_URL = "https://github.com/yushliu/quant-eng-acceleration";
 
 const updates = [
   {
