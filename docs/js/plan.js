@@ -1,131 +1,20 @@
-const planMeetings = [
-  {
-    ym: "2026-02",
-    code: "M0",
-    shortTag: "Kickoff",
-    title: "Meeting M0 - Kickoff",
-    status: "Done",
-    cards: [
-      {
-        heading: "Scope",
-        bullets: [
-          "Confirmed Spring scope boundaries across Infra, CPU, GPU, and FPGA-sim.",
-          "Locked review cadence and defined measurable outputs for each track."
-        ]
-      },
-      {
-        heading: "Engineering Standards",
-        bullets: [
-          "Standardized branch naming, PR template fields, and CI required checks.",
-          "Set testing expectations for baseline and optimization branches."
-        ]
-      },
-      {
-        heading: "Deliverables",
-        bullets: [
-          "Published first milestone timeline with owners and acceptance criteria.",
-          "Prepared benchmark report skeleton for p50, p95, and p99 metrics."
-        ]
-      }
-    ]
-  },
-  {
-    ym: "2026-02",
-    code: "M1",
-    shortTag: "CPU Baseline",
-    title: "Meeting M1 - CPU Baseline",
-    status: "Done",
-    cards: [
-      {
-        heading: "Baseline Review",
-        bullets: [
-          "Reviewed single-thread and OpenMP baseline runs on agreed datasets.",
-          "Validated environment metadata for reproducibility."
-        ]
-      },
-      {
-        heading: "Methodology",
-        bullets: [
-          "Aligned measurement windows and warm-up rules across contributors.",
-          "Documented repeat count policy for stable percentile statistics."
-        ]
-      },
-      {
-        heading: "Next Output",
-        bullets: [
-          "Assigned optimization experiments with owners and due checkpoints.",
-          "Queued a delta report comparing branch-level throughput changes."
-        ]
-      }
-    ]
-  },
-  {
-    ym: "2026-03",
-    code: "M2",
-    shortTag: "GPU Path",
-    title: "Meeting M2 - GPU Path",
-    status: "Planned",
-    cards: [
-      {
-        heading: "Prototype Goals",
-        bullets: [
-          "Define CuPy and Numba reference kernels for controlled comparisons.",
-          "Track speedup targets against current CPU baseline outputs."
-        ]
-      },
-      {
-        heading: "Validation",
-        bullets: [
-          "Confirm numerical parity checks and acceptable tolerance thresholds.",
-          "Record runtime variability across repeated runs."
-        ]
-      },
-      {
-        heading: "Report Package",
-        bullets: [
-          "Prepare draft benchmark note with plots and concise interpretation.",
-          "Summarize bottlenecks and candidate optimization directions."
-        ]
-      }
-    ]
-  },
-  {
-    ym: "2026-03",
-    code: "M3",
-    shortTag: "FPGA-sim",
-    title: "Meeting M3 - FPGA-sim Checkpoint",
-    status: "Planned",
-    cards: [
-      {
-        heading: "Parser Progress",
-        bullets: [
-          "Review event parser completeness and failure handling paths.",
-          "Verify trace normalization assumptions before aggregation."
-        ]
-      },
-      {
-        heading: "Latency Metrics",
-        bullets: [
-          "Finalize end-to-end latency definitions and percentile buckets.",
-          "Agree on outlier handling and reporting notes."
-        ]
-      },
-      {
-        heading: "Milestone Output",
-        bullets: [
-          "Publish checkpoint note with dataset summary and known risks.",
-          "Capture follow-up tasks for next integration cycle."
-        ]
-      }
-    ]
-  }
-];
+function getPlanMeetings() {
+  const source = Array.isArray(window.COMMUNITY_MEETINGS) ? window.COMMUNITY_MEETINGS : [];
+  return source.filter((meeting) => meeting && meeting.detail && Array.isArray(meeting.detail.cards));
+}
 
-let activeMeetingIndex = 0;
+const planMeetings = getPlanMeetings();
+const defaultMeetingIndex = planMeetings.findIndex((meeting) => meeting.code === "M0");
+let activeMeetingIndex = defaultMeetingIndex >= 0 ? defaultMeetingIndex : 0;
 
 function renderTimeline() {
   const timeline = document.getElementById("plan-timeline");
   if (!timeline) {
+    return;
+  }
+
+  if (planMeetings.length === 0) {
+    timeline.innerHTML = "<p class=\"text-sm text-gray-600\">No meetings available.</p>";
     return;
   }
 
@@ -186,19 +75,27 @@ function renderMeetingDetails() {
     return;
   }
 
+  if (planMeetings.length === 0) {
+    titleEl.textContent = "Meeting";
+    monthEl.textContent = "";
+    statusEl.textContent = "";
+    cardsEl.innerHTML = "<p class=\"text-sm text-gray-600\">No meeting details available.</p>";
+    return;
+  }
+
   const meeting = planMeetings[activeMeetingIndex];
   if (!meeting) {
     return;
   }
 
-  titleEl.textContent = meeting.title;
+  titleEl.textContent = meeting.detail.title;
   monthEl.textContent = meeting.ym;
   statusEl.textContent = meeting.status;
   statusEl.className = meeting.status === "Done"
     ? "rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-600"
     : "rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-700";
 
-  cardsEl.innerHTML = meeting.cards
+  cardsEl.innerHTML = meeting.detail.cards
     .map((card) => {
       const bulletMarkup = card.bullets
         .map((bullet) => `<li class=\"text-sm leading-6 text-gray-600\">${bullet}</li>`)
