@@ -6,7 +6,7 @@ window.COMMUNITY_MEETINGS = [
   {
     "id": "2025-11",
     "ym": "2025-11",
-    "shortTag": "RISK",
+    "shortTag": "CUDA",
     "status": "COMPLETED",
     "downloadItemId": "ewma-mcvar-backtest-2025-11",
     "latest": {
