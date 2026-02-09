@@ -4,8 +4,7 @@ function getPlanMeetings() {
 }
 
 const planMeetings = getPlanMeetings();
-const defaultMeetingIndex = planMeetings.findIndex((meeting) => meeting.code === "M0");
-let activeMeetingIndex = defaultMeetingIndex >= 0 ? defaultMeetingIndex : 0;
+let activeMeetingIndex = 0;
 
 function renderTimeline() {
   const timeline = document.getElementById("plan-timeline");
@@ -25,7 +24,7 @@ function renderTimeline() {
         ? "border-slate-700 bg-slate-50 text-slate-900"
         : "border-gray-200 bg-white text-gray-700 hover:border-slate-300 hover:text-slate-800";
       const dotClasses = isActive ? "border-slate-700 bg-slate-700" : "border-gray-300 bg-white";
-      const statusClasses = meeting.status === "Done"
+      const statusClasses = (meeting.status === "Done" || meeting.status === "Completed")
         ? "border-gray-200 bg-white text-gray-600"
         : "border-slate-200 bg-slate-50 text-slate-700";
 
@@ -41,7 +40,6 @@ function renderTimeline() {
           <span class="min-w-0">
             <span class="block text-xs font-semibold tracking-[0.12em]">${meeting.ym}</span>
             <span class="mt-1 inline-flex rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.08em] ${statusClasses}">${meeting.status}</span>
-            <span class="mt-0.5 block text-[11px] uppercase tracking-[0.12em] text-gray-500">${meeting.code}</span>
             <span class="mt-1 block truncate text-xs">${meeting.shortTag}</span>
           </span>
         </button>
@@ -91,7 +89,7 @@ function renderMeetingDetails() {
   titleEl.textContent = meeting.detail.title;
   monthEl.textContent = meeting.ym;
   statusEl.textContent = meeting.status;
-  statusEl.className = meeting.status === "Done"
+  statusEl.className = (meeting.status === "Done" || meeting.status === "Completed")
     ? "rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-600"
     : "rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-700";
 

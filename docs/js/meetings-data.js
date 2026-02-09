@@ -3,167 +3,106 @@
 // - detail: full version used by Plan > meeting detail cards
 window.COMMUNITY_MEETINGS = [
   {
-    id: "2026-03-m3",
-    ym: "2026-03",
-    code: "M3",
-    shortTag: "FPGA-sim",
-    status: "Planned",
-    latest: {
-      date: "2026-03-27",
-      title: "FPGA-sim checkpoint",
-      points: [
-        "Planned parser completeness review and latency bucket finalization.",
-        "Prepared milestone note outline and follow-up task checklist."
+    "id": "2025-10",
+    "ym": "2025-10",
+    "shortTag": "CUDA",
+    "status": "COMPLETED",
+    "latest": {
+      "date": "2025-10",
+      "title": "Intro to CUDA with Monte Carlo Risk",
+      "points": [
+        "Introduced CUDA basics and the GPU execution model for array workloads.",
+        "Ported the Monte Carlo VaR and CVaR baseline to GPU using CuPy on CUDA and logged VaR 0.014019 and CVaR 0.016107."
       ]
     },
-    detail: {
-      title: "Meeting M3 - FPGA-sim Checkpoint",
-      cards: [
+    "detail": {
+      "title": "Intro to CUDA with Monte Carlo Risk",
+      "cards": [
         {
-          heading: "Parser Progress",
-          bullets: [
-            "Review event parser completeness and failure handling paths.",
-            "Verify trace normalization assumptions before aggregation."
+          "heading": "CUDA Track Kickoff",
+          "bullets": [
+            "Explained what CUDA is and why GPUs help with parallel sampling.",
+            "Mapped NumPy style arrays to CuPy arrays on the GPU.",
+            "Confirmed the run executed on CUDA with CuPy."
           ]
         },
         {
-          heading: "Latency Metrics",
-          bullets: [
-            "Finalize end-to-end latency definitions and percentile buckets.",
-            "Agree on outlier handling and reporting notes."
+          "heading": "Baseline Kernel",
+          "bullets": [
+            "Used the same Monte Carlo VaR and CVaR workflow as the Python intro.",
+            "Kept the portfolio setup consistent with 10 assets and equal weights.",
+            "Ran 200000 paths at alpha 0.99 for tail risk."
           ]
         },
         {
-          heading: "Milestone Output",
-          bullets: [
-            "Publish checkpoint note with dataset summary and known risks.",
-            "Capture follow-up tasks for next integration cycle."
+          "heading": "Results Snapshot",
+          "bullets": [
+            "Recorded VaR 0.014019 and CVaR 0.016107 on the GPU run.",
+            "Recorded 3.463 seconds elapsed time for the GPU run.",
+            "Saved the numbers for later CPU and GPU consistency checks."
+          ]
+        },
+        {
+          "heading": "Next Steps for Visibility",
+          "bullets": [
+            "Export a small results file and commit it with a clear timestamp.",
+            "Tag a repo release so the run is easy to reference in a resume.",
+            "Add a short reproduction guide for Kaggle GPU runs."
           ]
         }
       ]
     }
   },
+
   {
-    id: "2026-03-m2",
-    ym: "2026-03",
-    code: "M2",
-    shortTag: "GPU Path",
-    status: "Planned",
-    latest: {
-      date: "2026-03-14",
-      title: "GPU path planning",
-      points: [
-        "Defined CuPy and Numba reference kernels for controlled comparison.",
-        "Set draft report package structure for speedup and variance analysis."
+    "id": "2025-09",
+    "ym": "2025-09",
+    "shortTag": "Risk",
+    "status": "COMPLETED",
+    "latest": {
+      "date": "2025-09",
+      "title": "Meeting Monte Carlo VaR CVaR Intro",
+      "points": [
+        "Introduced portfolio risk with Monte Carlo VaR and CVaR in Python.",
+        "Ran a GPU baseline with CuPy on CUDA and recorded VaR 0.014019 and CVaR 0.016107 at alpha 0.99."
       ]
     },
-    detail: {
-      title: "Meeting M2 - GPU Path",
-      cards: [
+    "detail": {
+      "title": "Monte Carlo VaR CVaR Intro",
+      "cards": [
         {
-          heading: "Prototype Goals",
-          bullets: [
-            "Define CuPy and Numba reference kernels for controlled comparisons.",
-            "Track speedup targets against current CPU baseline outputs."
+          "heading": "What We Built",
+          "bullets": [
+            "Simulated portfolio returns and converted them to losses.",
+            "Computed 99 percent VaR from the loss quantile.",
+            "Computed 99 percent CVaR from the average tail loss."
           ]
         },
         {
-          heading: "Validation",
-          bullets: [
-            "Confirm numerical parity checks and acceptable tolerance thresholds.",
-            "Record runtime variability across repeated runs."
+          "heading": "Run Setup",
+          "bullets": [
+            "Used 10 assets with equal weights.",
+            "Used 200000 Monte Carlo paths.",
+            "Used alpha 0.99 for tail risk."
           ]
         },
         {
-          heading: "Report Package",
-          bullets: [
-            "Prepare draft benchmark note with plots and concise interpretation.",
-            "Summarize bottlenecks and candidate optimization directions."
+          "heading": "Acceleration Result",
+          "bullets": [
+            "Executed on GPU with CuPy on CUDA.",
+            "Observed elapsed time 3.463 seconds on the GPU run.",
+            "Produced VaR 0.014019 and CVaR 0.016107."
+          ]
+        },
+        {
+          "heading": "Reproducibility Notes",
+          "bullets": [
+            "Keep parameters and seed fixed for comparisons.",
+            "Record device type and runtime for each run.",
+            "Save results as a versioned artifact in the repo."
           ]
         }
       ]
     }
   },
-  {
-    id: "2026-02-m1",
-    ym: "2026-02",
-    code: "M1",
-    shortTag: "CPU Baseline",
-    status: "Done",
-    latest: {
-      date: "2026-02-18",
-      title: "CPU baseline review",
-      points: [
-        "Reviewed OpenMP baseline runs and reproducibility metadata quality.",
-        "Assigned optimization experiments with milestone ownership."
-      ]
-    },
-    detail: {
-      title: "Meeting M1 - CPU Baseline",
-      cards: [
-        {
-          heading: "Baseline Review",
-          bullets: [
-            "Reviewed single-thread and OpenMP baseline runs on agreed datasets.",
-            "Validated environment metadata for reproducibility."
-          ]
-        },
-        {
-          heading: "Methodology",
-          bullets: [
-            "Aligned measurement windows and warm-up rules across contributors.",
-            "Documented repeat count policy for stable percentile statistics."
-          ]
-        },
-        {
-          heading: "Next Output",
-          bullets: [
-            "Assigned optimization experiments with owners and due checkpoints.",
-            "Queued a delta report comparing branch-level throughput changes."
-          ]
-        }
-      ]
-    }
-  },
-  {
-    id: "2026-02-m0",
-    ym: "2026-02",
-    code: "M0",
-    shortTag: "Kickoff",
-    status: "Done",
-    latest: {
-      date: "2026-02-03",
-      title: "Kickoff alignment",
-      points: [
-        "Confirmed scope boundaries across Infra, CPU, GPU, and FPGA-sim.",
-        "Locked review cadence and benchmark reporting format."
-      ]
-    },
-    detail: {
-      title: "Meeting M0 - Kickoff",
-      cards: [
-        {
-          heading: "Scope",
-          bullets: [
-            "Confirmed Spring scope boundaries across Infra, CPU, GPU, and FPGA-sim.",
-            "Locked review cadence and defined measurable outputs for each track."
-          ]
-        },
-        {
-          heading: "Engineering Standards",
-          bullets: [
-            "Standardized branch naming, PR template fields, and CI required checks.",
-            "Set testing expectations for baseline and optimization branches."
-          ]
-        },
-        {
-          heading: "Deliverables",
-          bullets: [
-            "Published first milestone timeline with owners and acceptance criteria.",
-            "Prepared benchmark report skeleton for p50, p95, and p99 metrics."
-          ]
-        }
-      ]
-    }
-  }
 ];

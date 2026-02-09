@@ -7,16 +7,7 @@ function getMeetingData() {
 function getLatestUpdates(limit = 3) {
   return getMeetingData()
     .filter((meeting) => meeting && meeting.latest && meeting.ym && meeting.latest.title)
-    .sort((a, b) => {
-      const monthDiff = b.ym.localeCompare(a.ym);
-      if (monthDiff !== 0) {
-        return monthDiff;
-      }
-
-      const aCode = Number(String(a.code || "").replace("M", ""));
-      const bCode = Number(String(b.code || "").replace("M", ""));
-      return Number.isNaN(bCode) || Number.isNaN(aCode) ? 0 : bCode - aCode;
-    })
+    .sort((a, b) => b.ym.localeCompare(a.ym))
     .slice(0, limit)
     .map((meeting) => ({
       ym: meeting.ym,
