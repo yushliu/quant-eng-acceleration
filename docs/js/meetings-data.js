@@ -7,6 +7,7 @@ window.COMMUNITY_MEETINGS = [
     "ym": "2025-10",
     "shortTag": "CUDA",
     "status": "COMPLETED",
+    "downloadItemId": "intro-cuda-2025-10",
     "latest": {
       "date": "2025-10",
       "title": "Intro to CUDA with Monte Carlo Risk",
@@ -59,6 +60,7 @@ window.COMMUNITY_MEETINGS = [
     "ym": "2025-09",
     "shortTag": "Risk",
     "status": "COMPLETED",
+    "downloadItemId": "meeting-2025-09",
     "latest": {
       "date": "2025-09",
       "title": "Monte Carlo VaR CVaR Intro",
@@ -72,6 +74,7 @@ window.COMMUNITY_MEETINGS = [
       "cards": [
         {
           "heading": "What We Built",
+          "showCodeLink": true,
           "bullets": [
             "Simulated portfolio returns and converted them to losses.",
             "Computed 99 percent VaR from the loss quantile.",

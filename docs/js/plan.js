@@ -67,9 +67,10 @@ function renderMeetingDetails() {
   const titleEl = document.getElementById("meeting-title");
   const monthEl = document.getElementById("meeting-month");
   const statusEl = document.getElementById("meeting-status");
+  const codeLinkEl = document.getElementById("meeting-code-link");
   const cardsEl = document.getElementById("meeting-cards");
 
-  if (!titleEl || !monthEl || !statusEl || !cardsEl) {
+  if (!titleEl || !monthEl || !statusEl || !cardsEl || !codeLinkEl) {
     return;
   }
 
@@ -89,6 +90,9 @@ function renderMeetingDetails() {
   titleEl.textContent = meeting.detail.title;
   monthEl.textContent = meeting.ym;
   statusEl.textContent = meeting.status;
+  codeLinkEl.innerHTML = meeting.downloadItemId
+    ? `<a href="./download.html#${meeting.downloadItemId}" class="inline-flex rounded-md border border-gray-300 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 transition hover:border-slate-700 hover:text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900">Code</a>`
+    : "";
   statusEl.className = (meeting.status === "Done" || meeting.status === "Completed")
     ? "rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-600"
     : "rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-700";

@@ -28,7 +28,7 @@ def portfolio_pnl(weights: np.ndarray, returns: np.ndarray):
     output shape: (n_paths,)
     """
     weights = np.asarray(weights, dtype=float)
-    weights = weights / np.sum(weights)  # normalize to sum to 1
+    weights = weights / np.sum(weights)
     return returns @ weights
 
 
