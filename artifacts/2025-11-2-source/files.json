@@ -1,0 +1,30 @@
+{
+  "root": "artifacts/2025-11-2-source",
+  "files": [
+    "README.md",
+    "requirements.txt",
+    "risk_pipeline/__init__.py",
+    "risk_pipeline/backtest/__init__.py",
+    "risk_pipeline/backtest/var_backtest.py",
+    "risk_pipeline/cli/__init__.py",
+    "risk_pipeline/cli/run_daily.py",
+    "risk_pipeline/config.py",
+    "risk_pipeline/data/__init__.py",
+    "risk_pipeline/data/download_patch.py",
+    "risk_pipeline/data/preprocess.py",
+    "risk_pipeline/data/yf_download.py",
+    "risk_pipeline/io_utils.py",
+    "risk_pipeline/models/__init__.py",
+    "risk_pipeline/models/ewma_cov.py",
+    "risk_pipeline/report/__init__.py",
+    "risk_pipeline/report/summarize.py",
+    "risk_pipeline/risk/__init__.py",
+    "risk_pipeline/risk/mc_sim.py",
+    "risk_pipeline/risk/var_cvar.py",
+    "tests/test_download_patch.py",
+    "tests/test_ewma_cov.py",
+    "tests/test_mc_stability.py",
+    "tests/test_pipeline_smoke.py",
+    "tests/test_var_cvar.py"
+  ]
+}

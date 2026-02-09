@@ -16,6 +16,12 @@ function getLatestUpdates(limit = 3) {
     }));
 }
 
+function getLatestPlanMeeting() {
+  return getMeetingData()
+    .filter((meeting) => meeting && meeting.id && meeting.ym && meeting.detail && Array.isArray(meeting.detail.cards))
+    .sort((a, b) => b.ym.localeCompare(a.ym))[0] || null;
+}
+
 function initMobileNav() {
   const button = document.getElementById("mobile-menu-button");
   const nav = document.getElementById("primary-nav");
@@ -74,8 +80,19 @@ function bindGithubLink() {
   link.href = GITHUB_URL;
 }
 
+function bindViewAllUpdatesLink() {
+  const link = document.getElementById("view-all-updates-link");
+  if (!link) {
+    return;
+  }
+
+  const latestMeeting = getLatestPlanMeeting();
+  link.href = latestMeeting ? `./plan.html#${latestMeeting.id}` : "./plan.html";
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   initMobileNav();
   bindGithubLink();
+  bindViewAllUpdatesLink();
   renderLatestUpdates();
 });

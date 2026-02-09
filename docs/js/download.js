@@ -9,6 +9,10 @@ let sourceExplorerRequestId = 0;
 let sourceExplorerModulePromise = null;
 
 const SOURCE_EXPLORER_ITEM_CONFIG = {
+  "yfinance-rate-limit-patch-2025-11": {
+    indexPath: "artifacts/2025-11-2-source/files.json",
+    baseRootPath: "artifacts/2025-11-2-source"
+  },
   "ewma-mcvar-backtest-2025-11": {
     indexPath: "artifacts/2025-11-1-source/files.json",
     baseRootPath: "artifacts/2025-11-1-source"
@@ -19,7 +23,7 @@ const SOURCE_EXPLORER_ITEM_CONFIG = {
   }
 };
 
-const RUN_GUIDE_HTML = `
+const RUN_GUIDE_HTML_GPU = `
   <h2 class="text-lg font-semibold tracking-tight text-gray-900">How to Run (CLI)</h2>
   <p class="mt-3 text-sm leading-6 text-gray-600">
     Use the command line to run the Daily EWMA &rarr; Monte Carlo VaR/CVaR backtest on GPU and generate the artifacts shown above.
@@ -120,6 +124,95 @@ const RUN_GUIDE_HTML = `
   </section>
 `;
 
+const RUN_GUIDE_HTML_PATCH = `
+  <h2 class="text-lg font-semibold tracking-tight text-gray-900">How to Run (CLI)</h2>
+  <p class="mt-3 text-sm leading-6 text-gray-600">
+    Run the yfinance rate-limit patch with chunked downloads and multi-asset stitching, then feed outputs into the existing risk pipeline.
+  </p>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">Install</h3>
+    <pre class="mt-2 overflow-auto rounded-md border border-gray-200 bg-white p-3 text-xs leading-6 text-gray-800 shadow-sm"><code>python3 -m pip install -r requirements.txt</code></pre>
+  </section>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">Run fast</h3>
+    <p class="mt-2 text-sm leading-6 text-gray-600">Fast verification run with chunking enabled:</p>
+    <pre class="mt-2 overflow-auto rounded-md border border-gray-200 bg-white p-3 text-xs leading-6 text-gray-800 shadow-sm"><code>python3 -m risk_pipeline.cli.run_daily \\
+  --mode fast \\
+  --tickers "SPY,QQQ,TLT" \\
+  --start 2025-01-01 \\
+  --end 2026-01-01 \\
+  --enable-download-patch \\
+  --chunk-months 3 \\
+  --cache-dir "./datasets/yfinance_cache" \\
+  --download-retries 3 \\
+  --download-base-sleep 1.5 \\
+  --download-jitter 0.6</code></pre>
+  </section>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">Run full</h3>
+    <p class="mt-2 text-sm leading-6 text-gray-600">Full run keeps the same patch wiring with larger compute settings:</p>
+    <pre class="mt-2 overflow-auto rounded-md border border-gray-200 bg-white p-3 text-xs leading-6 text-gray-800 shadow-sm"><code>python3 -m risk_pipeline.cli.run_daily \\
+  --mode full \\
+  --tickers "SPY,QQQ,TLT" \\
+  --start 2025-01-01 \\
+  --end 2026-01-01 \\
+  --enable-download-patch \\
+  --chunk-months 3 \\
+  --cache-dir "./datasets/yfinance_cache"</code></pre>
+  </section>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">Override parameters</h3>
+    <p class="mt-2 text-sm leading-6 text-gray-600">Tune chunking and retry behavior as needed:</p>
+    <pre class="mt-2 overflow-auto rounded-md border border-gray-200 bg-white p-3 text-xs leading-6 text-gray-800 shadow-sm"><code>python3 -m risk_pipeline.cli.run_daily \\
+  --mode fast \\
+  --tickers "SPY,QQQ,TLT" \\
+  --start 2025-01-01 \\
+  --end 2026-01-01 \\
+  --enable-download-patch \\
+  --chunk-months 3 \\
+  --cache-dir "./datasets/yfinance_cache/21f0395f7b2546e1" \\
+  --download-retries 5 \\
+  --download-base-sleep 2.0 \\
+  --download-jitter 0.8</code></pre>
+  </section>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">Debug</h3>
+    <p class="mt-2 text-sm leading-6 text-gray-600">Enable debug traces for chunk lifecycle and stitching:</p>
+    <pre class="mt-2 overflow-auto rounded-md border border-gray-200 bg-white p-3 text-xs leading-6 text-gray-800 shadow-sm"><code>python3 -m risk_pipeline.cli.run_daily --mode fast --enable-download-patch --chunk-months 3 --debug</code></pre>
+  </section>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">Backtest artifacts</h3>
+    <p class="mt-2 text-sm leading-6 text-gray-600">Each run writes to results/daily/&lt;run_id&gt;/ and produces:</p>
+    <ul class="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-gray-600">
+      <li><code>summary.md / summary.json</code>: run snapshot</li>
+      <li><code>params.json</code>: patch and runtime parameters</li>
+      <li><code>download_report.json</code>: chunk-level status (cache_hit, retries, rows, error)</li>
+      <li><code>backtest.json</code>: coverage metrics</li>
+      <li><code>backtest_detail.csv</code>: per-day rows (date, VaR, realized loss, breach)</li>
+    </ul>
+  </section>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">Kupiec POF interpretation</h3>
+    <p class="mt-2 text-sm leading-6 text-gray-600">
+      <code>kupiec_p_value</code> tests whether observed breach frequency matches expected VaR coverage.
+      A low p-value suggests calibration drift.
+    </p>
+  </section>
+`;
+
+const RUN_GUIDE_HTML_BY_ITEM_ID = {
+  "yfinance-rate-limit-patch-2025-11": RUN_GUIDE_HTML_PATCH,
+  "ewma-mcvar-backtest-2025-11": RUN_GUIDE_HTML_GPU,
+  "ewma-mcvar-backtest-2025-10": RUN_GUIDE_HTML_GPU
+};
+
 function getGithubConfig() {
   const fallback = {
     owner: "yushliu",
@@ -175,7 +268,7 @@ function removeRunGuideSection() {
   }
 }
 
-function ensureRunGuideSection() {
+function ensureRunGuideSection(runGuideHtml = RUN_GUIDE_HTML_GPU) {
   const existing = document.getElementById("run-guide");
   if (existing) {
     return existing;
@@ -189,7 +282,7 @@ function ensureRunGuideSection() {
   const section = document.createElement("section");
   section.id = "run-guide";
   section.className = "mt-6 rounded-lg border border-gray-200 bg-gray-50 p-6 shadow-sm";
-  section.innerHTML = RUN_GUIDE_HTML;
+  section.innerHTML = runGuideHtml;
   previewSection.insertAdjacentElement("afterend", section);
   return section;
 }
@@ -237,7 +330,8 @@ async function updateSourceExplorer(item) {
       return;
     }
 
-    ensureRunGuideSection();
+    const runGuideHtml = RUN_GUIDE_HTML_BY_ITEM_ID[item.id] || RUN_GUIDE_HTML_GPU;
+    ensureRunGuideSection(runGuideHtml);
 
     const containerEl = ensureSourceExplorerSection();
     if (!containerEl) {

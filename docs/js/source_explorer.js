@@ -1,4 +1,5 @@
 export const SOURCE_EXPLORER_ENABLED_IDS = new Set([
+  "yfinance-rate-limit-patch-2025-11",
   "ewma-mcvar-backtest-2025-11",
   "ewma-mcvar-backtest-2025-10"
 ]);

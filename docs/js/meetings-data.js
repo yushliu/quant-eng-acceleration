@@ -6,6 +6,75 @@ window.COMMUNITY_MEETINGS = [
   {
     "id": "2025-11",
     "ym": "2025-11",
+    "shortTag": "RISK",
+    "status": "COMPLETED",
+    "downloadItemId": "yfinance-rate-limit-patch-2025-11",
+    "latest": {
+      "date": "2025-11",
+      "title": "yfinance Rate Limit Patch + Multi-Asset Download Stitching (1 ticker × 3 months)",
+      "points": [
+        "Added a modular download patch that splits yfinance requests into small chunks (1 ticker × 3 months), retries with exponential backoff + jitter, caches each chunk on disk, and stitches results back into a single wide price table.",
+        "Kept the core VaR/CVaR/backtest compute path unchanged. Only the data download layer and the CLI entry wiring were updated to support patch-based downloads and multi-ticker inputs.",
+        "Added a new artifact download_report.json that records per-chunk status (cache_hit, retries, rows, error) plus summary totals, and validated the stitching/merge logic with fast unit tests (5 passed)."
+      ]
+    },
+    "detail": {
+      "title": "yfinance Rate Limit Patch + Multi-Asset Download Stitching (1 ticker × 3 months)",
+      "cards": [
+        {
+          "heading": "What This Build Did",
+          "bullets": [
+            "Implemented a chunked download module that splits a (ticker, date-range) request into 3-month windows, downloads each window separately, and reassembles the full series in chronological order.",
+            "Added chunk-level caching at data/cache/yfinance/{ticker}/{start}_{end}.csv so reruns reuse cached data instead of re-downloading.",
+            "Added per-chunk retry logic using exponential backoff with jitter to reduce transient failures caused by yfinance rate limits."
+          ]
+        },
+        {
+          "heading": "New Feature: Chunking and Stitching",
+          "bullets": [
+            "Chunk rule: 1 ticker × 3 months is the atomic unit, controlled by chunk_months for easy tuning.",
+            "Stitching rule: concatenate chunk outputs, sort by date, and deduplicate the date index so boundary overlaps do not create duplicate rows.",
+            "Multi-ticker merge: stitch each ticker independently, then merge into a wide price table with columns = tickers for downstream alignment and return generation."
+          ]
+        },
+        {
+          "heading": "New Feature: Multi-Asset Baseline Wiring",
+          "bullets": [
+            "Expanded the CLI entrypoint to accept a comma-separated tickers list and run the same pipeline on multi-asset inputs.",
+            "Kept prices_aligned.csv and returns.csv in wide format (columns = tickers) for transparency and reuse.",
+            "Aggregated wide returns into a baseline PORTFOLIO return series using equal weights (1/N) and fed that series into the existing EWMA/MC/backtest path without changing the core compute functions."
+          ]
+        },
+        {
+          "heading": "New Feature: Download Reporting and Reproducibility",
+          "bullets": [
+            "Added a new artifact download_report.json to record chunk-level outcomes: ticker, chunk_start, chunk_end, cache_hit, retries, rows, and error if any.",
+            "Extended params.json to include tickers, chunk_months, cache_dir, retry settings, and weights_mode (equal/custom) so each run is fully traceable.",
+            "Designed the patch to be modular so cached data can be reused and the rest of the risk pipeline remains stable across releases."
+          ]
+        },
+        {
+          "heading": "How To Run",
+          "bullets": [
+            "Example verification run: SPY,QQQ,TLT over 2025-01-01..2026-01-01 with chunk_months=3 to produce 12 chunks total (3 tickers × 4 windows).",
+            "CLI flags: --enable-download-patch --chunk-months --cache-dir --download-retries --download-base-sleep --download-jitter.",
+            "Expected outputs: download_report.json plus the existing risk artifacts and wide tables for prices and returns."
+          ]
+        },
+        {
+          "heading": "Validation",
+          "bullets": [
+            "Added unit tests for window generation, stitching dedupe, caching behavior (with yfinance mocked), and multi-asset merge with a 3 tickers × 12 months chunk count check.",
+            "Confirmed tests pass locally using a one-shot command without changing system settings: PYTHONPATH=. pytest -q tests/test_download_patch.py (5 passed).",
+            "Performed a syntax compile check on risk_pipeline and tests to ensure clean imports and packaging consistency."
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "2025-11",
+    "ym": "2025-11",
     "shortTag": "CUDA",
     "status": "COMPLETED",
     "downloadItemId": "ewma-mcvar-backtest-2025-11",

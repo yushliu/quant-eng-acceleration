@@ -1,0 +1,63 @@
+{
+  "args": {
+    "alpha": 0.99,
+    "auto_adjust": true,
+    "backend": "gpu",
+    "backtest_mc_paths": 500,
+    "bench": false,
+    "bench_repeat": 10,
+    "bench_warmup": 3,
+    "cache_dir": null,
+    "data_path": null,
+    "data_source": "yfinance",
+    "debug": false,
+    "decay_lambda": 0.94,
+    "end": "2026-02-09",
+    "gpu_device": 0,
+    "init_window": 60,
+    "interval": "1d",
+    "mc_paths": 3000,
+    "mode": "fast",
+    "offline": false,
+    "progress_every": 50,
+    "seed": 9,
+    "start": "2025-08-01",
+    "tickers": [
+      "SPY"
+    ],
+    "use_cache": true,
+    "weights": [
+      1.0
+    ]
+  },
+  "cache": {
+    "cache_dir": "/teamspace/studios/this_studio/test_gpu/datasets/yfinance_cache/004ea406ea8b109c",
+    "metadata": {
+      "auto_adjust": true,
+      "cache_hit": true,
+      "cache_key": "004ea406ea8b109c",
+      "columns": [
+        "SPY"
+      ],
+      "download_timestamp_utc": "2026-02-09T17:39:23.473944+00:00",
+      "end": "2026-02-09",
+      "index_name": "date",
+      "interval": "1d",
+      "start": "2025-08-01",
+      "tickers": [
+        "SPY"
+      ],
+      "yfinance_version": "1.1.0"
+    }
+  },
+  "dataset_stats": {
+    "num_assets": 1,
+    "price_end": "2026-02-06",
+    "price_rows": 131,
+    "price_start": "2025-08-01",
+    "return_end": "2026-02-06",
+    "return_rows": 130,
+    "return_start": "2025-08-04"
+  },
+  "run_id": "20260209T183326Z"
+}

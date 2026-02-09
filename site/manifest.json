@@ -1,6 +1,44 @@
 {
   "downloadItems": [
     {
+      "id": "yfinance-rate-limit-patch-2025-11",
+      "title": "yfinance Rate Limit Patch + Multi-Asset Download Stitching (1 ticker x 3 months)",
+      "short": "Chunked yfinance downloader with retry/cache/stitching for multi-asset inputs.",
+      "tag": "Risk",
+      "files": [
+        {
+          "label": "summary.md",
+          "path": "artifacts/2025-11-2/summary.md",
+          "lang": "markdown"
+        },
+        {
+          "label": "summary.json",
+          "path": "artifacts/2025-11-2/summary.json",
+          "lang": "json"
+        },
+        {
+          "label": "params.json",
+          "path": "artifacts/2025-11-2/params.json",
+          "lang": "json"
+        },
+        {
+          "label": "var_cvar.json",
+          "path": "artifacts/2025-11-2/var_cvar.json",
+          "lang": "json"
+        },
+        {
+          "label": "backtest.json",
+          "path": "artifacts/2025-11-2/backtest.json",
+          "lang": "json"
+        },
+        {
+          "label": "backtest_detail.csv",
+          "path": "artifacts/2025-11-2/backtest_detail.csv",
+          "lang": "csv"
+        }
+      ]
+    },
+    {
       "id": "ewma-mcvar-backtest-2025-11",
       "title": "Daily EWMA -> Monte Carlo VaR/CVaR Backtest (SPY, GPU T4)",
       "short": "SPY GPU run (20260209T183326Z): VaR 0.01877217, CVaR 0.02096967, breach_rate 0.014493.",

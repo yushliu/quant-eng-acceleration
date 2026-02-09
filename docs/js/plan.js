@@ -6,6 +6,18 @@ function getPlanMeetings() {
 const planMeetings = getPlanMeetings();
 let activeMeetingIndex = 0;
 
+function setActiveMeetingFromHash() {
+  const hashId = window.location.hash ? window.location.hash.slice(1) : "";
+  if (!hashId) {
+    return;
+  }
+
+  const index = planMeetings.findIndex((meeting) => meeting.id === hashId);
+  if (index >= 0) {
+    activeMeetingIndex = index;
+  }
+}
+
 function renderTimeline() {
   const timeline = document.getElementById("plan-timeline");
   if (!timeline) {
@@ -120,6 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
+  setActiveMeetingFromHash();
   renderTimeline();
   renderMeetingDetails();
 });

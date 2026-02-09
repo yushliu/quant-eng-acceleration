@@ -1,0 +1,7 @@
+{
+  "feature": "yfinance rate-limit patch with multi-asset download stitching",
+  "chunking": "1 ticker x 3 months",
+  "verification_run": "tickers=SPY,QQQ,TLT range=2025-01-01..2026-01-01",
+  "expected_chunks": 12,
+  "validation": "tests/test_download_patch.py (5 passed)"
+}
