@@ -22,6 +22,19 @@ function buildRawUrl(path) {
   return `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${path}`;
 }
 
+function isLocalPreview() {
+  const host = window.location.hostname;
+  return window.location.protocol === "file:" || host === "localhost" || host === "127.0.0.1";
+}
+
+function buildLocalUrl(path) {
+  return `../${String(path || "").replace(/^\/+/, "")}`;
+}
+
+function buildContentUrl(path) {
+  return isLocalPreview() ? buildLocalUrl(path) : buildRawUrl(path);
+}
+
 function getFilename(path) {
   const chunks = String(path || "").split("/");
   return chunks[chunks.length - 1] || "download.txt";
@@ -167,19 +180,19 @@ function updateViewerHeader(item) {
 }
 
 async function fetchTextWithCache(path) {
-  const rawUrl = buildRawUrl(path);
+  const contentUrl = buildContentUrl(path);
 
-  if (fileCache.has(rawUrl)) {
-    return fileCache.get(rawUrl);
+  if (fileCache.has(contentUrl)) {
+    return fileCache.get(contentUrl);
   }
 
-  const response = await fetch(rawUrl);
+  const response = await fetch(contentUrl);
   if (!response.ok) {
     throw new Error(`Failed to fetch ${path} (HTTP ${response.status})`);
   }
 
   const text = await response.text();
-  fileCache.set(rawUrl, text);
+  fileCache.set(contentUrl, text);
   return text;
 }
 
@@ -266,6 +279,16 @@ function setupActions() {
 
 async function loadManifest() {
   const { manifestPath } = getGithubConfig();
+
+  // Local preview should reflect local edits immediately without push.
+  if (isLocalPreview()) {
+    const localResponse = await fetch(buildLocalUrl(manifestPath));
+    if (localResponse.ok) {
+      const localJson = await localResponse.json();
+      return Array.isArray(localJson.downloadItems) ? localJson.downloadItems : [];
+    }
+  }
+
   const response = await fetch(buildRawUrl(manifestPath));
 
   if (!response.ok) {

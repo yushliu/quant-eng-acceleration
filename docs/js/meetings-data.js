@@ -5,6 +5,59 @@ window.COMMUNITY_MEETINGS = [
   {
     "id": "2025-10",
     "ym": "2025-10",
+    "shortTag": "RISK",
+    "status": "COMPLETED",
+    "downloadItemId": "ewma-mcvar-backtest-2025-10",
+    "latest": {
+      "date": "2025-10",
+      "title": "Daily EWMA → Monte Carlo VaR/CVaR Backtest (SPY)",
+      "points": [
+        "Built a production-like daily risk pipeline that estimates EWMA covariance and computes 1-day 99% VaR and CVaR via Monte Carlo simulation, then backtests coverage on realized returns.",
+        "Ran a fast-mode backtest on SPY (2025-08-04..2026-02-06) with EWMA lambda 0.94 and MC paths 3000, producing VaR 0.019229 and CVaR 0.021838 with breach_rate 0.014493 over 69 observations."
+      ]
+    },
+    "detail": {
+      "title": "Daily EWMA → Monte Carlo VaR/CVaR Backtest (SPY)",
+      "cards": [
+        {
+          "heading": "What This Build Did",
+          "bullets": [
+            "Downloaded and aligned daily price data and converted it to log returns for a consistent risk input stream.",
+            "Estimated a time-varying EWMA covariance (lambda 0.94) and generated Monte Carlo return scenarios using a stabilized Cholesky pipeline.",
+            "Computed 1-day tail risk metrics (VaR and CVaR at alpha 0.99) and evaluated coverage via a rolling backtest."
+          ]
+        },
+        {
+          "heading": "What You Can Use It For",
+          "bullets": [
+            "A clean baseline for a daily risk engine that can be extended to multi-asset portfolios and longer horizons without changing the core architecture.",
+            "A reproducible artifact pipeline for publishing results to GitHub Pages (summary + JSON + CSV) and later comparing CPU vs CUDA implementations.",
+            "A testable foundation for adding more formal backtest diagnostics and scaling from fast-mode to full-mode runs."
+          ]
+        },
+        {
+          "heading": "Data and Run Snapshot",
+          "bullets": [
+            "Ticker: SPY. Date range: 2025-08-04..2026-02-06. Rows: 130. Backtest observations: 69.",
+            "Model/MC: EWMA lambda 0.94, init_window 60, alpha 0.99, paths 3000, seed 9 (fast-mode).",
+            "Results: VaR 0.01922933, CVaR 0.02183821, breach_rate 0.014493 (expected 0.010000)."
+          ]
+        },
+        {
+          "heading": "Published Artifacts",
+          "bullets": [
+            "Saved machine-readable outputs for the website: summary.json, var_cvar.json, backtest.json, params.json.",
+            "Saved analysis tables for transparency and reuse: backtest_detail.csv, prices_aligned.csv, returns.csv, cov.csv.",
+            "Saved reproducibility logs and a human summary: logs.txt and summary.md."
+          ]
+        }
+      ]
+    }
+  },
+  
+  {
+    "id": "2025-10",
+    "ym": "2025-10",
     "shortTag": "CUDA",
     "status": "COMPLETED",
     "downloadItemId": "intro-cuda-2025-10",

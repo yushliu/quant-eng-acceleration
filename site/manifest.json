@@ -1,6 +1,44 @@
 {
   "downloadItems": [
     {
+      "id": "ewma-mcvar-backtest-2025-10",
+      "title": "Daily EWMA -> Monte Carlo VaR/CVaR Backtest (SPY)",
+      "short": "Daily EWMA covariance with Monte Carlo VaR/CVaR backtest artifacts for SPY.",
+      "tag": "Risk",
+      "files": [
+        {
+          "label": "summary.md",
+          "path": "artifacts/2025-10-2/summary.md",
+          "lang": "markdown"
+        },
+        {
+          "label": "summary.json",
+          "path": "artifacts/2025-10-2/summary.json",
+          "lang": "json"
+        },
+        {
+          "label": "var_cvar.json",
+          "path": "artifacts/2025-10-2/var_cvar.json",
+          "lang": "json"
+        },
+        {
+          "label": "backtest.json",
+          "path": "artifacts/2025-10-2/backtest.json",
+          "lang": "json"
+        },
+        {
+          "label": "params.json",
+          "path": "artifacts/2025-10-2/params.json",
+          "lang": "json"
+        },
+        {
+          "label": "backtest_detail.csv",
+          "path": "artifacts/2025-10-2/backtest_detail.csv",
+          "lang": "csv"
+        }
+      ]
+    },
+    {
       "id": "intro-cuda-2025-10",
       "title": "Intro to CUDA with Monte Carlo Risk",
       "short": "CUDA-focused implementation notes and starter code for Monte Carlo risk.",
