@@ -61,7 +61,7 @@ window.COMMUNITY_MEETINGS = [
     "status": "COMPLETED",
     "latest": {
       "date": "2025-09",
-      "title": "Meeting Monte Carlo VaR CVaR Intro",
+      "title": "Monte Carlo VaR CVaR Intro",
       "points": [
         "Introduced portfolio risk with Monte Carlo VaR and CVaR in Python.",
         "Ran a GPU baseline with CuPy on CUDA and recorded VaR 0.014019 and CVaR 0.016107 at alpha 0.99."
