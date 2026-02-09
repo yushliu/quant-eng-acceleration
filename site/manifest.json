@@ -1,6 +1,44 @@
 {
   "downloadItems": [
     {
+      "id": "ewma-mcvar-backtest-2025-11",
+      "title": "Daily EWMA -> Monte Carlo VaR/CVaR Backtest (SPY, GPU T4)",
+      "short": "SPY GPU run (20260209T183326Z): VaR 0.01877217, CVaR 0.02096967, breach_rate 0.014493.",
+      "tag": "Risk",
+      "files": [
+        {
+          "label": "summary.md",
+          "path": "artifacts/2025-11-1/summary.md",
+          "lang": "markdown"
+        },
+        {
+          "label": "summary.json",
+          "path": "artifacts/2025-11-1/summary.json",
+          "lang": "json"
+        },
+        {
+          "label": "var_cvar.json",
+          "path": "artifacts/2025-11-1/var_cvar.json",
+          "lang": "json"
+        },
+        {
+          "label": "backtest.json",
+          "path": "artifacts/2025-11-1/backtest.json",
+          "lang": "json"
+        },
+        {
+          "label": "params.json",
+          "path": "artifacts/2025-11-1/params.json",
+          "lang": "json"
+        },
+        {
+          "label": "backtest_detail.csv",
+          "path": "artifacts/2025-11-1/backtest_detail.csv",
+          "lang": "csv"
+        }
+      ]
+    },
+    {
       "id": "ewma-mcvar-backtest-2025-10",
       "title": "Daily EWMA -> Monte Carlo VaR/CVaR Backtest (SPY)",
       "short": "Daily EWMA covariance with Monte Carlo VaR/CVaR backtest artifacts for SPY.",

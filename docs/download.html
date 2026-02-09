@@ -9,6 +9,7 @@
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/github.min.css"
   />
+  <link rel="stylesheet" href="./css/source_explorer.css" />
 </head>
 <body data-page="download" class="min-h-screen bg-gray-100 text-gray-900 antialiased">
   <header id="site-header"></header>
@@ -23,10 +24,10 @@
 
     <section class="mt-8 rounded-lg border border-gray-200 bg-gray-50 p-6 shadow-sm">
       <h2 class="text-sm font-semibold uppercase tracking-[0.16em] text-gray-500">Artifacts</h2>
-      <div id="download-grid" class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
+      <div id="download-grid" class="mt-4 flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory"></div>
     </section>
 
-    <section class="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-6 shadow-sm" aria-live="polite">
+    <section id="single-file-preview" class="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-6 shadow-sm" aria-live="polite">
       <header class="flex flex-col gap-3 border-b border-gray-200 pb-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 id="viewer-title" class="text-lg font-semibold tracking-tight text-gray-900">Code Viewer</h2>

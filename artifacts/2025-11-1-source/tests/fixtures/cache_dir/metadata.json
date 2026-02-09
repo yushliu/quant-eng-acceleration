@@ -1,0 +1,7 @@
+{
+  "tickers": ["SPY", "QQQ"],
+  "cache_key": "fixture-cache",
+  "cache_hit": true,
+  "interval": "1d",
+  "auto_adjust": true
+}
