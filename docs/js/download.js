@@ -27,12 +27,18 @@ function getFilename(path) {
   return chunks[chunks.length - 1] || "download.txt";
 }
 
-function setCodeViewerText(text) {
+function setCodeViewerText(text, options = {}) {
   const viewer = document.getElementById("code-viewer");
   if (!viewer) {
     return;
   }
+  const shouldHighlight = options.highlight !== false;
   viewer.textContent = text;
+  if (!shouldHighlight) {
+    viewer.className = `language-${selectedFileLang}`;
+    viewer.removeAttribute("data-highlighted");
+    return;
+  }
   applySyntaxHighlighting();
 }
 
@@ -62,7 +68,12 @@ function applySyntaxHighlighting() {
     return;
   }
 
-  viewer.className = `hljs language-${selectedFileLang}`;
+  // Keep a deterministic sequence:
+  // 1) set language class
+  // 2) reset previous highlight state
+  // 3) run highlight as the final step
+  viewer.className = `language-${selectedFileLang}`;
+  viewer.removeAttribute("data-highlighted");
 
   if (window.hljs && typeof window.hljs.highlightElement === "function") {
     window.hljs.highlightElement(viewer);
@@ -174,7 +185,7 @@ async function fetchTextWithCache(path) {
 
 async function loadFileContent(path) {
   try {
-    setCodeViewerText("Loading...");
+    setCodeViewerText("Loading...", { highlight: false });
     const text = await fetchTextWithCache(path);
     selectedFileText = text;
     setCodeViewerText(text);
