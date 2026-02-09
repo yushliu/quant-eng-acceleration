@@ -3,23 +3,31 @@
     {
       "id": "meeting-2025-09",
       "title": "Monte Carlo VaR CVaR Intro",
-      "short": "Python intro and GPU run using CuPy on CUDA.",
+      "short": "Python intro for Monte Carlo VaR and CVaR.",
       "tag": "Risk",
       "files": [
         {
-          "label": "mc_var_cvar_gpu.py",
-          "path": "artifacts/2025-09/mc_var_cvar_gpu.py",
+          "label": "mc_var_cvar.py",
+          "path": "artifacts/2025-09/mc_var_cvar.py",
           "lang": "python"
         },
+        {
+          "label": "intro_to_py.py",
+          "path": "artifacts/2025-09/intro_to_py.py",
+          "lang": "python"
+        }
+      ]
+    },
+    {
+      "id": "intro-cuda-2025-10",
+      "title": "Intro to CUDA with Monte Carlo Risk",
+      "short": "CUDA-focused implementation notes and starter code for Monte Carlo risk.",
+      "tag": "CUDA",
+      "files": [
         {
           "label": "intro_to_cuda.py",
-          "path": "artifacts/2025-09/intro_to_cuda.py",
+          "path": "artifacts/2025-10/intro_to_cuda.py",
           "lang": "python"
-        },
-        {
-          "label": "results.json",
-          "path": "artifacts/2025-09/results.json",
-          "lang": "json"
         }
       ]
     }

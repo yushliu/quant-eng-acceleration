@@ -4,6 +4,7 @@ let manifestItems = [];
 let selectedItemId = "";
 let selectedFilePath = "";
 let selectedFileText = "";
+let selectedFileLang = "plaintext";
 
 function getGithubConfig() {
   const fallback = {
@@ -32,6 +33,40 @@ function setCodeViewerText(text) {
     return;
   }
   viewer.textContent = text;
+  applySyntaxHighlighting();
+}
+
+function mapHighlightLang(lang) {
+  const normalized = String(lang || "").toLowerCase();
+  if (normalized === "py" || normalized === "python") {
+    return "python";
+  }
+  if (normalized === "json") {
+    return "json";
+  }
+  if (normalized === "js" || normalized === "javascript") {
+    return "javascript";
+  }
+  if (normalized === "ts" || normalized === "typescript") {
+    return "typescript";
+  }
+  if (normalized === "sh" || normalized === "bash" || normalized === "shell") {
+    return "bash";
+  }
+  return "plaintext";
+}
+
+function applySyntaxHighlighting() {
+  const viewer = document.getElementById("code-viewer");
+  if (!viewer) {
+    return;
+  }
+
+  viewer.className = `hljs language-${selectedFileLang}`;
+
+  if (window.hljs && typeof window.hljs.highlightElement === "function") {
+    window.hljs.highlightElement(viewer);
+  }
 }
 
 function renderCards() {
@@ -100,6 +135,9 @@ function renderFileSelector(item) {
     }
 
     selectedFilePath = nextPath;
+    const selectedFile = files.find((file) => file.path === nextPath);
+    selectedFileLang = mapHighlightLang(selectedFile ? selectedFile.lang : "");
+    updateViewerHeader(item);
     await loadFileContent(nextPath);
   };
 }
@@ -153,7 +191,9 @@ async function selectItem(itemId) {
   }
 
   selectedItemId = itemId;
-  selectedFilePath = item.files && item.files[0] ? item.files[0].path : "";
+  const firstFile = item.files && item.files[0] ? item.files[0] : null;
+  selectedFilePath = firstFile ? firstFile.path : "";
+  selectedFileLang = mapHighlightLang(firstFile ? firstFile.lang : "");
 
   renderCards();
   renderFileSelector(item);
