@@ -95,18 +95,18 @@ function renderCards() {
     .map((item) => {
       const isActive = item.id === selectedItemId;
       const activeClasses = isActive
-        ? "border-slate-700 bg-slate-50"
-        : "border-gray-200 bg-white hover:border-slate-300";
+        ? "border-blue-500 bg-blue-50"
+        : "border-gray-200 bg-white hover:border-blue-300";
 
       return `
         <button
           type="button"
           data-item-id="${item.id}"
-          class="rounded-md border p-4 text-left shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900 ${activeClasses}"
+          class="rounded-md border p-4 text-left shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-300 ${activeClasses}"
         >
           <div class="flex items-start justify-between gap-3">
             <h3 class="text-sm font-semibold text-gray-900">${item.title}</h3>
-            <span class="rounded-full border border-gray-200 bg-gray-50 px-2 py-0.5 text-[10px] uppercase tracking-[0.08em] text-gray-600">${item.tag || "Item"}</span>
+            <span class="rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-[10px] uppercase tracking-[0.08em] text-blue-600">${item.tag || "Item"}</span>
           </div>
           <p class="mt-2 text-xs leading-5 text-gray-600">${item.short || ""}</p>
         </button>

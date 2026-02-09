@@ -1,4 +1,29 @@
+function injectThemeTokens() {
+  if (document.getElementById("theme-tokens")) {
+    return;
+  }
+
+  const style = document.createElement("style");
+  style.id = "theme-tokens";
+  style.textContent = `
+    :root {
+      --accent-primary: #3B82F6;
+      --accent-hover: #2563EB;
+      --accent-tint-bg: #EFF6FF;
+      --accent-focus: #A5B4FC;
+    }
+
+    body {
+      background-color: var(--accent-tint-bg);
+      color: #1f2937;
+    }
+  `;
+  document.head.appendChild(style);
+}
+
 function renderSiteHeader() {
+  injectThemeTokens();
+
   const host = document.getElementById("site-header");
   const config = window.SITE_CONFIG;
 
@@ -11,9 +36,11 @@ function renderSiteHeader() {
     .map((item) => {
       const isActive = item.key === currentPage;
       const activeAttrs = isActive ? ' aria-current="page"' : "";
-      const colorClass = isActive ? "text-slate-900" : "text-gray-600";
+      const colorClass = isActive
+        ? "border border-blue-200 bg-blue-50 text-blue-500"
+        : "text-gray-600 hover:text-blue-600";
 
-      return `<li><a href="${item.href}"${activeAttrs} class="inline-flex rounded-md px-3 py-2 text-sm font-medium ${colorClass} transition hover:text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900">${item.label}</a></li>`;
+      return `<li><a href="${item.href}"${activeAttrs} class="inline-flex rounded-md px-3 py-2 text-sm font-medium transition ${colorClass} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-300">${item.label}</a></li>`;
     })
     .join("");
 
@@ -21,11 +48,11 @@ function renderSiteHeader() {
   host.innerHTML = `
     <div class="mx-auto max-w-[1100px] px-4 sm:px-6">
       <div class="relative flex min-h-16 items-center justify-between py-2">
-        <a href="./index.html" class="text-sm font-semibold tracking-tight text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900">
+        <a href="./index.html" class="text-sm font-semibold tracking-tight text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-300">
           ${config.brand}
         </a>
 
-        <button id="mobile-menu-button" type="button" aria-label="Toggle navigation" class="inline-flex items-center rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 shadow-sm transition hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900 md:hidden" aria-controls="primary-nav" aria-expanded="false">
+        <button id="mobile-menu-button" type="button" aria-label="Toggle navigation" class="inline-flex items-center rounded-md border border-blue-200 bg-blue-50 px-3 py-1.5 text-sm text-blue-600 shadow-sm transition hover:border-blue-500 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-300 md:hidden" aria-controls="primary-nav" aria-expanded="false">
           Menu
         </button>
 

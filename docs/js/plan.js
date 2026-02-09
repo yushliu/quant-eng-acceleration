@@ -21,17 +21,17 @@ function renderTimeline() {
     .map((meeting, index) => {
       const isActive = index === activeMeetingIndex;
       const activeClasses = isActive
-        ? "border-slate-700 bg-slate-50 text-slate-900"
-        : "border-gray-200 bg-white text-gray-700 hover:border-slate-300 hover:text-slate-800";
-      const dotClasses = isActive ? "border-slate-700 bg-slate-700" : "border-gray-300 bg-white";
+        ? "border-blue-500 bg-blue-50 text-blue-600"
+        : "border-gray-200 bg-white text-gray-700 hover:border-blue-300 hover:text-blue-600";
+      const dotClasses = isActive ? "border-blue-500 bg-blue-500" : "border-gray-300 bg-white";
       const statusClasses = (meeting.status === "Done" || meeting.status === "Completed")
         ? "border-gray-200 bg-white text-gray-600"
-        : "border-slate-200 bg-slate-50 text-slate-700";
+        : "border-blue-200 bg-blue-50 text-blue-600";
 
       return `
         <button
           type="button"
-          class="group inline-flex min-w-[152px] items-start gap-3 rounded-md border px-3 py-2 text-left shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900 lg:min-w-0 lg:w-full ${activeClasses}"
+          class="group inline-flex min-w-[152px] items-start gap-3 rounded-md border px-3 py-2 text-left shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-300 lg:min-w-0 lg:w-full ${activeClasses}"
           data-meeting-index="${index}"
           aria-selected="${isActive ? "true" : "false"}"
           aria-current="${isActive ? "true" : "false"}"
@@ -91,11 +91,11 @@ function renderMeetingDetails() {
   monthEl.textContent = meeting.ym;
   statusEl.textContent = meeting.status;
   codeLinkEl.innerHTML = meeting.downloadItemId
-    ? `<a href="./download.html#${meeting.downloadItemId}" class="inline-flex rounded-md border border-gray-300 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 transition hover:border-slate-700 hover:text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900">Code</a>`
+    ? `<a href="./download.html#${meeting.downloadItemId}" class="inline-flex rounded-md border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-600 transition hover:border-blue-500 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-300">Code</a>`
     : "";
   statusEl.className = (meeting.status === "Done" || meeting.status === "Completed")
     ? "rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-600"
-    : "rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-700";
+    : "rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-600";
 
   cardsEl.innerHTML = meeting.detail.cards
     .map((card) => {
