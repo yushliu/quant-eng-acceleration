@@ -1,5 +1,6 @@
 window.SITE_CONFIG = {
   brand: "Quantitative Engineering Acceleration Club",
+  footerDisclaimer: "Independent student community. Not affiliated with or endorsed by any University. No live trading; no exchange connectivity.",
   github: {
     owner: "yushliu",
     repo: "quant-eng-acceleration",

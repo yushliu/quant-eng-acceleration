@@ -66,4 +66,20 @@ function renderSiteHeader() {
   `;
 }
 
+function renderSiteFooter() {
+  const config = window.SITE_CONFIG || {};
+  const text = String(config.footerDisclaimer || "").trim();
+  if (!text) {
+    return;
+  }
+
+  const footerParagraph = document.querySelector("footer p");
+  if (!footerParagraph) {
+    return;
+  }
+
+  footerParagraph.textContent = text;
+}
+
 renderSiteHeader();
+renderSiteFooter();
