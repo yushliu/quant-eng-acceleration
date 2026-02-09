@@ -1,0 +1,35 @@
+{
+  "downloadItems": [
+    {
+      "id": "example",
+      "title": "Example file",
+      "short": "Hello world test file for the code viewer.",
+      "tag": "Test",
+      "files": [
+        {
+          "label": "example.py",
+          "path": "artifacts/example.py",
+          "lang": "python"
+        }
+      ]
+    },
+    {
+      "id": "meeting-2025-09",
+      "title": "Meeting Monte Carlo VaR CVaR Intro",
+      "short": "Python intro and GPU run using CuPy on CUDA.",
+      "tag": "Risk",
+      "files": [
+        {
+          "label": "mc_var_cvar_gpu.py",
+          "path": "artifacts/2025-09/mc_var_cvar_gpu.py",
+          "lang": "python"
+        },
+        {
+          "label": "results.json",
+          "path": "artifacts/2025-09/results.json",
+          "lang": "json"
+        }
+      ]
+    }
+  ]
+}

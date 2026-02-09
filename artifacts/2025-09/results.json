@@ -1,0 +1,12 @@
+{
+  "meeting": "2025-09",
+  "metric": {
+    "alpha": 0.99,
+    "var": 0.014019,
+    "cvar": 0.016107
+  },
+  "runtime": {
+    "backend": "GPU (CuPy)",
+    "elapsed_seconds": 3.463
+  }
+}
