@@ -9,6 +9,10 @@ let sourceExplorerRequestId = 0;
 let sourceExplorerModulePromise = null;
 
 const SOURCE_EXPLORER_ITEM_CONFIG = {
+  "pricing-no-arbitrage-cpu-vs-gpu-2025-12": {
+    indexPath: "artifacts/2025-12-1-source/files.json",
+    baseRootPath: "artifacts/2025-12-1-source"
+  },
   "yfinance-rate-limit-patch-2025-11": {
     indexPath: "artifacts/2025-11-2-source/files.json",
     baseRootPath: "artifacts/2025-11-2-source"
@@ -207,7 +211,160 @@ const RUN_GUIDE_HTML_PATCH = `
   </section>
 `;
 
+const RUN_GUIDE_HTML_PRICING = `
+  <h2 class="text-lg font-semibold tracking-tight text-gray-900">How to Run (CLI) &mdash; Derivatives Pricing + No-Arbitrage (CPU/GPU)</h2>
+  <p class="mt-3 text-sm leading-6 text-gray-600">
+    This build reuses the existing yfinance download patch, estimates historical volatility, and prices a European option with Black&ndash;Scholes, Binomial CRR, and Monte Carlo (CPU/GPU).
+  </p>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">Install</h3>
+    <pre class="mt-2 overflow-auto rounded-md border border-gray-200 bg-white p-3 text-xs leading-6 text-gray-800 shadow-sm"><code>python3 -m pip install -r requirements.txt</code></pre>
+    <p class="mt-2 text-sm leading-6 text-gray-600">GPU note (Tesla T4 / CUDA): install CuPy for GPU Monte Carlo.</p>
+    <pre class="mt-2 overflow-auto rounded-md border border-gray-200 bg-white p-3 text-xs leading-6 text-gray-800 shadow-sm"><code>python3 -m pip install -U cupy-cuda12x
+# or
+python3 -m pip install -U cupy-cuda11x
+
+python -c "import cupy as cp; print(cp.__version__); print(cp.cuda.runtime.getDeviceCount())"</code></pre>
+  </section>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">Run fast</h3>
+    <pre class="mt-2 overflow-auto rounded-md border border-gray-200 bg-white p-3 text-xs leading-6 text-gray-800 shadow-sm"><code>PYTHONPATH=. python3 -m risk_pipeline.cli.run_pricing \\
+  --run-id pricing_spy_cpu_hist_fast \\
+  --ticker SPY \\
+  --start 2025-01-01 \\
+  --end 2026-01-01 \\
+  --option-type call \\
+  --strike 500 \\
+  --maturity-days 30 \\
+  --risk-free-rate 0.03 \\
+  --dividend-yield 0.0 \\
+  --sigma-mode hist \\
+  --hist-vol-window 60 \\
+  --annualization 252 \\
+  --paths 20000 \\
+  --seed 9 \\
+  --backend cpu \\
+  --binomial-steps 200 \\
+  --repeat 3 \\
+  --enable-download-patch true \\
+  --chunk-months 3 \\
+  --cache-dir "./datasets/yfinance_cache"</code></pre>
+  </section>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">Run full</h3>
+    <p class="mt-2 text-sm leading-6 text-gray-600">Release-like CPU baseline:</p>
+    <pre class="mt-2 overflow-auto rounded-md border border-gray-200 bg-white p-3 text-xs leading-6 text-gray-800 shadow-sm"><code>PYTHONPATH=. python3 -m risk_pipeline.cli.run_pricing \\
+  --run-id pricing_spy_cpu_hist_2025-12 \\
+  --ticker SPY \\
+  --start 2025-01-01 \\
+  --end 2026-01-01 \\
+  --option-type call \\
+  --strike 500 \\
+  --maturity-days 30 \\
+  --risk-free-rate 0.03 \\
+  --dividend-yield 0.0 \\
+  --sigma-mode hist \\
+  --hist-vol-window 60 \\
+  --annualization 252 \\
+  --paths 100000 \\
+  --seed 9 \\
+  --backend cpu \\
+  --binomial-steps 1000 \\
+  --repeat 3 \\
+  --enable-download-patch true \\
+  --chunk-months 3 \\
+  --cache-dir "./datasets/yfinance_cache"</code></pre>
+    <p class="mt-2 text-sm leading-6 text-gray-600">Release-like GPU baseline:</p>
+    <pre class="mt-2 overflow-auto rounded-md border border-gray-200 bg-white p-3 text-xs leading-6 text-gray-800 shadow-sm"><code>PYTHONPATH=. python3 -m risk_pipeline.cli.run_pricing \\
+  --run-id pricing_spy_gpu_hist_2025-12 \\
+  --ticker SPY \\
+  --start 2025-01-01 \\
+  --end 2026-01-01 \\
+  --option-type call \\
+  --strike 500 \\
+  --maturity-days 30 \\
+  --risk-free-rate 0.03 \\
+  --dividend-yield 0.0 \\
+  --sigma-mode hist \\
+  --hist-vol-window 60 \\
+  --annualization 252 \\
+  --paths 100000 \\
+  --seed 9 \\
+  --backend gpu \\
+  --binomial-steps 1000 \\
+  --repeat 3 \\
+  --enable-download-patch true \\
+  --chunk-months 3 \\
+  --cache-dir "./datasets/yfinance_cache"</code></pre>
+  </section>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">Override parameters</h3>
+    <p class="mt-2 text-sm leading-6 text-gray-600">Change option contract:</p>
+    <pre class="mt-2 overflow-auto rounded-md border border-gray-200 bg-white p-3 text-xs leading-6 text-gray-800 shadow-sm"><code>PYTHONPATH=. python3 -m risk_pipeline.cli.run_pricing \\
+  --run-id pricing_spy_put_custom \\
+  --ticker SPY \\
+  --start 2025-01-01 --end 2026-01-01 \\
+  --option-type put --strike 650 --maturity-days 90 \\
+  --risk-free-rate 0.03 --dividend-yield 0.0 \\
+  --sigma-mode hist --hist-vol-window 60 --annualization 252 \\
+  --paths 100000 --seed 9 --backend cpu \\
+  --binomial-steps 1000 --repeat 3 \\
+  --enable-download-patch true --chunk-months 3 --cache-dir "./datasets/yfinance_cache"</code></pre>
+    <p class="mt-2 text-sm leading-6 text-gray-600">Use fixed sigma:</p>
+    <pre class="mt-2 overflow-auto rounded-md border border-gray-200 bg-white p-3 text-xs leading-6 text-gray-800 shadow-sm"><code>PYTHONPATH=. python3 -m risk_pipeline.cli.run_pricing \\
+  --run-id pricing_spy_fixed_sigma \\
+  --ticker SPY \\
+  --start 2025-01-01 --end 2026-01-01 \\
+  --option-type call --strike 500 --maturity-days 30 \\
+  --risk-free-rate 0.03 --dividend-yield 0.0 \\
+  --sigma-mode fixed --sigma 0.20 \\
+  --paths 100000 --seed 9 --backend cpu \\
+  --binomial-steps 1000 --repeat 3 \\
+  --enable-download-patch true --chunk-months 3 --cache-dir "./datasets/yfinance_cache"</code></pre>
+    <p class="mt-2 text-sm leading-6 text-gray-600">Scale GPU paths:</p>
+    <pre class="mt-2 overflow-auto rounded-md border border-gray-200 bg-white p-3 text-xs leading-6 text-gray-800 shadow-sm"><code>PYTHONPATH=. python3 -m risk_pipeline.cli.run_pricing \\
+  --run-id pricing_spy_gpu_bigpaths \\
+  --ticker SPY \\
+  --start 2025-01-01 --end 2026-01-01 \\
+  --option-type call --strike 500 --maturity-days 30 \\
+  --risk-free-rate 0.03 --dividend-yield 0.0 \\
+  --sigma-mode hist --hist-vol-window 60 --annualization 252 \\
+  --paths 500000 --seed 9 --backend gpu \\
+  --binomial-steps 1000 --repeat 5 \\
+  --enable-download-patch true --chunk-months 3 --cache-dir "./datasets/yfinance_cache"</code></pre>
+  </section>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">Debug</h3>
+    <pre class="mt-2 overflow-auto rounded-md border border-gray-200 bg-white p-3 text-xs leading-6 text-gray-800 shadow-sm"><code>PYTHONPATH=. python3 -m risk_pipeline.cli.run_pricing --run-id debug_pricing --debug</code></pre>
+  </section>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">Backtest artifacts</h3>
+    <p class="mt-2 text-sm leading-6 text-gray-600">Each run writes under <code>results/pricing/&lt;run_id&gt;/</code> and produces:</p>
+    <ul class="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-gray-600">
+      <li><code>summary.md / logs.txt</code>: summary and logs</li>
+      <li><code>params.json</code>: full run parameters</li>
+      <li><code>download_report.json</code>: chunk outcomes</li>
+      <li><code>prices_aligned.csv</code> and <code>returns.csv</code></li>
+      <li><code>hist_vol.json</code>, <code>price.json</code>, <code>greeks.json</code>, <code>bench.json</code></li>
+    </ul>
+  </section>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">Kupiec POF interpretation</h3>
+    <p class="mt-2 text-sm leading-6 text-gray-600">
+      Not applicable for pricing-only runs. For this item, focus on no-arbitrage checks and Monte Carlo CI containment of BS price.
+    </p>
+  </section>
+`;
+
 const RUN_GUIDE_HTML_BY_ITEM_ID = {
+  "pricing-no-arbitrage-cpu-vs-gpu-2025-12": RUN_GUIDE_HTML_PRICING,
   "yfinance-rate-limit-patch-2025-11": RUN_GUIDE_HTML_PATCH,
   "ewma-mcvar-backtest-2025-11": RUN_GUIDE_HTML_GPU,
   "ewma-mcvar-backtest-2025-10": RUN_GUIDE_HTML_GPU

@@ -4,6 +4,74 @@
 window.COMMUNITY_MEETINGS = [
 
   {
+    "id": "2025-12",
+    "ym": "2025-12",
+    "shortTag": "CUDA",
+    "status": "COMPLETED",
+    "downloadItemId": "pricing-no-arbitrage-cpu-vs-gpu-2025-12",
+    "latest": {
+      "date": "2025-12",
+      "title": "Derivatives Pricing + No-Arbitrage Checks (SPY, CPU vs GPU T4)",
+      "points": [
+        "Built a reproducible derivatives pricing pipeline that reuses the existing yfinance download patch, estimates sigma via 60-day historical volatility, and prices a European call via Black–Scholes, Binomial CRR, and Monte Carlo.",
+        "Validated correctness against the Black–Scholes oracle and no-arbitrage checks: CRR (1000 steps) matched BS to numerical precision, put-call parity error was near zero, and both CPU and GPU Monte Carlo 95% CIs contained the BS price.",
+        "Benchmarked Monte Carlo on NVIDIA Tesla T4 (CuPy): steady-state GPU runs were about 4.5× faster than CPU for 100,000 paths, while the first GPU run included one-time CUDA initialization overhead."
+      ]
+    },
+    "detail": {
+      "title": "Derivatives Pricing + No-Arbitrage Checks (SPY, CPU vs GPU T4)",
+      "cards": [
+        {
+          "heading": "What This Build Did",
+          "bullets": [
+            "Reused the existing yfinance download patch to fetch and align SPY prices, then computed log returns for volatility estimation.",
+            "Estimated sigma using a 60-day historical volatility baseline (annualization 252) and used it consistently across all pricers.",
+            "Priced a European option using three engines: Black–Scholes (analytic), Binomial CRR (tree), and Monte Carlo (CPU and GPU backends)."
+          ]
+        },
+        {
+          "heading": "Data and Run Snapshot",
+          "bullets": [
+            "Underlying: SPY. Date range: 2025-01-01..2026-01-01. rows_prices=250, rows_returns=249.",
+            "Option: European call. S0=681.919983, K=500, T=0.082192 years (30 days), r=0.03, q=0.0.",
+            "Sigma (hist vol): window=60, sigma_annual=0.13008054 (annualization=252)."
+          ]
+        },
+        {
+          "heading": "Correctness Check: BS vs CRR vs Monte Carlo",
+          "bullets": [
+            "Black–Scholes call price: 183.1513408860.",
+            "Binomial CRR (steps=1000): matched BS to numerical precision (abs_error_vs_bs ≈ 3.7e-11).",
+            "Monte Carlo (paths=100000): CPU price=183.22539960 (CI95 [183.06722407, 183.38357514]); GPU(T4) price=183.14226308 (CI95 [182.98490125, 183.29962491]); BS lies within both CIs."
+          ]
+        },
+        {
+          "heading": "No-Arbitrage Validation",
+          "bullets": [
+            "Put-call parity: abs_error ≈ 2.84e-14 (numerical noise level).",
+            "Bounds checks: call_within_bounds=true and put_within_bounds=true for the configured inputs."
+          ]
+        },
+        {
+          "heading": "Performance: CPU vs GPU (NVIDIA Tesla T4)",
+          "bullets": [
+            "CPU Monte Carlo timing (mean over 3): 0.005485 s for 100,000 paths.",
+            "GPU Monte Carlo timing (T4, CuPy): first run included CUDA initialization (2.0775 s); steady-state runs were 0.001534 s and 0.000933 s.",
+            "Steady-state speedup: about 4.5× faster on GPU than CPU for the same path count, after warm-up."
+          ]
+        },
+        {
+          "heading": "Published Artifacts",
+          "bullets": [
+            "Saved pricing outputs: price.json (BS/CRR/MC + CI + errors) and greeks.json (analytic/finite-diff as configured).",
+            "Saved volatility baseline: hist_vol.json with sigma_annual and window_used for traceability.",
+            "Saved benchmarking and reproducibility: bench.json, params.json, download_report.json, logs.txt, and summary.md."
+          ]
+        }
+      ]
+    }
+  },  
+  {
     "id": "2025-11",
     "ym": "2025-11",
     "shortTag": "RISK",

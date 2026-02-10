@@ -1,4 +1,5 @@
 export const SOURCE_EXPLORER_ENABLED_IDS = new Set([
+  "pricing-no-arbitrage-cpu-vs-gpu-2025-12",
   "yfinance-rate-limit-patch-2025-11",
   "ewma-mcvar-backtest-2025-11",
   "ewma-mcvar-backtest-2025-10"

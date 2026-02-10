@@ -1,6 +1,24 @@
 {
   "downloadItems": [
     {
+      "id": "pricing-no-arbitrage-cpu-vs-gpu-2025-12",
+      "title": "Derivatives Pricing + No-Arbitrage Checks (SPY, CPU vs GPU T4)",
+      "short": "SPY pricing benchmark artifacts (GPU historical vol run): bench.json and price.json.",
+      "tag": "CUDA",
+      "files": [
+        {
+          "label": "bench.json",
+          "path": "artifacts/2025-12-1/results/pricing/pricing_spy_gpu_hist_2025-11/bench.json",
+          "lang": "json"
+        },
+        {
+          "label": "price.json",
+          "path": "artifacts/2025-12-1/results/pricing/pricing_spy_gpu_hist_2025-11/price.json",
+          "lang": "json"
+        }
+      ]
+    },
+    {
       "id": "yfinance-rate-limit-patch-2025-11",
       "title": "yfinance Rate Limit Patch + Multi-Asset Download Stitching (1 ticker x 3 months)",
       "short": "Chunked yfinance downloader with retry/cache/stitching for multi-asset inputs.",
