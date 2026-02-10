@@ -1,0 +1,59 @@
+{
+  "binomial": {
+    "abs_error_vs_bs": 3.7346126191550866e-11,
+    "rel_error_vs_bs": 2.0390856005138543e-13,
+    "selected": 183.1513408859929,
+    "steps": 1000
+  },
+  "bs": {
+    "call": 183.15134088603025,
+    "put": 2.7687221516810356e-14,
+    "selected": 183.15134088603025
+  },
+  "mc": {
+    "abs_error_vs_bs": 0.009077806367372432,
+    "cpu": {
+      "ci_high": 183.38357513565376,
+      "ci_low": 183.06722407144878,
+      "paths": 100000,
+      "price": 183.22539960355127,
+      "stderr": 0.08070180209311409
+    },
+    "engine": "mc_gpu",
+    "gpu": {
+      "available": true,
+      "ci_high": 183.29962490602733,
+      "ci_low": 182.98490125329843,
+      "device": "Tesla T4",
+      "gpu_backend": "cupy",
+      "paths": 100000,
+      "price": 183.14226307966288,
+      "stderr": 0.08028664610430675
+    },
+    "rel_error_vs_bs": 4.956450945680647e-05,
+    "selected": {
+      "ci_high": 183.29962490602733,
+      "ci_low": 182.98490125329843,
+      "paths": 100000,
+      "price": 183.14226307966288,
+      "stderr": 0.08028664610430675
+    }
+  },
+  "no_arbitrage": {
+    "bounds": {
+      "call_lower_bound": 183.15134088603025,
+      "call_upper_bound": 681.9199829101562,
+      "call_within_bounds": true,
+      "put_lower_bound": 0.0,
+      "put_upper_bound": 498.768642024126,
+      "put_within_bounds": true
+    },
+    "put_call_parity": {
+      "abs_error": 2.842170943040401e-14,
+      "lhs_call_minus_put": 183.15134088603023,
+      "rel_error": 1.5518155255052164e-16,
+      "rhs_discounted_spot_minus_strike": 183.15134088603025
+    }
+  },
+  "option_type": "call"
+}
