@@ -1,4 +1,5 @@
 export const SOURCE_EXPLORER_ENABLED_IDS = new Set([
+  "risk-model-comparison-stage3-2026-01-2",
   "risk-model-comparison-stage2-2026-01-1",
   "risk-model-comparison-stage1-2025-12-2",
   "pricing-no-arbitrage-cpu-vs-gpu-2025-12",
@@ -82,6 +83,15 @@ function createTreeNode(name, relPath) {
     folders: new Map(),
     files: []
   };
+}
+
+function stripPrefix(path, prefix) {
+  const normalizedPath = normalizePath(path);
+  const normalizedPrefix = normalizePath(prefix);
+  if (!normalizedPrefix || !normalizedPath.startsWith(normalizedPrefix)) {
+    return normalizedPath;
+  }
+  return normalizedPath.slice(normalizedPrefix.length).replace(/^\/+/, "");
 }
 
 function buildTree(filePaths) {
@@ -264,14 +274,18 @@ export async function mountSourceExplorer({ containerEl, indexUrl, baseRoot, hlj
     ? allowedPrefixes.map((prefix) => normalizePath(prefix)).filter(Boolean)
     : [];
   const hasPrefixFilter = Array.isArray(allowedPrefixes);
+  const displayPrefix = normalizedPrefixes.length === 1 ? normalizedPrefixes[0] : "";
   const indexFiles = Array.isArray(indexJson && indexJson.files) ? indexJson.files : [];
-  const filePaths = indexFiles
+  const realFilePaths = indexFiles
     .map((path) => normalizePath(path))
     .filter(Boolean)
     .filter((path) => !hasPrefixFilter || normalizedPrefixes.some((prefix) => path.startsWith(prefix)));
+  const displayFilePaths = realFilePaths
+    .map((path) => stripPrefix(path, displayPrefix))
+    .filter(Boolean);
   const rootPath = String(baseRoot || (indexJson && indexJson.root) || "").replace(/\/+$/, "");
 
-  if (!filePaths.length || !rootPath) {
+  if (!displayFilePaths.length || !rootPath) {
     pathEl.textContent = "";
     setBusyMessage(codeEl, "No source files available.");
     treeEl.innerHTML = "";
@@ -280,7 +294,12 @@ export async function mountSourceExplorer({ containerEl, indexUrl, baseRoot, hlj
     return;
   }
 
-  const treeRoot = buildTree(filePaths);
+  const displayToRealPath = new Map();
+  displayFilePaths.forEach((displayPath, index) => {
+    displayToRealPath.set(displayPath, realFilePaths[index]);
+  });
+
+  const treeRoot = buildTree(displayFilePaths);
   const expandedFolders = new Set([""]);
   let selectedPath = "";
   let selectedPreviewText = "";
@@ -326,7 +345,8 @@ export async function mountSourceExplorer({ containerEl, indexUrl, baseRoot, hlj
     selectedPath = path;
     refreshTree();
 
-    const lang = inferPreviewLanguage(path);
+    const realPath = displayToRealPath.get(path) || path;
+    const lang = inferPreviewLanguage(realPath);
     if (!lang) {
       setPreviewState(path, "Binary or unsupported file. Please download to view.", "plaintext", false);
       return;
@@ -341,7 +361,7 @@ export async function mountSourceExplorer({ containerEl, indexUrl, baseRoot, hlj
     downloadButton.disabled = false;
 
     try {
-      const response = await fetch(joinContentUrl(rootPath, path));
+      const response = await fetch(joinContentUrl(rootPath, realPath));
       if (!response.ok) {
         throw new Error(`Failed to load file (HTTP ${response.status})`);
       }
@@ -356,7 +376,7 @@ export async function mountSourceExplorer({ containerEl, indexUrl, baseRoot, hlj
         return;
       }
 
-      if (getFileExtension(path) === "csv") {
+      if (getFileExtension(realPath) === "csv") {
         const csvPreview = truncateCsvPreview(fullText);
         setPreviewState(path, csvPreview.text, "plaintext", true);
         return;
@@ -395,7 +415,7 @@ export async function mountSourceExplorer({ containerEl, indexUrl, baseRoot, hlj
       return;
     }
 
-    const sourceUrl = joinContentUrl(rootPath, selectedPath);
+    const sourceUrl = joinContentUrl(rootPath, displayToRealPath.get(selectedPath) || selectedPath);
     try {
       const response = await fetch(sourceUrl);
       if (!response.ok) {
@@ -417,7 +437,7 @@ export async function mountSourceExplorer({ containerEl, indexUrl, baseRoot, hlj
     }
   });
 
-  const defaultPath = pickDefaultFile(filePaths);
+  const defaultPath = pickDefaultFile(displayFilePaths);
   if (!defaultPath) {
     setBusyMessage(codeEl, "No source files available.");
     copyButton.disabled = true;

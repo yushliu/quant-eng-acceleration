@@ -7,6 +7,90 @@ function isCompletedStatus(status) {
   return typeof status === "string" && ["done", "completed"].includes(status.toLowerCase());
 }
 
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function renderCardTable(table) {
+  if (!table || !Array.isArray(table.columns) || !Array.isArray(table.rows) || !table.columns.length) {
+    return "";
+  }
+
+  const headMarkup = table.columns
+    .map((column) => `<th class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-[0.08em] text-gray-500">${escapeHtml(column)}</th>`)
+    .join("");
+
+  const bodyMarkup = table.rows
+    .map((row) => {
+      const cells = Array.isArray(row) ? row : [];
+      const cellMarkup = table.columns
+        .map((_, index) => `<td class="px-3 py-2 text-sm text-gray-600">${escapeHtml(cells[index] || "")}</td>`)
+        .join("");
+      return `<tr class="border-t border-gray-200">${cellMarkup}</tr>`;
+    })
+    .join("");
+
+  return `
+    <div class="mt-4 overflow-x-auto rounded-md border border-gray-200">
+      <table class="min-w-full bg-white">
+        <thead class="bg-gray-50">
+          <tr>${headMarkup}</tr>
+        </thead>
+        <tbody>${bodyMarkup}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderCardChart(chart) {
+  if (!chart || !Array.isArray(chart.series) || !chart.series.length) {
+    return "";
+  }
+
+  const numericValues = chart.series
+    .map((item) => Number(item && item.value))
+    .filter((value) => Number.isFinite(value));
+  const maxValue = numericValues.length ? Math.max(...numericValues) : 0;
+  if (maxValue <= 0) {
+    return "";
+  }
+
+  const barsMarkup = chart.series
+    .map((item) => {
+      const value = Number(item && item.value);
+      const label = item && item.label ? item.label : "";
+      const displayValue = item && item.displayValue ? item.displayValue : String(item && item.value ? item.value : "");
+      const heightPercent = Number.isFinite(value) ? Math.max((value / maxValue) * 100, 6) : 6;
+
+      return `
+        <div class="flex min-w-0 flex-1 flex-col items-center gap-2">
+          <div class="text-[11px] font-medium text-gray-500">${escapeHtml(displayValue)}</div>
+          <div class="flex h-40 w-full items-end justify-center rounded-md bg-gray-50 px-2 py-2">
+            <div class="w-full max-w-[72px] rounded-t-md bg-blue-500" style="height:${heightPercent}%"></div>
+          </div>
+          <div class="text-center text-xs leading-5 text-gray-600">${escapeHtml(label)}</div>
+        </div>
+      `;
+    })
+    .join("");
+
+  const subtitleMarkup = chart.subtitle
+    ? `<p class="mt-2 text-xs leading-5 text-gray-500">${escapeHtml(chart.subtitle)}</p>`
+    : "";
+
+  return `
+    <div class="mt-4 rounded-md border border-gray-200 bg-white p-4">
+      <div class="flex items-end gap-3">${barsMarkup}</div>
+      ${subtitleMarkup}
+    </div>
+  `;
+}
+
 const planMeetings = getPlanMeetings();
 let activeMeetingIndex = 0;
 let activeMeetingViewId = "";
@@ -218,16 +302,22 @@ function renderMeetingDetails() {
 
   cardsEl.innerHTML = cards
     .map((card) => {
-      const bulletMarkup = card.bullets
-        .map((bullet) => `<li class=\"text-sm leading-6 text-gray-600\">${bullet}</li>`)
+      const bullets = Array.isArray(card.bullets) ? card.bullets : [];
+      const bulletMarkup = bullets
+        .map((bullet) => `<li class=\"text-sm leading-6 text-gray-600\">${escapeHtml(bullet)}</li>`)
         .join("");
+      const listMarkup = bulletMarkup
+        ? `<ul class="mt-3 list-disc space-y-1 pl-5">${bulletMarkup}</ul>`
+        : "";
+      const tableMarkup = renderCardTable(card.table);
+      const chartMarkup = renderCardChart(card.chart);
 
       return `
         <article class="rounded-md border border-gray-200 bg-white p-5 shadow-sm">
-          <h3 class="text-sm font-semibold uppercase tracking-[0.12em] text-gray-500">${card.heading}</h3>
-          <ul class="mt-3 list-disc space-y-1 pl-5">
-            ${bulletMarkup}
-          </ul>
+          <h3 class="text-sm font-semibold uppercase tracking-[0.12em] text-gray-500">${escapeHtml(card.heading)}</h3>
+          ${listMarkup}
+          ${tableMarkup}
+          ${chartMarkup}
         </article>
       `;
     })

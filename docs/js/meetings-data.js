@@ -3,6 +3,192 @@
 // - detail: full version used by Plan > meeting detail cards
 window.COMMUNITY_MEETINGS = [
   {
+    "id": "2026-01-2",
+    "ym": "2026-01",
+    "shortTag": "ALGORITHM",
+    "status": "COMPLETED",
+    "downloadItemId": "risk-model-comparison-stage3-2026-01-2",
+    "detailViews": [
+      {
+        "id": "infrastructure",
+        "label": "Infrastructure",
+        "detail": {
+          "title": "Meeting Record - Stage 3 Infrastructure",
+          "cards": []
+        }
+      },
+      {
+        "id": "algorithm",
+        "label": "Algorithm",
+        "detail": {
+          "title": "Meeting Record - Stage 3 Final Comparison and Recommendation",
+          "cards": [
+            {
+              "heading": "Meeting Objective",
+              "bullets": [
+                "Completed Stage 3 by interpreting the finished Stage 2 outputs and producing a final model comparison under the shared multi-asset framework.",
+                "Reviewed final comparison outputs, evaluated conservativeness, breach behavior, exceedance severity, and stability, and identified the main tradeoffs across models.",
+                "Selected the most appropriate benchmark baseline for future club releases under the tested setup."
+              ]
+            },
+            {
+              "heading": "Inputs Reviewed",
+              "bullets": [
+                "Reviewed portfolio_returns.csv, historical_daily_risk.csv, parametric_daily_risk.csv, ewma_mc_daily_risk.csv, comparison_summary.csv, and comparison_analysis.md from the Stage 2 output package.",
+                "Used the shared baseline portfolio setup: SPY, QQQ, TLT, GLD with equal weights.",
+                "Kept the shared rules unchanged: 1-day horizon, alpha 0.99, 60-day rolling/init window, portfolio_loss = - portfolio_return, and breach = realized loss > estimated VaR."
+              ]
+            },
+            {
+              "heading": "Final Comparison Summary",
+              "bullets": [
+                "Historical Simulation: avg VaR 0.016231, avg CVaR 0.018748, breach rate 0.037037, breach gap 0.027037, exceedance severity 0.005207, CVaR stability proxy 0.001666, breaches 7.",
+                "Parametric Normal: avg VaR 0.016414, avg CVaR 0.018950, breach rate 0.031746, breach gap 0.021746, exceedance severity 0.006153, CVaR stability proxy 0.001046, breaches 6.",
+                "EWMA + Monte Carlo: avg VaR 0.017063, avg CVaR 0.019541, breach rate 0.015873, breach gap 0.005873, exceedance severity 0.008273, CVaR stability proxy 0.001979, breaches 3."
+              ],
+              "table": {
+                "columns": ["Model", "Avg VaR", "Avg CVaR", "Breach Rate", "N Breaches"],
+                "rows": [
+                  ["Historical Simulation", "0.016231", "0.018748", "0.037037", "7"],
+                  ["Parametric Normal", "0.016414", "0.018950", "0.031746", "6"],
+                  ["EWMA + Monte Carlo", "0.017063", "0.019541", "0.015873", "3"]
+                ]
+              }
+            },
+            {
+              "heading": "Metric Ranking Table",
+              "bullets": [
+                "Conservativeness by Avg VaR and Avg CVaR: EWMA + Monte Carlo ranked first, Parametric Normal second, Historical Simulation third.",
+                "Coverage closeness by smallest breach gap: EWMA + Monte Carlo ranked first, Parametric Normal second, Historical Simulation third.",
+                "Smoothness by smallest CVaR stability proxy: Parametric Normal ranked first, Historical Simulation second, EWMA + Monte Carlo third."
+              ],
+              "table": {
+                "columns": ["Metric", "Most Favorable", "Middle", "Least Favorable"],
+                "rows": [
+                  ["Conservativeness (Avg VaR)", "EWMA + Monte Carlo", "Parametric Normal", "Historical Simulation"],
+                  ["Conservativeness (Avg CVaR)", "EWMA + Monte Carlo", "Parametric Normal", "Historical Simulation"],
+                  ["Coverage closeness", "EWMA + Monte Carlo", "Parametric Normal", "Historical Simulation"],
+                  ["Smoothness (CVaR stability)", "Parametric Normal", "Historical Simulation", "EWMA + Monte Carlo"]
+                ]
+              }
+            },
+            {
+              "heading": "Column Chart - Average VaR",
+              "chart": {
+                "subtitle": "Higher indicates a more conservative average VaR under the shared setup.",
+                "series": [
+                  { "label": "Historical Simulation", "value": 0.016231, "displayValue": "0.016231" },
+                  { "label": "Parametric Normal", "value": 0.016414, "displayValue": "0.016414" },
+                  { "label": "EWMA + Monte Carlo", "value": 0.017063, "displayValue": "0.017063" }
+                ]
+              }
+            },
+            {
+              "heading": "Column Chart - Breach Rate",
+              "chart": {
+                "subtitle": "Expected breach rate at alpha = 0.99 is 0.010000.",
+                "series": [
+                  { "label": "Historical Simulation", "value": 0.037037, "displayValue": "0.037037" },
+                  { "label": "Parametric Normal", "value": 0.031746, "displayValue": "0.031746" },
+                  { "label": "EWMA + Monte Carlo", "value": 0.015873, "displayValue": "0.015873" },
+                  { "label": "Expected", "value": 0.010000, "displayValue": "0.010000" }
+                ]
+              }
+            },
+            {
+              "heading": "Column Chart - Number of Breaches",
+              "chart": {
+                "subtitle": "Lower is better under the shared evaluation rule.",
+                "series": [
+                  { "label": "Historical Simulation", "value": 7, "displayValue": "7" },
+                  { "label": "Parametric Normal", "value": 6, "displayValue": "6" },
+                  { "label": "EWMA + Monte Carlo", "value": 3, "displayValue": "3" }
+                ]
+              }
+            },
+            {
+              "heading": "Interpretation by Model",
+              "bullets": [
+                "Historical Simulation remained the most direct empirical baseline, but it was the least conservative and recorded the highest breach count.",
+                "Parametric Normal was the smoothest reference model, though its breach behavior still remained materially above the intended 1 percent level.",
+                "EWMA + Monte Carlo was the strongest primary benchmark candidate because it was the most conservative and closest to the intended 99 percent coverage target."
+              ]
+            },
+            {
+              "heading": "Tradeoff Discussion",
+              "bullets": [
+                "EWMA + Monte Carlo was the most conservative model, but Parametric Normal was the smoothest; this showed a clear tradeoff between dynamic responsiveness and output stability.",
+                "Historical Simulation and Parametric Normal were simpler to explain, but both produced breach rates materially above the expected level.",
+                "EWMA + Monte Carlo behaved more like a dynamic production-style risk engine, while Historical Simulation remained useful as an empirical baseline reference."
+              ]
+            },
+            {
+              "heading": "Final Recommendation",
+              "bullets": [
+                "Recommended primary benchmark baseline: EWMA + Monte Carlo, because it had the highest average VaR/CVaR, the lowest breach count, and the smallest breach gap.",
+                "Recommended smooth reference model: Parametric Normal, because it had the smallest CVaR stability proxy and the most stable output path.",
+                "Recommended empirical baseline: Historical Simulation, because it remained the most direct and intuitive empirical comparison model."
+              ]
+            },
+            {
+              "heading": "Stage 1 Hypothesis Review",
+              "bullets": [
+                "Historical Simulation reacting more slowly was supported by the highest breach count and the lowest VaR/CVaR levels.",
+                "Parametric Normal being smoother but potentially understating tail risk was supported by the smallest stability proxy and breach behavior still above target.",
+                "EWMA + Monte Carlo being more responsive and more conservative was supported by the highest VaR/CVaR levels and breach behavior closest to the intended 1 percent rate."
+              ]
+            },
+            {
+              "heading": "How To Use",
+              "bullets": [
+                "Use stage3_meeting_record.md as the complete final-review document with tables, ranking logic, recommendation, and text-based graphs.",
+                "Use stage3_comparison_summary.csv when you want the machine-readable final comparison table for charts, slides, or later analysis.",
+                "Use stage3_ranking_table.csv when you want the compact ranking view for recommendation-oriented summaries, and use summary.md for a short top-level overview."
+              ]
+            },
+            {
+              "heading": "What This Update Adds",
+              "bullets": [
+                "Converted Stage 2 preliminary outputs into a final model-comparison decision record.",
+                "Added explicit recommendation tables, tradeoff discussion, limitation notes, and a formal benchmark selection outcome.",
+                "Added table-first reporting and text-based graphs so the results can be reviewed quickly even without separate image assets."
+              ]
+            },
+            {
+              "heading": "Limitations",
+              "bullets": [
+                "Only one portfolio was tested in this cycle, so results may still depend on this portfolio composition.",
+                "The current conclusions are based on a fixed parameter setup; alternative windows or Monte Carlo sizes may shift relative behavior.",
+                "No second-portfolio robustness check was completed yet, so cross-allocation stability remains untested."
+              ]
+            },
+            {
+              "heading": "Meeting Outcome",
+              "bullets": [
+                "Stage 3 completed the first full risk-model comparison cycle for the project and selected a recommended benchmark baseline for future releases.",
+                "Under the tested setup, EWMA + Monte Carlo was selected as the strongest primary benchmark candidate, Parametric Normal as the smoothest reference model, and Historical Simulation as the main empirical baseline."
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "latest": {
+      "date": "2026-01 (2nd)",
+      "title": "Meeting Record - Stage 3 Final Comparison and Recommendation",
+      "points": [
+        "Completed the final comparison pass across Historical Simulation, Parametric Normal, and EWMA + Monte Carlo using the shared baseline portfolio and fixed evaluation rules.",
+        "Documented ranking tables, tradeoffs, hypothesis review, and a final recommendation instead of only preliminary observations.",
+        "Selected EWMA + Monte Carlo as the strongest primary benchmark candidate under the tested setup, with Parametric Normal as the smooth reference model."
+      ]
+    },
+    "detail": {
+      "title": "Meeting Record - Stage 3 Final Comparison and Recommendation",
+      "cards": []
+    }
+  },
+
+  {
     "id": "2026-01-1",
     "ym": "2026-01",
     "shortTag": "ALGORITHM",

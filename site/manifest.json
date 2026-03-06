@@ -1,6 +1,50 @@
 {
   "downloadItems": [
     {
+      "id": "risk-model-comparison-stage3-2026-01-2",
+      "title": "Meeting Record - Stage 3 Final Comparison and Recommendation",
+      "short": "",
+      "tag": "Update",
+      "views": [
+        {
+          "id": "infrastructure",
+          "label": "Infrastructure",
+          "filePrefixes": [],
+          "sourcePrefixes": []
+        },
+        {
+          "id": "algorithm",
+          "label": "Algorithm",
+          "filePrefixes": [
+            "artifacts/2026-1-2/Algorithm/"
+          ],
+          "sourcePrefixes": []
+        }
+      ],
+      "files": [
+        {
+          "label": "stage3_meeting_record.md",
+          "path": "artifacts/2026-1-2/Algorithm/stage3_meeting_record.md",
+          "lang": "markdown"
+        },
+        {
+          "label": "stage3_comparison_summary.csv",
+          "path": "artifacts/2026-1-2/Algorithm/stage3_comparison_summary.csv",
+          "lang": "csv"
+        },
+        {
+          "label": "stage3_ranking_table.csv",
+          "path": "artifacts/2026-1-2/Algorithm/stage3_ranking_table.csv",
+          "lang": "csv"
+        },
+        {
+          "label": "summary.md",
+          "path": "artifacts/2026-1-2/Algorithm/summary.md",
+          "lang": "markdown"
+        }
+      ]
+    },
+    {
       "id": "risk-model-comparison-stage2-2026-01-1",
       "title": "Meeting Record - Stage 2 Implementation and Preliminary Results",
       "short": "",

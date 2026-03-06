@@ -1,0 +1,6 @@
+metric,most_favorable,middle,least_favorable
+Conservativeness (Avg VaR),EWMA + Monte Carlo,Parametric Normal,Historical Simulation
+Conservativeness (Avg CVaR),EWMA + Monte Carlo,Parametric Normal,Historical Simulation
+Coverage closeness (smallest breach gap),EWMA + Monte Carlo,Parametric Normal,Historical Simulation
+Smoothness (smallest CVaR stability proxy),Parametric Normal,Historical Simulation,EWMA + Monte Carlo
+Smallest exceedance severity,Historical Simulation,Parametric Normal,EWMA + Monte Carlo

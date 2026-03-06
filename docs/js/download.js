@@ -10,6 +10,10 @@ let sourceExplorerRequestId = 0;
 let sourceExplorerModulePromise = null;
 
 const SOURCE_EXPLORER_ITEM_CONFIG = {
+  "risk-model-comparison-stage3-2026-01-2": {
+    indexPath: "artifacts/2026-1-2-source/files.json",
+    baseRootPath: "artifacts/2026-1-2-source"
+  },
   "risk-model-comparison-stage2-2026-01-1": {
     indexPath: "artifacts/2026-1-1-source/files.json",
     baseRootPath: "artifacts/2026-1-1-source"
@@ -437,7 +441,39 @@ const RUN_GUIDE_HTML_RISK_STAGE2 = `
   </section>
 `;
 
+const RUN_GUIDE_HTML_RISK_STAGE3 = `
+  <h2 class="text-lg font-semibold tracking-tight text-gray-900">How to Use These Artifacts</h2>
+  <p class="mt-3 text-sm leading-6 text-gray-600">
+    This item is the Stage 3 final-review release. It converts the Stage 2 outputs into the final comparison record, ranking tables, tradeoff discussion, and benchmark recommendation.
+  </p>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">What Is Included</h3>
+    <ul class="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-gray-600">
+      <li><code>stage3_meeting_record.md</code>: full final-review document with tables, ranking logic, recommendation, and text graphs</li>
+      <li><code>stage3_comparison_summary.csv</code>: final machine-readable comparison table across the three models</li>
+      <li><code>stage3_ranking_table.csv</code>: compact ranking view by evaluation category</li>
+      <li><code>summary.md</code>: short overview for a quick read</li>
+    </ul>
+  </section>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">How to Use It</h3>
+    <p class="mt-2 text-sm leading-6 text-gray-600">
+      Start with <code>summary.md</code> for the top-line result, then read <code>stage3_meeting_record.md</code> for the full interpretation. Use the CSV files when you need structured data for charts, slides, or downstream analysis.
+    </p>
+  </section>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">What This Stage Decides</h3>
+    <p class="mt-2 text-sm leading-6 text-gray-600">
+      Under the current tested setup, EWMA + Monte Carlo is recommended as the primary benchmark baseline, Parametric Normal as the smooth reference model, and Historical Simulation as the empirical baseline reference.
+    </p>
+  </section>
+`;
+
 const RUN_GUIDE_HTML_BY_ITEM_ID = {
+  "risk-model-comparison-stage3-2026-01-2": RUN_GUIDE_HTML_RISK_STAGE3,
   "risk-model-comparison-stage2-2026-01-1": RUN_GUIDE_HTML_RISK_STAGE2,
   "risk-model-comparison-stage1-2025-12-2": RUN_GUIDE_HTML_RISK_STAGE1,
   "pricing-no-arbitrage-cpu-vs-gpu-2025-12": RUN_GUIDE_HTML_PRICING,
