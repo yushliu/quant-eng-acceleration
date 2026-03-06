@@ -9,6 +9,10 @@ let sourceExplorerRequestId = 0;
 let sourceExplorerModulePromise = null;
 
 const SOURCE_EXPLORER_ITEM_CONFIG = {
+  "risk-model-comparison-stage1-2025-12-2": {
+    indexPath: "artifacts/2025-12-2-source/files.json",
+    baseRootPath: "artifacts/2025-12-2-source"
+  },
   "pricing-no-arbitrage-cpu-vs-gpu-2025-12": {
     indexPath: "artifacts/2025-12-1-source/files.json",
     baseRootPath: "artifacts/2025-12-1-source"
@@ -363,7 +367,33 @@ python -c "import cupy as cp; print(cp.__version__); print(cp.cuda.runtime.getDe
   </section>
 `;
 
+const RUN_GUIDE_HTML_RISK_STAGE1 = `
+  <h2 class="text-lg font-semibold tracking-tight text-gray-900">How to Use These Artifacts</h2>
+  <p class="mt-3 text-sm leading-6 text-gray-600">
+    This item is a Stage 1 research-design release. It defines the comparison framework, model cards, portfolio setup, and evaluation rules for later implementation work.
+  </p>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">Contents</h3>
+    <ul class="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-gray-600">
+      <li><code>stage1_report.md</code>: project objective, scope, and comparison specification</li>
+      <li><code>model_cards.md</code>: assumptions, strengths, weaknesses, and expected behavior for each Phase 1 model</li>
+      <li><code>evaluation_design.md</code>: horizon, alpha, breach rules, and evaluation metrics</li>
+      <li><code>portfolio_definition.md</code>: baseline and comparison portfolios</li>
+      <li><code>params.json</code> and <code>summary.md</code>: traceability for the selected design choices</li>
+    </ul>
+  </section>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">Next Implementation Target</h3>
+    <p class="mt-2 text-sm leading-6 text-gray-600">
+      Implement Historical Simulation, Parametric, and EWMA + Monte Carlo under one shared output schema, then run the baseline portfolio first before extending to the second portfolio.
+    </p>
+  </section>
+`;
+
 const RUN_GUIDE_HTML_BY_ITEM_ID = {
+  "risk-model-comparison-stage1-2025-12-2": RUN_GUIDE_HTML_RISK_STAGE1,
   "pricing-no-arbitrage-cpu-vs-gpu-2025-12": RUN_GUIDE_HTML_PRICING,
   "yfinance-rate-limit-patch-2025-11": RUN_GUIDE_HTML_PATCH,
   "ewma-mcvar-backtest-2025-11": RUN_GUIDE_HTML_GPU,

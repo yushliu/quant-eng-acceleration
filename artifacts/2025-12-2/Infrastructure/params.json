@@ -1,0 +1,35 @@
+{
+  "stage": "stage1_design",
+  "team": "Risk",
+  "project": "Model Comparison Stage 1 - Research Design + Specification",
+  "phase1_models": [
+    "historical_simulation_var_cvar",
+    "parametric_var_cvar",
+    "ewma_mc_var_cvar"
+  ],
+  "portfolios": {
+    "baseline": {
+      "tickers": ["SPY", "QQQ", "TLT", "GLD"],
+      "weights_mode": "equal"
+    },
+    "comparison": {
+      "tickers": ["SPY", "QQQ", "IWM", "TLT"],
+      "weights_mode": "equal"
+    }
+  },
+  "evaluation": {
+    "horizon_days": 1,
+    "alpha": 0.99,
+    "rolling_design": "shared",
+    "metrics": [
+      "breach_rate",
+      "breach_rate_gap",
+      "exceedance_severity",
+      "cvar_stability",
+      "responsiveness_to_volatility_change",
+      "conservativeness"
+    ]
+  },
+  "status": "completed",
+  "release_id": "2025-12-2"
+}

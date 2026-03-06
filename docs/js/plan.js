@@ -3,6 +3,10 @@ function getPlanMeetings() {
   return source.filter((meeting) => meeting && meeting.detail && Array.isArray(meeting.detail.cards));
 }
 
+function isCompletedStatus(status) {
+  return typeof status === "string" && ["done", "completed"].includes(status.toLowerCase());
+}
+
 const planMeetings = getPlanMeetings();
 let activeMeetingIndex = 0;
 
@@ -36,7 +40,7 @@ function renderTimeline() {
         ? "border-blue-500 bg-blue-50 text-blue-600"
         : "border-gray-200 bg-white text-gray-700 hover:border-blue-300 hover:text-blue-600";
       const dotClasses = isActive ? "border-blue-500 bg-blue-500" : "border-gray-300 bg-white";
-      const statusClasses = (meeting.status === "Done" || meeting.status === "Completed")
+      const statusClasses = isCompletedStatus(meeting.status)
         ? "border-gray-200 bg-white text-gray-600"
         : "border-blue-200 bg-blue-50 text-blue-600";
 
@@ -105,7 +109,7 @@ function renderMeetingDetails() {
   codeLinkEl.innerHTML = meeting.downloadItemId
     ? `<a href="./download.html#${meeting.downloadItemId}" class="inline-flex rounded-md border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-600 transition hover:border-blue-500 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-300">Code</a>`
     : "";
-  statusEl.className = (meeting.status === "Done" || meeting.status === "Completed")
+  statusEl.className = isCompletedStatus(meeting.status)
     ? "rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-600"
     : "rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-600";
 

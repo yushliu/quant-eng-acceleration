@@ -1,6 +1,44 @@
 {
   "downloadItems": [
     {
+      "id": "risk-model-comparison-stage1-2025-12-2",
+      "title": "Model Comparison Stage 1 - Research Design + Specification",
+      "short": "Stage 1 design report, model cards, evaluation framework, and portfolio definition for the Risk benchmark study.",
+      "tag": "Risk",
+      "files": [
+        {
+          "label": "stage1_report.md",
+          "path": "artifacts/2025-12-2/Algorithm/stage1_report.md",
+          "lang": "markdown"
+        },
+        {
+          "label": "model_cards.md",
+          "path": "artifacts/2025-12-2/Algorithm/model_cards.md",
+          "lang": "markdown"
+        },
+        {
+          "label": "evaluation_design.md",
+          "path": "artifacts/2025-12-2/Algorithm/evaluation_design.md",
+          "lang": "markdown"
+        },
+        {
+          "label": "portfolio_definition.md",
+          "path": "artifacts/2025-12-2/Algorithm/portfolio_definition.md",
+          "lang": "markdown"
+        },
+        {
+          "label": "params.json",
+          "path": "artifacts/2025-12-2/Infrastructure/params.json",
+          "lang": "json"
+        },
+        {
+          "label": "summary.md",
+          "path": "artifacts/2025-12-2/Infrastructure/summary.md",
+          "lang": "markdown"
+        }
+      ]
+    },
+    {
       "id": "pricing-no-arbitrage-cpu-vs-gpu-2025-12",
       "title": "Derivatives Pricing + No-Arbitrage Checks (SPY, CPU vs GPU T4)",
       "short": "SPY pricing benchmark artifacts (GPU historical vol run): bench.json and price.json.",

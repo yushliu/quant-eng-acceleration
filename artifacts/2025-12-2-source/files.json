@@ -1,0 +1,8 @@
+{
+  "root": "artifacts/2025-12-2-source",
+  "files": [
+    "README.md",
+    "Infrastructure/README.md",
+    "Algorithm/README.md"
+  ]
+}
