@@ -5,10 +5,15 @@ let selectedItemId = "";
 let selectedFilePath = "";
 let selectedFileText = "";
 let selectedFileLang = "plaintext";
+let selectedItemViewId = "";
 let sourceExplorerRequestId = 0;
 let sourceExplorerModulePromise = null;
 
 const SOURCE_EXPLORER_ITEM_CONFIG = {
+  "risk-model-comparison-stage2-2026-01-1": {
+    indexPath: "artifacts/2026-1-1-source/files.json",
+    baseRootPath: "artifacts/2026-1-1-source"
+  },
   "risk-model-comparison-stage1-2025-12-2": {
     indexPath: "artifacts/2025-12-2-source/files.json",
     baseRootPath: "artifacts/2025-12-2-source"
@@ -392,7 +397,48 @@ const RUN_GUIDE_HTML_RISK_STAGE1 = `
   </section>
 `;
 
+const RUN_GUIDE_HTML_RISK_STAGE2 = `
+  <h2 class="text-lg font-semibold tracking-tight text-gray-900">How to Use These Artifacts</h2>
+  <p class="mt-3 text-sm leading-6 text-gray-600">
+    This item is a Stage 2 implementation-and-results release. It records the first baseline-portfolio comparison run and provides the summary files used for later Stage 3 interpretation.
+  </p>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">What Is Included</h3>
+    <ul class="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-gray-600">
+      <li><code>stage2_meeting_record.md</code>: full meeting-style record for the Stage 2 completion pass</li>
+      <li><code>comparison_summary.csv</code>: machine-readable summary metrics across the three models</li>
+      <li><code>comparison_analysis.md</code>: short preliminary interpretation note for internal review</li>
+      <li><code>params.json</code> and <code>summary.md</code>: compact traceability and setup reference</li>
+    </ul>
+  </section>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">How to Use It</h3>
+    <p class="mt-2 text-sm leading-6 text-gray-600">
+      Start with <code>summary.md</code> for the quick overview, use <code>stage2_meeting_record.md</code> for the full narrative, and use <code>comparison_summary.csv</code> when you need the structured metrics for charts, tables, or later comparison scripts.
+    </p>
+  </section>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">How to Run</h3>
+    <p class="mt-2 text-sm leading-6 text-gray-600">
+      The Stage 2 workflow is implemented in <code>risk_pipeline/cli/run_comparison.py</code>. It reuses the existing <code>returns.csv</code>, builds the equal-weight <code>SPY/QQQ/TLT/GLD</code> portfolio, runs Historical Simulation, Parametric Normal, and EWMA + Monte Carlo on the same aligned dates, and writes outputs under <code>results/comparison/&lt;run_id&gt;/</code>.
+    </p>
+    <pre class="mt-2 overflow-auto rounded-md border border-gray-200 bg-white p-3 text-xs leading-6 text-gray-800 shadow-sm"><code>./.venv/bin/python -m risk_pipeline.cli.run_comparison</code></pre>
+  </section>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">Verification</h3>
+    <p class="mt-2 text-sm leading-6 text-gray-600">
+      Workflow verification for this release used the following command:
+    </p>
+    <pre class="mt-2 overflow-auto rounded-md border border-gray-200 bg-white p-3 text-xs leading-6 text-gray-800 shadow-sm"><code>./.venv/bin/python -m unittest tests.test_comparison_workflow</code></pre>
+  </section>
+`;
+
 const RUN_GUIDE_HTML_BY_ITEM_ID = {
+  "risk-model-comparison-stage2-2026-01-1": RUN_GUIDE_HTML_RISK_STAGE2,
   "risk-model-comparison-stage1-2025-12-2": RUN_GUIDE_HTML_RISK_STAGE1,
   "pricing-no-arbitrage-cpu-vs-gpu-2025-12": RUN_GUIDE_HTML_PRICING,
   "yfinance-rate-limit-patch-2025-11": RUN_GUIDE_HTML_PATCH,
@@ -432,6 +478,113 @@ function buildContentUrl(path) {
 function getFilename(path) {
   const chunks = String(path || "").split("/");
   return chunks[chunks.length - 1] || "download.txt";
+}
+
+function getItemViews(item) {
+  return Array.isArray(item && item.views) ? item.views : [];
+}
+
+function getDefaultItemViewId(item) {
+  const views = getItemViews(item);
+  if (!views.length) {
+    return "";
+  }
+
+  const algorithmView = views.find((view) => view && view.id === "algorithm");
+  return algorithmView ? algorithmView.id : (views[0].id || "");
+}
+
+function syncSelectedItemView(item, preferredViewId = "") {
+  const views = getItemViews(item);
+  if (!views.length) {
+    selectedItemViewId = "";
+    return;
+  }
+
+  const preferredView = views.find((view) => view && view.id === preferredViewId);
+  const currentView = views.find((view) => view && view.id === selectedItemViewId);
+  selectedItemViewId = (preferredView || currentView || views.find(Boolean) || {}).id || "";
+}
+
+function getSelectedItemView(item) {
+  return getItemViews(item).find((view) => view && view.id === selectedItemViewId) || null;
+}
+
+function getVisibleFiles(item) {
+  const files = Array.isArray(item && item.files) ? item.files : [];
+  const selectedView = getSelectedItemView(item);
+  if (!selectedView || !Array.isArray(selectedView.filePrefixes) || !selectedView.filePrefixes.length) {
+    return files;
+  }
+
+  return files.filter((file) => selectedView.filePrefixes.some((prefix) => String(file.path || "").startsWith(prefix)));
+}
+
+function updateItemViewUrl(item) {
+  if (!item || !item.id) {
+    return;
+  }
+
+  const url = new URL(window.location.href);
+  url.hash = item.id;
+
+  if (selectedItemViewId) {
+    url.searchParams.set("view", selectedItemViewId);
+  } else {
+    url.searchParams.delete("view");
+  }
+
+  window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
+}
+
+function renderItemViewSwitch(item) {
+  const switchEl = document.getElementById("item-view-switch");
+  if (!switchEl) {
+    return;
+  }
+
+  const views = getItemViews(item);
+  if (views.length < 2) {
+    switchEl.innerHTML = "";
+    return;
+  }
+
+  switchEl.innerHTML = `
+    <div class="inline-flex rounded-md border border-gray-200 bg-white p-1 shadow-sm">
+      ${views.map((view) => {
+        const isActive = view.id === selectedItemViewId;
+        const classes = isActive
+          ? "bg-blue-500 text-white"
+          : "text-gray-600 hover:bg-gray-100";
+        return `<button type="button" data-item-view="${view.id}" class="rounded-md px-3 py-1.5 text-sm font-medium transition ${classes}">${view.label}</button>`;
+      }).join("")}
+    </div>
+  `;
+
+  switchEl.querySelectorAll("[data-item-view]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const nextViewId = button.getAttribute("data-item-view");
+      if (!nextViewId || nextViewId === selectedItemViewId) {
+        return;
+      }
+
+      selectedItemViewId = nextViewId;
+      renderItemViewSwitch(item);
+      renderFileSelector(item);
+      updateViewerHeader(item);
+      updateItemViewUrl(item);
+
+      if (!selectedFilePath) {
+        selectedFileText = "";
+        setCodeViewerText("No file found for this view.");
+        await updateSourceExplorer(item);
+        return;
+      }
+
+      await loadFileContent(selectedFilePath);
+      await updateSourceExplorer(item);
+    });
+  });
 }
 
 function getSourceExplorerModule() {
@@ -525,10 +678,14 @@ async function updateSourceExplorer(item) {
       return;
     }
 
+    const selectedView = getSelectedItemView(item);
+    const allowedPrefixes = selectedView && Array.isArray(selectedView.sourcePrefixes) ? selectedView.sourcePrefixes : null;
+
     await sourceExplorerModule.mountSourceExplorer({
       containerEl,
       indexUrl: buildContentUrl(config.indexPath),
       baseRoot: buildContentUrl(config.baseRootPath),
+      allowedPrefixes,
       hljs: window.hljs
     });
   } catch (_error) {
@@ -618,7 +775,7 @@ function renderCards() {
             <h3 class="text-sm font-semibold text-gray-900">${item.title}</h3>
             <span class="rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-[10px] uppercase tracking-[0.08em] text-blue-600">${item.tag || "Item"}</span>
           </div>
-          <p class="mt-2 text-xs leading-5 text-gray-600">${item.short || ""}</p>
+          ${item.short ? `<p class="mt-2 text-xs leading-5 text-gray-600">${item.short}</p>` : ""}
         </button>
       `;
     })
@@ -642,12 +799,19 @@ function renderFileSelector(item) {
     return;
   }
 
-  const files = Array.isArray(item.files) ? item.files : [];
+  const files = getVisibleFiles(item);
   selector.innerHTML = files
     .map((file) => `<option value="${file.path}">${file.label || file.path}</option>`)
     .join("");
 
+  const fallbackFile = files[0] || null;
+  if (!files.find((file) => file.path === selectedFilePath)) {
+    selectedFilePath = fallbackFile ? fallbackFile.path : "";
+    selectedFileLang = mapHighlightLang(fallbackFile ? fallbackFile.lang : "");
+  }
+
   selector.value = selectedFilePath;
+  selector.disabled = files.length === 0;
 
   selector.onchange = async (event) => {
     const nextPath = event.target.value;
@@ -666,13 +830,15 @@ function renderFileSelector(item) {
 function updateViewerHeader(item) {
   const titleEl = document.getElementById("viewer-title");
   const subtitleEl = document.getElementById("viewer-subtitle");
+  const selectedView = getSelectedItemView(item);
 
   if (titleEl) {
     titleEl.textContent = item.title || "Code Viewer";
   }
 
   if (subtitleEl) {
-    subtitleEl.textContent = `${item.id} · ${selectedFilePath}`;
+    const viewLabel = selectedView ? `${selectedView.label} · ` : "";
+    subtitleEl.textContent = `${item.id} · ${viewLabel}${selectedFilePath || "No file selected"}`;
   }
 }
 
@@ -712,16 +878,21 @@ async function selectItem(itemId) {
   }
 
   selectedItemId = itemId;
-  const firstFile = item.files && item.files[0] ? item.files[0] : null;
+  const requestedViewId = new URLSearchParams(window.location.search).get("view") || "";
+  syncSelectedItemView(item, requestedViewId || getDefaultItemViewId(item));
+  const visibleFiles = getVisibleFiles(item);
+  const firstFile = visibleFiles[0] || null;
   selectedFilePath = firstFile ? firstFile.path : "";
   selectedFileLang = mapHighlightLang(firstFile ? firstFile.lang : "");
 
   renderCards();
+  renderItemViewSwitch(item);
   renderFileSelector(item);
   updateViewerHeader(item);
+  updateItemViewUrl(item);
 
   if (!selectedFilePath) {
-    setCodeViewerText("No file found for this item.");
+    setCodeViewerText("No file found for this view.");
     await updateSourceExplorer(item);
     return;
   }

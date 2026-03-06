@@ -9,6 +9,96 @@ function isCompletedStatus(status) {
 
 const planMeetings = getPlanMeetings();
 let activeMeetingIndex = 0;
+let activeMeetingViewId = "";
+
+function getMeetingViews(meeting) {
+  return Array.isArray(meeting && meeting.detailViews) ? meeting.detailViews : [];
+}
+
+function getDefaultMeetingViewId(meeting) {
+  const views = getMeetingViews(meeting);
+  if (!views.length) {
+    return "";
+  }
+
+  const algorithmView = views.find((view) => view && view.id === "algorithm");
+  return algorithmView ? algorithmView.id : (views[0].id || "");
+}
+
+function syncActiveMeetingView(meeting, preferredViewId = "") {
+  const views = getMeetingViews(meeting);
+  if (!views.length) {
+    activeMeetingViewId = "";
+    return;
+  }
+
+  const preferredView = views.find((view) => view && view.id === preferredViewId);
+  const currentView = views.find((view) => view && view.id === activeMeetingViewId);
+  activeMeetingViewId = (preferredView || currentView || views.find(Boolean) || {}).id || "";
+}
+
+function getActiveMeetingDetail(meeting) {
+  const views = getMeetingViews(meeting);
+  if (!views.length) {
+    return meeting && meeting.detail ? meeting.detail : null;
+  }
+
+  const selectedView = views.find((view) => view && view.id === activeMeetingViewId) || views.find(Boolean);
+  return selectedView && selectedView.detail ? selectedView.detail : null;
+}
+
+function buildDownloadLink(meeting) {
+  if (!meeting || !meeting.downloadItemId) {
+    return "";
+  }
+
+  const url = new URL("./download.html", window.location.href);
+  url.hash = meeting.downloadItemId;
+
+  if (activeMeetingViewId) {
+    url.searchParams.set("view", activeMeetingViewId);
+  }
+
+  return url.pathname.split("/").pop() + url.search + url.hash;
+}
+
+function renderMeetingViewSwitch(meeting) {
+  const switchEl = document.getElementById("meeting-view-switch");
+  if (!switchEl) {
+    return;
+  }
+
+  const views = getMeetingViews(meeting);
+  if (views.length < 2) {
+    switchEl.innerHTML = "";
+    return;
+  }
+
+  switchEl.innerHTML = `
+    <div class="inline-flex rounded-md border border-gray-200 bg-white p-1 shadow-sm">
+      ${views.map((view) => {
+        const isActive = view.id === activeMeetingViewId;
+        const classes = isActive
+          ? "bg-blue-500 text-white"
+          : "text-gray-600 hover:bg-gray-100";
+        return `<button type="button" data-meeting-view="${view.id}" class="rounded-md px-3 py-1.5 text-sm font-medium transition ${classes}">${view.label}</button>`;
+      }).join("")}
+    </div>
+  `;
+
+  switchEl.querySelectorAll("[data-meeting-view]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const nextViewId = button.getAttribute("data-meeting-view");
+      if (!nextViewId || nextViewId === activeMeetingViewId) {
+        return;
+      }
+
+      activeMeetingViewId = nextViewId;
+      renderMeetingViewSwitch(meeting);
+      renderMeetingDetails();
+    });
+  });
+}
 
 function setActiveMeetingFromHash() {
   const hashId = window.location.hash ? window.location.hash.slice(1) : "";
@@ -19,6 +109,7 @@ function setActiveMeetingFromHash() {
   const index = planMeetings.findIndex((meeting) => meeting.id === hashId);
   if (index >= 0) {
     activeMeetingIndex = index;
+    syncActiveMeetingView(planMeetings[index], "");
   }
 }
 
@@ -73,6 +164,7 @@ function renderTimeline() {
       }
 
       activeMeetingIndex = nextIndex;
+      syncActiveMeetingView(planMeetings[nextIndex], getDefaultMeetingViewId(planMeetings[nextIndex]));
       renderTimeline();
       renderMeetingDetails();
     });
@@ -85,8 +177,9 @@ function renderMeetingDetails() {
   const statusEl = document.getElementById("meeting-status");
   const codeLinkEl = document.getElementById("meeting-code-link");
   const cardsEl = document.getElementById("meeting-cards");
+  const switchEl = document.getElementById("meeting-view-switch");
 
-  if (!titleEl || !monthEl || !statusEl || !cardsEl || !codeLinkEl) {
+  if (!titleEl || !monthEl || !statusEl || !cardsEl || !codeLinkEl || !switchEl) {
     return;
   }
 
@@ -103,17 +196,27 @@ function renderMeetingDetails() {
     return;
   }
 
-  titleEl.textContent = meeting.detail.title;
+  syncActiveMeetingView(meeting, activeMeetingViewId || getDefaultMeetingViewId(meeting));
+  const meetingDetail = getActiveMeetingDetail(meeting);
+
+  titleEl.textContent = meetingDetail && meetingDetail.title ? meetingDetail.title : "Meeting";
   monthEl.textContent = meeting.ym;
   statusEl.textContent = meeting.status;
   codeLinkEl.innerHTML = meeting.downloadItemId
-    ? `<a href="./download.html#${meeting.downloadItemId}" class="inline-flex rounded-md border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-600 transition hover:border-blue-500 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-300">Code</a>`
+    ? `<a href="${buildDownloadLink(meeting)}" class="inline-flex rounded-md border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-600 transition hover:border-blue-500 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-300">Code</a>`
     : "";
   statusEl.className = isCompletedStatus(meeting.status)
     ? "rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-600"
     : "rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-600";
+  renderMeetingViewSwitch(meeting);
 
-  cardsEl.innerHTML = meeting.detail.cards
+  const cards = meetingDetail && Array.isArray(meetingDetail.cards) ? meetingDetail.cards : [];
+  if (!cards.length) {
+    cardsEl.innerHTML = "<article class=\"rounded-md border border-dashed border-gray-300 bg-white p-5 text-sm text-gray-500 shadow-sm\">No content yet for this view.</article>";
+    return;
+  }
+
+  cardsEl.innerHTML = cards
     .map((card) => {
       const bulletMarkup = card.bullets
         .map((bullet) => `<li class=\"text-sm leading-6 text-gray-600\">${bullet}</li>`)
@@ -136,6 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
+  syncActiveMeetingView(planMeetings[0], getDefaultMeetingViewId(planMeetings[0]));
   setActiveMeetingFromHash();
   renderTimeline();
   renderMeetingDetails();

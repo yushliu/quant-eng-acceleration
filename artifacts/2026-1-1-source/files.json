@@ -1,0 +1,14 @@
+{
+  "root": "artifacts/2026-1-1-source",
+  "files": [
+    "README.md",
+    "Algorithm/Display/test_comparison_workflow.py",
+    "Algorithm/Display/test_download_patch.py",
+    "Algorithm/Display/test_ewma_cov.py",
+    "Algorithm/Display/test_mc_stability.py",
+    "Algorithm/Display/test_pipeline_smoke.py",
+    "Algorithm/Display/test_var_cvar.py",
+    "Algorithm/README.md",
+    "Infrastructure/README.md"
+  ]
+}

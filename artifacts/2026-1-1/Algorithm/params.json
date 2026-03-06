@@ -1,0 +1,24 @@
+{
+  "stage": "stage2_implementation_preliminary_results",
+  "project": "Risk Model Comparison under a Reproducible Multi-Asset Framework",
+  "team": "Algorithm",
+  "date_recorded": "2026-03-06",
+  "portfolio": {
+    "tickers": ["SPY", "QQQ", "TLT", "GLD"],
+    "weights": [0.25, 0.25, 0.25, 0.25],
+    "weights_mode": "equal"
+  },
+  "models": [
+    "historical_simulation_var_cvar",
+    "parametric_normal_var_cvar",
+    "ewma_mc_var_cvar"
+  ],
+  "horizon_days": 1,
+  "alpha": 0.99,
+  "rolling_window": 60,
+  "input_file": "returns.csv",
+  "loss_definition": "portfolio_loss = - portfolio_return",
+  "breach_definition": "realized loss > estimated VaR",
+  "n_obs": 189,
+  "status": "completed_for_baseline_portfolio_first_run"
+}

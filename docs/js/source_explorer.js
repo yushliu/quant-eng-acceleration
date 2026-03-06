@@ -1,4 +1,5 @@
 export const SOURCE_EXPLORER_ENABLED_IDS = new Set([
+  "risk-model-comparison-stage2-2026-01-1",
   "risk-model-comparison-stage1-2025-12-2",
   "pricing-no-arbitrage-cpu-vs-gpu-2025-12",
   "yfinance-rate-limit-patch-2025-11",
@@ -200,7 +201,7 @@ function renderTree({ treeRoot, treeEl, expandedFolders, selectedPath, onToggleF
   appendFiles(treeRoot, 0, treeEl);
 }
 
-export async function mountSourceExplorer({ containerEl, indexUrl, baseRoot, hljs }) {
+export async function mountSourceExplorer({ containerEl, indexUrl, baseRoot, hljs, allowedPrefixes = [] }) {
   if (!containerEl) {
     return;
   }
@@ -259,8 +260,15 @@ export async function mountSourceExplorer({ containerEl, indexUrl, baseRoot, hlj
     return;
   }
 
+  const normalizedPrefixes = Array.isArray(allowedPrefixes)
+    ? allowedPrefixes.map((prefix) => normalizePath(prefix)).filter(Boolean)
+    : [];
+  const hasPrefixFilter = Array.isArray(allowedPrefixes);
   const indexFiles = Array.isArray(indexJson && indexJson.files) ? indexJson.files : [];
-  const filePaths = indexFiles.map((path) => normalizePath(path)).filter(Boolean);
+  const filePaths = indexFiles
+    .map((path) => normalizePath(path))
+    .filter(Boolean)
+    .filter((path) => !hasPrefixFilter || normalizedPrefixes.some((prefix) => path.startsWith(prefix)));
   const rootPath = String(baseRoot || (indexJson && indexJson.root) || "").replace(/\/+$/, "");
 
   if (!filePaths.length || !rootPath) {

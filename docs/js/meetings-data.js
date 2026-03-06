@@ -3,14 +3,265 @@
 // - detail: full version used by Plan > meeting detail cards
 window.COMMUNITY_MEETINGS = [
   {
+    "id": "2026-01-1",
+    "ym": "2026-01",
+    "shortTag": "ALGORITHM",
+    "status": "COMPLETED",
+    "downloadItemId": "risk-model-comparison-stage2-2026-01-1",
+    "detailViews": [
+      {
+        "id": "infrastructure",
+        "label": "Infrastructure",
+        "detail": {
+          "title": "Model Comparison Stage 2 - Infrastructure",
+          "cards": []
+        }
+      },
+      {
+        "id": "algorithm",
+        "label": "Algorithm",
+        "detail": {
+          "title": "Meeting Record - Stage 2 Implementation and Preliminary Results",
+          "cards": [
+            {
+              "heading": "Meeting Objective",
+              "bullets": [
+                "Recorded the completion of Stage 2 for the Risk Team project under the shared multi-asset comparison framework.",
+                "Moved from the Stage 1 design specification into an implementation-ready workflow using a shared input dataset and a shared portfolio definition.",
+                "This stage does not provide a final recommendation or final interpretation; those are reserved for Stage 3."
+              ]
+            },
+            {
+              "heading": "Implementation Build",
+              "bullets": [
+                "Implemented the Stage 2 comparison runner in risk_pipeline/cli/run_comparison.py.",
+                "Added a workflow verification test in tests/test_comparison_workflow.py.",
+                "The workflow reuses the existing returns.csv, builds an equal-weight SPY/QQQ/TLT/GLD portfolio, runs Historical Simulation, Parametric Normal, and repo-based EWMA + Monte Carlo on the same aligned dates, and writes CSV/Markdown artifacts."
+              ]
+            },
+            {
+              "heading": "Completed Implementation Scope",
+              "bullets": [
+                "Reused the existing returns.csv dataset from the risk pipeline output without re-downloading market data.",
+                "Constructed a common equal-weight baseline portfolio using SPY, QQQ, TLT, and GLD.",
+                "Ran all three selected models successfully: Historical Simulation VaR/CVaR, Parametric Normal VaR/CVaR, and EWMA + Monte Carlo VaR/CVaR."
+              ]
+            },
+            {
+              "heading": "Shared Experimental Setup",
+              "bullets": [
+                "Input file: returns.csv. Portfolio: SPY / QQQ / TLT / GLD. Weighting rule: equal weight.",
+                "Horizon: 1-day. Confidence level: 0.99. Rolling/init window: 60 trading days.",
+                "Loss definition: portfolio_loss = - portfolio_return. Breach definition: realized loss > estimated VaR. Number of aligned observations: 189."
+              ]
+            },
+            {
+              "heading": "Generated Output Artifacts",
+              "bullets": [
+                "Generated portfolio_returns.csv, historical_daily_risk.csv, parametric_daily_risk.csv, ewma_mc_daily_risk.csv, comparison_summary.csv, and comparison_analysis.md.",
+                "Output directory recorded for the baseline run: results/comparison/20260306T220658Z.",
+                "Prepared the workflow output package for later Stage 3 interpretation."
+              ]
+            },
+            {
+              "heading": "Summary Comparison Table",
+              "bullets": [
+                "Historical Simulation: avg VaR 0.016231, avg CVaR 0.018748, breach rate 0.037037, n breaches 7.",
+                "Parametric Normal: avg VaR 0.016414, avg CVaR 0.018950, breach rate 0.031746, n breaches 6.",
+                "EWMA + Monte Carlo: avg VaR 0.017063, avg CVaR 0.019541, breach rate 0.015873, n breaches 3."
+              ]
+            },
+            {
+              "heading": "How To Use",
+              "bullets": [
+                "Use stage2_meeting_record.md for the full meeting-style write-up and project record.",
+                "Use comparison_summary.csv when you want the machine-readable model comparison table for later plotting, analysis, or website integration.",
+                "Use comparison_analysis.md for the short internal interpretation note, and use params.json plus summary.md to understand the shared run setup quickly."
+              ]
+            },
+            {
+              "heading": "How To Run",
+              "bullets": [
+                "Run the Stage 2 workflow through risk_pipeline/cli/run_comparison.py inside the project environment so all three models share the same input and output schema.",
+                "Expected baseline input is the existing returns.csv; the workflow should construct the equal-weight SPY/QQQ/TLT/GLD portfolio series and then write the comparison outputs under results/comparison/<run_id>/.",
+                "Verification command used in this stage: ./.venv/bin/python -m unittest tests.test_comparison_workflow."
+              ]
+            },
+            {
+              "heading": "Main Findings",
+              "bullets": [
+                "EWMA + Monte Carlo was the most conservative in average VaR/CVaR and also closest to the expected 1 percent breach rate in this baseline run.",
+                "Parametric Normal was the smoothest model by the CVaR stability proxy.",
+                "Historical Simulation was less conservative than EWMA + Monte Carlo and recorded the highest breach count in the current baseline run."
+              ]
+            },
+            {
+              "heading": "Stage 2 Completion Check",
+              "bullets": [
+                "Completed: reuse existing returns.csv, build equal-weight baseline portfolio, run all three models, align outputs on shared dates, generate summary comparison table, and save machine-readable artifacts.",
+                "Prepared a Stage 3-ready results package for interpretation and final comparison work.",
+                "Status: completed for baseline portfolio first run."
+              ]
+            },
+            {
+              "heading": "Verification",
+              "bullets": [
+                "Implementation workflow test passed successfully.",
+                "Verification item: comparison workflow unit test.",
+                "Command used: ./.venv/bin/python -m unittest tests.test_comparison_workflow."
+              ]
+            },
+            {
+              "heading": "Notes for Next Stage",
+              "bullets": [
+                "Stage 3 will handle interpretation of model differences, discussion of tradeoffs, evaluation on the second portfolio if required, and the final recommendation for benchmark baseline selection.",
+                "No final model recommendation is made in this Stage 2 record.",
+                "The current output package is intended to serve as the direct input to Stage 3."
+              ]
+            },
+            {
+              "heading": "Meeting Outcome",
+              "bullets": [
+                "Stage 2 was completed successfully for the baseline portfolio first run.",
+                "The team now has a shared comparison result package that can be used as the input for Stage 3 interpretation and final comparison work."
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "latest": {
+      "date": "2026-01",
+      "title": "Meeting Record - Stage 2 Implementation and Preliminary Results",
+      "points": [
+        "Completed the first baseline-portfolio implementation pass using a shared equal-weight SPY, QQQ, TLT, GLD portfolio built from the existing returns.csv dataset.",
+        "Ran Historical Simulation, Parametric Normal, and EWMA + Monte Carlo under the same 1-day, 99 percent, 60-day rolling setup and generated a shared comparison package.",
+        "Recorded preliminary comparison outputs without making a final recommendation; interpretation and baseline selection are deferred to Stage 3."
+      ]
+    },
+    "detail": {
+      "title": "Meeting Record - Stage 2 Implementation and Preliminary Results",
+      "cards": []
+    }
+  },
+
+  {
     "id": "2025-12-2",
     "ym": "2025-12",
     "shortTag": "COMPARISON",
     "status": "COMPLETED",
     "downloadItemId": "risk-model-comparison-stage1-2025-12-2",
+    "detailViews": [
+      {
+        "id": "infrastructure",
+        "label": "Infrastructure",
+        "detail": {
+          "title": "Model Comparison Stage 1 - Infrastructure",
+          "cards": []
+        }
+      },
+      {
+        "id": "algorithm",
+        "label": "Algorithm",
+        "detail": {
+          "title": "Meeting Record - Stage 1 Research Design + Specification",
+          "cards": [
+            {
+              "heading": "Report",
+              "bullets": [
+                "Risk",
+                "Model Comparison Stage 1 - Research Design + Specification",
+                "Report"
+              ]
+            },
+            {
+              "heading": "What This Build Did",
+              "bullets": [
+                "Defined the first formal comparison framework for the club's Risk Team under the existing reproducible multi-asset pipeline.",
+                "Selected three Phase 1 risk models for comparison: Historical Simulation VaR/CVaR, Parametric VaR/CVaR, and EWMA + Monte Carlo VaR/CVaR.",
+                "Converted the club's prior infrastructure progress into a research-oriented benchmark design by locking the model set, portfolio structure, and evaluation criteria."
+              ]
+            },
+            {
+              "heading": "Project Objective",
+              "bullets": [
+                "The goal of this stage is not to produce final model rankings yet, but to define what a meaningful risk-model comparison should look like under a shared framework.",
+                "The project asks which model is the most stable, most responsive, most conservative, and most suitable as the club's future benchmark baseline.",
+                "This stage establishes the design rules needed before implementation and interpretation can begin in later updates."
+              ]
+            },
+            {
+              "heading": "Phase 1 Model Set",
+              "bullets": [
+                "Historical Simulation VaR/CVaR: empirical rolling-window baseline using realized portfolio returns directly.",
+                "Parametric VaR/CVaR: moment-based model using estimated mean/covariance with an approximate normality assumption.",
+                "EWMA + Monte Carlo VaR/CVaR: volatility-sensitive scenario model aligned with the club's existing reproducible risk pipeline."
+              ]
+            },
+            {
+              "heading": "Portfolio Design",
+              "bullets": [
+                "Baseline portfolio: SPY, QQQ, TLT, GLD with equal weights.",
+                "Comparison portfolio: SPY, QQQ, IWM, TLT with equal weights.",
+                "The two-portfolio setup was chosen to test whether model behavior remains consistent across a more balanced allocation and a more equity-heavy allocation."
+              ]
+            },
+            {
+              "heading": "Evaluation Framework",
+              "bullets": [
+                "Locked the common comparison rules across models: 1-day horizon, alpha = 0.99, shared rolling design, and identical portfolio definitions within each experiment.",
+                "Defined the main evaluation metrics: breach rate, breach rate gap, exceedance severity, CVaR stability, responsiveness to volatility change, and conservativeness.",
+                "Standardized the loss convention and breach definition so later results reflect model behavior rather than inconsistent setup choices."
+              ]
+            },
+            {
+              "heading": "Expected Hypotheses",
+              "bullets": [
+                "Historical Simulation is expected to be intuitive and relatively stable, but slower to react during sharp volatility changes.",
+                "Parametric VaR/CVaR is expected to be smooth and efficient, but may understate tail risk under fat-tailed market behavior.",
+                "EWMA + Monte Carlo is expected to respond more quickly to changing volatility and may provide more conservative tail estimates in stressed periods."
+              ]
+            },
+            {
+              "heading": "Stage 1 Deliverables",
+              "bullets": [
+                "Completed a Stage 1 design report covering project objective, research questions, scope, model definitions, portfolio definitions, and evaluation criteria.",
+                "Drafted model cards for all three Phase 1 models, including assumptions, inputs, outputs, strengths, weaknesses, and expected behavior.",
+                "Established the implementation handoff for later stages so all models can be connected to the same reproducible artifact workflow."
+              ]
+            },
+            {
+              "heading": "What You Can Use It For",
+              "bullets": [
+                "A formal blueprint for implementing the club's first true multi-model risk benchmark study.",
+                "A shared design standard so later portfolio runs and backtests can be interpreted consistently.",
+                "A clean transition from infrastructure milestones to a research-style comparison project with an eventual model recommendation."
+              ]
+            },
+            {
+              "heading": "Next Step",
+              "bullets": [
+                "Implement the three selected models under the same output schema and run them on the baseline portfolio first.",
+                "Generate preliminary daily VaR/CVaR series and backtest metrics before extending the comparison to the second portfolio.",
+                "Use the next update to verify that all models run correctly under the shared design and to review the first cross-model differences."
+              ]
+            },
+            {
+              "heading": "Published Artifacts",
+              "bullets": [
+                "Saved Stage 1 documentation: stage1_report.md, model_cards.md, evaluation_design.md, portfolio_definition.md.",
+                "Saved design traceability outputs: params.json and summary.md for the selected model set, portfolio setup, and evaluation rules.",
+                "Prepared the project for Stage 2 implementation under the existing reproducible artifact pipeline.",
+                "Independent student community. Not affiliated with or endorsed by any University. No live trading; no exchange connectivity."
+              ]
+            }
+          ]
+        }
+      }
+    ],
     "latest": {
       "date": "2025-12 (2nd)",
-      "title": "Model Comparison Stage 1 - Research Design + Specification",
+      "title": "Meeting Record - Stage 1 Research Design + Specification",
       "points": [
         "Defined the first formal comparison framework for the Risk Team under the club's reproducible multi-asset pipeline and locked the initial model set, portfolio setup, and evaluation rules.",
         "Selected three Phase 1 models for comparison: Historical Simulation VaR/CVaR, Parametric VaR/CVaR, and EWMA + Monte Carlo VaR/CVaR.",
@@ -18,98 +269,8 @@ window.COMMUNITY_MEETINGS = [
       ]
     },
     "detail": {
-      "title": "Model Comparison Stage 1 - Research Design + Specification",
-      "cards": [
-        {
-          "heading": "Report",
-          "bullets": [
-            "Risk",
-            "Model Comparison Stage 1 - Research Design + Specification",
-            "Report"
-          ]
-        },
-        {
-          "heading": "What This Build Did",
-          "bullets": [
-            "Defined the first formal comparison framework for the club's Risk Team under the existing reproducible multi-asset pipeline.",
-            "Selected three Phase 1 risk models for comparison: Historical Simulation VaR/CVaR, Parametric VaR/CVaR, and EWMA + Monte Carlo VaR/CVaR.",
-            "Converted the club's prior infrastructure progress into a research-oriented benchmark design by locking the model set, portfolio structure, and evaluation criteria."
-          ]
-        },
-        {
-          "heading": "Project Objective",
-          "bullets": [
-            "The goal of this stage is not to produce final model rankings yet, but to define what a meaningful risk-model comparison should look like under a shared framework.",
-            "The project asks which model is the most stable, most responsive, most conservative, and most suitable as the club's future benchmark baseline.",
-            "This stage establishes the design rules needed before implementation and interpretation can begin in later updates."
-          ]
-        },
-        {
-          "heading": "Phase 1 Model Set",
-          "bullets": [
-            "Historical Simulation VaR/CVaR: empirical rolling-window baseline using realized portfolio returns directly.",
-            "Parametric VaR/CVaR: moment-based model using estimated mean/covariance with an approximate normality assumption.",
-            "EWMA + Monte Carlo VaR/CVaR: volatility-sensitive scenario model aligned with the club's existing reproducible risk pipeline."
-          ]
-        },
-        {
-          "heading": "Portfolio Design",
-          "bullets": [
-            "Baseline portfolio: SPY, QQQ, TLT, GLD with equal weights.",
-            "Comparison portfolio: SPY, QQQ, IWM, TLT with equal weights.",
-            "The two-portfolio setup was chosen to test whether model behavior remains consistent across a more balanced allocation and a more equity-heavy allocation."
-          ]
-        },
-        {
-          "heading": "Evaluation Framework",
-          "bullets": [
-            "Locked the common comparison rules across models: 1-day horizon, alpha = 0.99, shared rolling design, and identical portfolio definitions within each experiment.",
-            "Defined the main evaluation metrics: breach rate, breach rate gap, exceedance severity, CVaR stability, responsiveness to volatility change, and conservativeness.",
-            "Standardized the loss convention and breach definition so later results reflect model behavior rather than inconsistent setup choices."
-          ]
-        },
-        {
-          "heading": "Expected Hypotheses",
-          "bullets": [
-            "Historical Simulation is expected to be intuitive and relatively stable, but slower to react during sharp volatility changes.",
-            "Parametric VaR/CVaR is expected to be smooth and efficient, but may understate tail risk under fat-tailed market behavior.",
-            "EWMA + Monte Carlo is expected to respond more quickly to changing volatility and may provide more conservative tail estimates in stressed periods."
-          ]
-        },
-        {
-          "heading": "Stage 1 Deliverables",
-          "bullets": [
-            "Completed a Stage 1 design report covering project objective, research questions, scope, model definitions, portfolio definitions, and evaluation criteria.",
-            "Drafted model cards for all three Phase 1 models, including assumptions, inputs, outputs, strengths, weaknesses, and expected behavior.",
-            "Established the implementation handoff for later stages so all models can be connected to the same reproducible artifact workflow."
-          ]
-        },
-        {
-          "heading": "What You Can Use It For",
-          "bullets": [
-            "A formal blueprint for implementing the club's first true multi-model risk benchmark study.",
-            "A shared design standard so later portfolio runs and backtests can be interpreted consistently.",
-            "A clean transition from infrastructure milestones to a research-style comparison project with an eventual model recommendation."
-          ]
-        },
-        {
-          "heading": "Next Step",
-          "bullets": [
-            "Implement the three selected models under the same output schema and run them on the baseline portfolio first.",
-            "Generate preliminary daily VaR/CVaR series and backtest metrics before extending the comparison to the second portfolio.",
-            "Use the next update to verify that all models run correctly under the shared design and to review the first cross-model differences."
-          ]
-        },
-        {
-          "heading": "Published Artifacts",
-          "bullets": [
-            "Saved Stage 1 documentation: stage1_report.md, model_cards.md, evaluation_design.md, portfolio_definition.md.",
-            "Saved design traceability outputs: params.json and summary.md for the selected model set, portfolio setup, and evaluation rules.",
-            "Prepared the project for Stage 2 implementation under the existing reproducible artifact pipeline.",
-            "Independent student community. Not affiliated with or endorsed by any University. No live trading; no exchange connectivity."
-          ]
-        }
-      ]
+      "title": "Meeting Record - Stage 1 Research Design + Specification",
+      "cards": []
     }
   },
 
