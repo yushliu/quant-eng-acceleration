@@ -122,6 +122,17 @@ window.COMMUNITY_MEETINGS = [
               ]
             },
             {
+              "heading": "Recorded Example Outputs",
+              "bullets": [
+                "`demo_basic.py` ran successfully and showed scalar/vector comparison tables plus an `astype(\"fp16\")` example with active dtype switching working as expected.",
+                "In the scalar example, `fp16`, `bf16`, and `tf32` all rounded `1.234567` to `1.234375`, while the integer comparison paths remained exact for that single-value case.",
+                "In the vector example, `bf16` showed materially larger drift than `fp16` or `tf32`, while `int16` and `int32` stayed much closer to the FP64 reference.",
+                "`demo_ops.py` showed operation-level drift clearly: the mean example pushed `bf16` to exactly `1.0`, the dot-product example showed visible `bf16`, `tf32`, and `int8` differences, and the quantile example showed the same pattern on a loss-like vector.",
+                "`demo_quant.py` extended the same comparison style to portfolio weighted return, tail-style quantile checking, and a small matrix aggregation based on `matmul` plus `mean`.",
+                "Across the current examples, `bf16` and `int8` were the most visibly drift-prone formats, `tf32` sat in the middle, and `int16` / `int32` stayed much closer to FP64."
+              ]
+            },
+            {
               "heading": "Acceptance Target",
               "bullets": [
                 "At least three example scripts are available.",
@@ -206,6 +217,17 @@ window.COMMUNITY_MEETINGS = [
             "Run `python3 examples/demo_ops.py` for supported operation-level examples.",
             "Run `python3 examples/demo_quant.py` for lightweight quant-style examples.",
             "Use `README_examples.md` as the short guide for scope, commands, and file-by-file explanation."
+          ]
+        },
+        {
+          "heading": "Recorded Example Outputs",
+          "bullets": [
+            "`demo_basic.py` ran successfully and showed scalar/vector comparison tables plus an `astype(\"fp16\")` example with active dtype switching working as expected.",
+            "In the scalar example, `fp16`, `bf16`, and `tf32` all rounded `1.234567` to `1.234375`, while the integer comparison paths remained exact for that single-value case.",
+            "In the vector example, `bf16` showed materially larger drift than `fp16` or `tf32`, while `int16` and `int32` stayed much closer to the FP64 reference.",
+            "`demo_ops.py` showed operation-level drift clearly: the mean example pushed `bf16` to exactly `1.0`, the dot-product example showed visible `bf16`, `tf32`, and `int8` differences, and the quantile example showed the same pattern on a loss-like vector.",
+            "`demo_quant.py` extended the same comparison style to portfolio weighted return, tail-style quantile checking, and a small matrix aggregation based on `matmul` plus `mean`.",
+            "Across the current examples, `bf16` and `int8` were the most visibly drift-prone formats, `tf32` sat in the middle, and `int16` / `int32` stayed much closer to FP64."
           ]
         },
         {

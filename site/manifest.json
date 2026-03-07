@@ -10,7 +10,7 @@
           "id": "infrastructure",
           "label": "Infrastructure",
           "title": "Meeting Record - dtcnumpy Stage 5 User Examples and Demo Workflows",
-          "description": "Infrastructure meeting record for the dtcnumpy Stage 5 usage layer: published example scripts, demo workflows, and lightweight usage notes before larger project integration.",
+          "description": "Infrastructure meeting record for the dtcnumpy Stage 5 usage layer: published example scripts, demo workflows, lightweight usage notes, and recorded example outputs before larger project integration.",
           "guideKey": "risk_stage5_infrastructure",
           "filePrefixes": [
             "artifacts/2026-2-2/Infrastructure/"

@@ -48,6 +48,124 @@ const SOURCE_EXPLORER_ITEM_CONFIG = {
   }
 };
 
+const STAGE5_EXAMPLE_DEMOS = {
+  demo_basic: {
+    label: "demo_basic.py",
+    path: "artifacts/2026-2-2/Infrastructure/Display/demo_basic.py",
+    command: "python3 -m examples.demo_basic",
+    output: `=== Scalar Example ===
+datatype              value     diff_vs_fp64   diff_pct_vs_fp64
+fp64               1.234567                0                  0
+fp32               1.234567    4.6165466e-08      3.7394055e-06
+fp16               1.234375        -0.000192        0.015552011
+bf16               1.234375        -0.000192        0.015552011
+tf32               1.234375        -0.000192        0.015552011
+int8               1.234567                0                  0
+int16              1.234567                0                  0
+int32              1.234567                0                  0
+
+=== Vector Example ===
+datatype          shape    mean_abs_diff_vs_fp64   max_abs_diff_vs_fp64   mean_rel_diff_pct_vs_fp64
+fp64               (3,)                        0                      0                           0
+fp32               (3,)             7.947286e-08          9.5367432e-08               2.8271858e-06
+fp16               (3,)            0.00071614583              0.0015625                 0.018555599
+bf16               (3,)             0.0067708333               0.009375                  0.25932248
+tf32               (3,)                0.0015625             0.00234375                 0.050970909
+int8               (3,)             0.0047244094           0.0094488189                  0.30878493
+int16              (3,)            4.2725913e-05          8.5451827e-05                0.0027925434
+int32              (3,)             2.793968e-10          5.5879346e-10               1.8261226e-08
+
+=== Astype Example ===
+Active dtype after astype: fp16
+datatype          shape    mean_abs_diff_vs_fp64   max_abs_diff_vs_fp64   mean_rel_diff_pct_vs_fp64
+fp64               (3,)                        0                      0                           0
+fp32               (3,)             7.947286e-08          9.5367432e-08               2.8271858e-06
+fp16               (3,)            0.00071614583              0.0015625                 0.018555599
+bf16               (3,)             0.0067708333               0.009375                  0.25932248
+tf32               (3,)                0.0015625             0.00234375                 0.050970909
+int8               (3,)             0.0047244094           0.0094488189                  0.30878493
+int16              (3,)            4.2725913e-05          8.5451827e-05                0.0027925434
+int32              (3,)             2.793968e-10          5.5879346e-10               1.8261226e-08`
+  },
+  demo_ops: {
+    label: "demo_ops.py",
+    path: "artifacts/2026-2-2/Infrastructure/Display/demo_ops.py",
+    command: "python3 -m examples.demo_ops",
+    output: `=== Mean on a Small Vector ===
+datatype              value     diff_vs_fp64   diff_pct_vs_fp64
+fp64                 1.0025                0                  0
+fp32                 1.0025   -2.3841857e-09      2.3782401e-07
+fp16              1.0024414    -5.859375e-05       0.0058447631
+bf16                      1          -0.0025         0.24937656
+tf32              1.0024414    -5.859375e-05       0.0058447631
+int8                  1.004           0.0015         0.14962594
+int16             1.0024986   -1.3885922e-06      0.00013851294
+int32                1.0025   -4.5401904e-11      4.5288683e-09
+
+=== Dot Product Drift ===
+datatype              value     diff_vs_fp64   diff_pct_vs_fp64
+fp64                0.00803                0                  0
+fp32           0.0080300002    1.7598271e-10      2.1915655e-06
+fp16           0.0080296341   -3.6586702e-07       0.0045562518
+bf16           0.0079975128   -3.2487183e-05         0.40457264
+tf32            0.008024754   -5.2459973e-06        0.065329979
+int8           0.0080099092    -2.009083e-05         0.25019714
+int16               0.00803                0                  0
+int32               0.00803    9.5693418e-13      1.1916989e-08
+
+=== Quantile on a Loss-Like Vector ===
+datatype              value     diff_vs_fp64   diff_pct_vs_fp64
+fp64                 -0.062                0                  0
+fp32                 -0.062     2.682209e-10      4.3261436e-07
+fp16           -0.061999512    4.8828125e-07       0.0007875504
+bf16            -0.06171875       0.00028125         0.45362903
+tf32           -0.061975098    2.4902344e-05        0.040165071
+int8           -0.061858268    0.00014173228         0.22860046
+int16          -0.061999451    5.4933317e-07      0.00088602124
+int32                -0.062    8.3819063e-12      1.3519204e-08`
+  },
+  demo_quant: {
+    label: "demo_quant.py",
+    path: "artifacts/2026-2-2/Infrastructure/Display/demo_quant.py",
+    command: "python3 -m examples.demo_quant",
+    output: `=== Portfolio Weighted Return ===
+This shows how dtype semantics can change a portfolio-style aggregation.
+datatype              value     diff_vs_fp64   diff_pct_vs_fp64
+fp64               0.006925                0                  0
+fp32           0.0069250002    1.9222498e-10       2.775812e-06
+fp16           0.0069237426   -1.2574077e-06        0.018157511
+bf16           0.0068823099   -4.2690086e-05         0.61646334
+tf32           0.0069223391   -2.6609108e-06        0.038424704
+int8           0.0069491971    2.4197098e-05         0.34941658
+int16          0.0069249782   -2.1820064e-08      0.00031509117
+int32              0.006925    6.7520642e-14      9.7502732e-10
+
+=== Tail-Style Quantile Check ===
+This highlights how reduced precision can move a downside quantile.
+datatype              value     diff_vs_fp64   diff_pct_vs_fp64
+fp64                -0.0716                0                  0
+fp32           -0.071599998    2.4199486e-09      3.3798164e-06
+fp16           -0.071594238    5.7617187e-06       0.0080470932
+bf16           -0.071533203    6.6796875e-05        0.093291725
+tf32           -0.071551514    4.8486328e-05        0.067718335
+int8           -0.071655118    -5.511811e-05        0.076980601
+int16          -0.071599829    1.7090365e-07      0.00023869225
+int32               -0.0716    6.5192574e-12       9.105108e-09
+
+=== Small Matrix Aggregation ===
+This is a compact matrix example relevant to factor-style transformations.
+datatype              value     diff_vs_fp64   diff_pct_vs_fp64
+fp64           0.0019444444                0                  0
+fp32           0.0019444444    2.0696045e-12       1.064368e-07
+fp16           0.0019427366   -1.7078821e-06        0.087833937
+bf16           0.0019338992   -1.0545254e-05         0.54232734
+tf32            0.001945385     9.405406e-07        0.048370659
+int8           0.0019623039     1.785948e-05         0.91848755
+int16          0.0019445318    8.7315631e-08       0.0044905181
+int32          0.0019444444   -3.2337581e-12      1.6630756e-07`
+  }
+};
+
 const RUN_GUIDE_HTML_GPU = `
   <h2 class="text-lg font-semibold tracking-tight text-gray-900">How to Run (CLI)</h2>
   <p class="mt-3 text-sm leading-6 text-gray-600">
@@ -613,6 +731,47 @@ python3 examples/demo_quant.py</code></pre>
     </p>
   </section>
 
+  <section class="mt-5" id="stage5-example-demo">
+    <h3 class="text-sm font-semibold text-gray-900">Interactive Example View</h3>
+    <p class="mt-2 text-sm leading-6 text-gray-600">
+      Select an example file to compare the command, source code, and recorded execution output side by side.
+    </p>
+    <div class="mt-3">
+      <label for="stage5-example-select" class="block text-xs font-semibold uppercase tracking-[0.08em] text-gray-500">Example File</label>
+      <select id="stage5-example-select" class="mt-2 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm">
+        <option value="demo_basic">demo_basic.py</option>
+        <option value="demo_ops">demo_ops.py</option>
+        <option value="demo_quant">demo_quant.py</option>
+      </select>
+    </div>
+    <div class="mt-4 rounded-md border border-gray-200 bg-white p-4">
+      <p class="text-xs font-semibold uppercase tracking-[0.08em] text-gray-500">Python Command</p>
+      <pre class="mt-2 overflow-auto rounded-md border border-gray-200 bg-gray-50 p-3 text-xs leading-6 text-gray-800"><code id="stage5-example-command"></code></pre>
+      <div class="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <section class="min-w-0">
+          <p class="text-xs font-semibold uppercase tracking-[0.08em] text-gray-500">Code</p>
+          <pre class="mt-2 overflow-auto rounded-md border border-gray-200 bg-gray-950 p-3 text-xs leading-6 text-gray-100"><code id="stage5-example-code" class="language-python"></code></pre>
+        </section>
+        <section class="min-w-0">
+          <p class="text-xs font-semibold uppercase tracking-[0.08em] text-gray-500">Execution Output</p>
+          <pre class="mt-2 overflow-auto rounded-md border border-gray-200 bg-gray-950 p-3 text-xs leading-6 text-gray-100"><code id="stage5-example-output" class="language-plaintext"></code></pre>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">Recorded Example Outputs</h3>
+    <ul class="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-gray-600">
+      <li><code>demo_basic.py</code> ran successfully and showed clean scalar/vector comparison tables plus an <code>astype("fp16")</code> example with the active dtype switching as expected.</li>
+      <li>In the scalar example, <code>fp16</code>, <code>bf16</code>, and <code>tf32</code> all rounded <code>1.234567</code> to <code>1.234375</code>, while integer comparison modes stayed exact for that single-value case.</li>
+      <li>In the vector example, lower-precision drift became clearer: <code>bf16</code> showed materially larger mean relative difference than <code>fp16</code> or <code>tf32</code>, while <code>int16</code> and <code>int32</code> stayed close to the FP64 reference.</li>
+      <li><code>demo_ops.py</code> showed operation-level drift rather than only raw-input drift: the mean example pushed <code>bf16</code> to exactly <code>1.0</code>, the dot-product example showed visible <code>bf16</code>, <code>tf32</code>, and <code>int8</code> differences, and the quantile example showed the same pattern on a loss-like vector.</li>
+      <li><code>demo_quant.py</code> showed the same comparison style on small quant-oriented workflows: portfolio weighted return, tail-style quantile checking, and a small matrix aggregation based on <code>matmul</code> plus <code>mean</code>.</li>
+      <li>Across the current examples, <code>bf16</code> and <code>int8</code> were the most visibly drift-prone formats, <code>tf32</code> sat in the middle, and <code>int16</code> / <code>int32</code> stayed much closer to the FP64 reference.</li>
+    </ul>
+  </section>
+
   <section class="mt-5">
     <h3 class="text-sm font-semibold text-gray-900">Scope Boundary</h3>
     <p class="mt-2 text-sm leading-6 text-gray-600">
@@ -852,6 +1011,67 @@ function ensureRunGuideSection(runGuideHtml = RUN_GUIDE_HTML_GPU) {
   return section;
 }
 
+function applyCodeHighlight(codeEl, language = "") {
+  if (!codeEl) {
+    return;
+  }
+  codeEl.className = language ? `language-${language}` : "language-plaintext";
+  codeEl.removeAttribute("data-highlighted");
+  if (window.hljs && typeof window.hljs.highlightElement === "function" && language && language !== "plaintext") {
+    window.hljs.highlightElement(codeEl);
+  }
+}
+
+async function mountStage5ExampleDemo(item) {
+  if (!item || item.id !== "risk-model-comparison-stage5-2026-02-2") {
+    return;
+  }
+
+  const selectedView = getSelectedItemView(item);
+  if (!selectedView || selectedView.id !== "infrastructure") {
+    return;
+  }
+
+  const sectionEl = document.getElementById("stage5-example-demo");
+  if (!sectionEl) {
+    return;
+  }
+
+  const selectEl = sectionEl.querySelector("#stage5-example-select");
+  const commandEl = sectionEl.querySelector("#stage5-example-command");
+  const codeEl = sectionEl.querySelector("#stage5-example-code");
+  const outputEl = sectionEl.querySelector("#stage5-example-output");
+
+  if (!selectEl || !commandEl || !codeEl || !outputEl) {
+    return;
+  }
+
+  async function renderExample(exampleKey) {
+    const example = STAGE5_EXAMPLE_DEMOS[exampleKey] || STAGE5_EXAMPLE_DEMOS.demo_basic;
+    commandEl.textContent = example.command;
+    outputEl.textContent = example.output;
+    codeEl.textContent = "Loading...";
+    applyCodeHighlight(codeEl, "plaintext");
+
+    try {
+      const codeText = await fetchTextWithCache(example.path);
+      codeEl.textContent = codeText;
+      applyCodeHighlight(codeEl, "python");
+    } catch (error) {
+      codeEl.textContent = error.message || "Failed to load example code.";
+      applyCodeHighlight(codeEl, "plaintext");
+    }
+  }
+
+  const initialValue = STAGE5_EXAMPLE_DEMOS[selectEl.value] ? selectEl.value : "demo_basic";
+  selectEl.value = initialValue;
+  selectEl.onchange = async (event) => {
+    await renderExample(event.target.value);
+  };
+
+  await renderExample(initialValue);
+}
+
 function ensureSourceExplorerSection() {
   const existing = document.getElementById("source-explorer");
   if (existing) {
@@ -897,6 +1117,7 @@ async function updateSourceExplorer(item) {
 
     const runGuideHtml = getRunGuideHtml(item);
     ensureRunGuideSection(runGuideHtml);
+    await mountStage5ExampleDemo(item);
 
     const containerEl = ensureSourceExplorerSection();
     if (!containerEl) {
