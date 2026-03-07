@@ -1,13 +1,12 @@
-# Risk
+# dtcnumpy Stage 1 - Scope Definition + Data-Type Semantics Design
 
-## Model Comparison Stage 1 - Research Design + Specification
+Stage 1 defines `dtcnumpy` as a precision-semantics simulator for quantitative computation rather than a CUDA hardware simulator.
 
-Stage 1 defines the club's first formal multi-model risk benchmark framework under the reproducible multi-asset pipeline.
-
-- Locked the Phase 1 model set: Historical Simulation VaR/CVaR, Parametric VaR/CVaR, and EWMA + Monte Carlo VaR/CVaR.
-- Locked the portfolio setup: baseline portfolio `SPY,QQQ,TLT,GLD` and comparison portfolio `SPY,QQQ,IWM,TLT`, both equal weight.
-- Locked the evaluation framework: 1-day horizon, `alpha = 0.99`, shared rolling design, identical portfolio definitions, and common loss/breach conventions.
-- Defined the comparison metrics: breach rate, breach rate gap, exceedance severity, CVaR stability, responsiveness to volatility change, and conservativeness.
-- Prepared the implementation handoff for Stage 2 so all models can be run under the same artifact workflow and interpreted on a consistent basis.
+- Fixed the v0.1 project boundary so the work stays focused on numeric-format comparison instead of expanding into a full NumPy replacement.
+- Selected the initial supported formats: `FP64`, `FP32`, `FP16`, `BF16`, `TF32`, `INT8`, `INT16`, and `INT32`.
+- Set `FP64` as the high-precision reference and `FP32` as the practical baseline for later interpretation.
+- Defined the semantic design target: casting behavior, reduced-precision rounding, accumulation behavior, integer quantization/dequantization, and output drift relative to the reference path.
+- Established the first target use case as the club's risk-pipeline kernels rather than the entire repository.
+- Froze the first wrapper-style API direction around a lightweight `import dtcnumpy as dnp` interface.
 
 Independent student community. Not affiliated with or endorsed by any University. No live trading; no exchange connectivity.

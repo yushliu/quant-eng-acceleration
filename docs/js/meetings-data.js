@@ -8,6 +8,33 @@ window.COMMUNITY_MEETINGS = [
     "shortTag": "ALGORITHM",
     "status": "COMPLETED",
     "downloadItemId": "risk-model-comparison-stage3-2026-01-2",
+    "latestViews": [
+      {
+        "id": "infrastructure",
+        "label": "Infrastructure",
+        "latest": {
+          "date": "2026-01 (2nd)",
+          "title": "Meeting Record - Stage 3 Infrastructure",
+          "points": [
+            "No infrastructure update published yet for this view.",
+            "Algorithm view contains the finalized Stage 3 comparison and recommendation content for this release."
+          ]
+        }
+      },
+      {
+        "id": "algorithm",
+        "label": "Algorithm",
+        "latest": {
+          "date": "2026-01 (2nd)",
+          "title": "Meeting Record - Stage 3 Final Comparison and Recommendation",
+          "points": [
+            "Completed the final comparison pass across Historical Simulation, Parametric Normal, and EWMA + Monte Carlo using the shared baseline portfolio and fixed evaluation rules.",
+            "Documented ranking tables, tradeoffs, hypothesis review, and a final recommendation instead of only preliminary observations.",
+            "Selected EWMA + Monte Carlo as the strongest primary benchmark candidate under the tested setup, with Parametric Normal as the smooth reference model."
+          ]
+        }
+      }
+    ],
     "detailViews": [
       {
         "id": "infrastructure",
@@ -194,13 +221,141 @@ window.COMMUNITY_MEETINGS = [
     "shortTag": "ALGORITHM",
     "status": "COMPLETED",
     "downloadItemId": "risk-model-comparison-stage2-2026-01-1",
+    "latestViews": [
+      {
+        "id": "infrastructure",
+        "label": "Infrastructure",
+        "latest": {
+          "date": "2026-01",
+          "title": "Meeting Record - dtcnumpy Stage 2 Base Container + Data-Type Conversion API",
+          "points": [
+            "Implemented the Stage 2 dtcnumpy package structure, base DTCArray container, and the first array/asarray/astype conversion API.",
+            "Added comparison reporting around the FP64 reference path while keeping arithmetic kernels, linalg, random modules, and risk-pipeline integration out of scope for this stage.",
+            "Completed the implementation structure, but execution verification is still pending because numpy and pytest are not installed in the current environment."
+          ]
+        }
+      },
+      {
+        "id": "algorithm",
+        "label": "Algorithm",
+        "latest": {
+          "date": "2026-01",
+          "title": "Meeting Record - Stage 2 Implementation and Preliminary Results",
+          "points": [
+            "Completed the first baseline-portfolio implementation pass using a shared equal-weight SPY, QQQ, TLT, GLD portfolio built from the existing returns.csv dataset.",
+            "Ran Historical Simulation, Parametric Normal, and EWMA + Monte Carlo under the same 1-day, 99 percent, 60-day rolling setup and generated a shared comparison package.",
+            "Recorded preliminary comparison outputs without making a final recommendation; interpretation and baseline selection are deferred to Stage 3."
+          ]
+        }
+      }
+    ],
     "detailViews": [
       {
         "id": "infrastructure",
         "label": "Infrastructure",
         "detail": {
-          "title": "Model Comparison Stage 2 - Infrastructure",
-          "cards": []
+          "title": "Meeting Record - dtcnumpy Stage 2 Base Container + Data-Type Conversion API",
+          "cards": [
+            {
+              "heading": "What This Build Did",
+              "bullets": [
+                "Implemented the Stage 2 package structure for dtcnumpy, including dtcnumpy/dtypes.py, dtcnumpy/core.py, dtcnumpy/report.py, dtcnumpy/__init__.py, and tests/test_stage2_array.py.",
+                "Built a base DTCArray container that stores an FP64 reference representation, precomputed simulated versions for all Stage 2 formats, and an active dtype view for later comparison and casting workflows.",
+                "Added the core Stage 2 creation and conversion interface: array(...), asarray(...), and astype(...).",
+                "Implemented the first reporting layer so Stage 2 objects can be compared against the FP64 reference through a comparison table.",
+                "Kept the implementation within the Stage 2 boundary and did not add arithmetic kernels, linalg kernels, random modules, or risk-pipeline integration yet."
+              ]
+            },
+            {
+              "heading": "Stage 2 Scope That Was Followed",
+              "bullets": [
+                "Stage 2 is limited to base container construction, dtype conversion semantics, active dtype switching through astype(...), and comparison reporting.",
+                "Stage 2 does not include dot, mean, quantile, einsum, linalg, random, full NumPy compatibility, or hardware execution simulation.",
+                "The goal of this build is to make dtype-aware objects observable and comparable before arithmetic kernels are introduced in later stages."
+              ]
+            },
+            {
+              "heading": "Supported Formats In This Build",
+              "bullets": [
+                "FP64, FP32, FP16, BF16, TF32, INT8, INT16, and INT32 are included in the Stage 2 implementation boundary.",
+                "FP64 is used as the high-precision reference.",
+                "FP32 is treated as the practical baseline for future comparison.",
+                "All Stage 2 comparisons are currently framed relative to FP64."
+              ]
+            },
+            {
+              "heading": "Data-Type Semantics Implemented",
+              "bullets": [
+                "FP64, FP32, and FP16 are represented through reduced-precision conversion paths consistent with their intended floating-point roles.",
+                "BF16 and TF32 are approximated through explicit float32 bit truncation rather than native hardware execution.",
+                "Integer formats use symmetric quantize/dequantize semantics instead of raw direct integer casting.",
+                "Integer results are stored as dequantized float64 values so they can be compared directly against the FP64 reference in reporting."
+              ]
+            },
+            {
+              "heading": "Container And API Design",
+              "bullets": [
+                "DTCArray now acts as the base Stage 2 object for dtcnumpy.",
+                "A single input is converted into multiple simulated dtype views at construction time.",
+                "astype(...) returns a new container with the requested active dtype while reusing the stored dtype versions.",
+                "Reporting is handled through the Stage 2 comparison layer, which is intended to support meeting demos and early semantic validation before the numerical API expands."
+              ]
+            },
+            {
+              "heading": "What This Build Enables",
+              "bullets": [
+                "The team can now create a single array input and inspect how it is represented under multiple data-type semantics.",
+                "The project now has a fixed object model that later stages can build on when arithmetic functions are introduced.",
+                "The simulator can already support early comparison discussions around value drift, percentage error, integer quantization effects, and reduced mantissa precision effects.",
+                "This gives the CUDA and infrastructure track a concrete base before operation-level precision sensitivity is studied in Stage 3 and beyond."
+              ]
+            },
+            {
+              "heading": "Known Limitations At This Stage",
+              "bullets": [
+                "This build only covers input/value conversion semantics.",
+                "It does not simulate CUDA cores, Tensor Core scheduling, throughput, or device-level execution.",
+                "Integer support is limited to quantize/dequantize comparison behavior for now.",
+                "No arithmetic kernels are included yet, so Stage 2 cannot evaluate operation-level drift at this point.",
+                "No risk-pipeline kernel has been integrated yet."
+              ]
+            },
+            {
+              "heading": "Validation Status",
+              "bullets": [
+                "Initial Stage 2 test files were added.",
+                "A local test command was prepared: python3 -m pytest -q.",
+                "Full execution verification has not been completed yet in the current environment because numpy and pytest are not installed.",
+                "As a result, Stage 2 should currently be recorded as implementation completed in structure and execution verification pending environment setup."
+              ]
+            },
+            {
+              "heading": "Why This Stage Matters",
+              "bullets": [
+                "Stage 2 turns the dtcnumpy idea into an actual package-level prototype.",
+                "The project now has a controlled base object and a fixed set of supported data-type paths.",
+                "This stage reduces ambiguity before arithmetic operations are introduced later.",
+                "Without Stage 2, later comparisons in risk kernels would not have a stable semantic foundation."
+              ]
+            },
+            {
+              "heading": "Next Step According To Plan",
+              "bullets": [
+                "Prepare a simple Stage 2 demo script for meeting presentation.",
+                "Set up the local environment with required dependencies: numpy and pytest.",
+                "Run the existing Stage 2 tests once the environment is available.",
+                "After verification, move to Stage 3: MVP numeric operations for the risk pipeline, beginning with controlled math functions rather than full NumPy behavior."
+              ]
+            },
+            {
+              "heading": "Published Artifacts",
+              "bullets": [
+                "Stage 2 package draft: dtcnumpy/dtypes.py, dtcnumpy/core.py, dtcnumpy/report.py, dtcnumpy/__init__.py.",
+                "Stage 2 initial test file: tests/test_stage2_array.py.",
+                "Stage 2 status note: implementation drafted, test execution pending environment setup."
+              ]
+            }
+          ]
         }
       },
       {
@@ -337,13 +492,143 @@ window.COMMUNITY_MEETINGS = [
     "shortTag": "COMPARISON",
     "status": "COMPLETED",
     "downloadItemId": "risk-model-comparison-stage1-2025-12-2",
+    "latestViews": [
+      {
+        "id": "infrastructure",
+        "label": "Infrastructure",
+        "latest": {
+          "date": "2025-12 (2nd)",
+          "title": "Meeting Record - dtcnumpy Stage 1 Scope Definition + Data-Type Semantics Design",
+          "points": [
+            "Defined dtcnumpy as a data-type semantics simulator for quantitative computation rather than a CUDA hardware simulator.",
+            "Froze the v0.1 scope around precision semantics, selected FP64/FP32/FP16/BF16/TF32/INT8/INT16/INT32, and fixed FP64 as the high-precision reference.",
+            "Prepared the semantic rules, architecture boundary, and first target use case for later risk-pipeline integration."
+          ]
+        }
+      },
+      {
+        "id": "algorithm",
+        "label": "Algorithm",
+        "latest": {
+          "date": "2025-12 (2nd)",
+          "title": "Meeting Record - Stage 1 Research Design + Specification",
+          "points": [
+            "Defined the first formal comparison framework for the Risk Team under the club's reproducible multi-asset pipeline and locked the initial model set, portfolio setup, and evaluation rules.",
+            "Selected three Phase 1 models for comparison: Historical Simulation VaR/CVaR, Parametric VaR/CVaR, and EWMA + Monte Carlo VaR/CVaR.",
+            "Published Stage 1 research artifacts including the design report, model cards, evaluation design, portfolio definition, and traceability files for later implementation."
+          ]
+        }
+      }
+    ],
     "detailViews": [
       {
         "id": "infrastructure",
         "label": "Infrastructure",
         "detail": {
-          "title": "Model Comparison Stage 1 - Infrastructure",
-          "cards": []
+          "title": "Meeting Record - dtcnumpy Stage 1 Scope Definition + Data-Type Semantics Design",
+          "cards": [
+            {
+              "heading": "What This Build Did",
+              "bullets": [
+                "Defined dtcnumpy as a data-type semantics simulator for quantitative computation rather than a CUDA hardware simulator.",
+                "Fixed the first-version project boundary so the work stays focused on numerical precision comparison instead of expanding into a full NumPy replacement.",
+                "Selected the initial supported formats for version 0.1: FP64, FP32, FP16, BF16, TF32, INT8, INT16, and INT32.",
+                "Established FP64 as the high-precision reference and FP32 as the practical baseline for later result interpretation.",
+                "Began drafting semantic rules for each supported format, including rounding behavior, accumulation behavior, and integer quantization/dequantization logic.",
+                "Defined the intended user-facing interface as a lightweight NumPy-style wrapper such as import dtcnumpy as dnp."
+              ]
+            },
+            {
+              "heading": "Why This Stage Matters",
+              "bullets": [
+                "The club does not want to build a fake CUDA-core simulator. That scope would be too large, too hardware-specific, and not aligned with the current benchmarking goals.",
+                "The actual goal is to study how different numeric formats change outputs in quantitative workflows, especially in risk-related pipelines such as covariance estimation, Monte Carlo sampling, portfolio-loss computation, and VaR/CVaR evaluation.",
+                "Before implementation starts, the semantics of each supported format must be clearly defined. Without this stage, later comparisons would be inconsistent and the project would lose interpretability.",
+                "This stage turns the project from a vague mixed-precision idea into a controlled benchmark tool with a precise role inside the club's CUDA and infrastructure track."
+              ]
+            },
+            {
+              "heading": "Scope Frozen For V0.1",
+              "bullets": [
+                "dtcnumpy v0.1 is scoped as a precision-semantics simulator only.",
+                "It will not simulate CUDA cores, tensor core scheduling, warp execution, device throughput, or full NumPy compatibility.",
+                "It will simulate data-type casting behavior, reduced-precision rounding behavior, accumulation behavior, integer quantization/dequantization behavior, and output drift relative to a high-precision reference.",
+                "The first version will target only the club's risk pipeline kernels, not the entire repository."
+              ]
+            },
+            {
+              "heading": "Supported Formats In Stage 1",
+              "bullets": [
+                "FP64 - reference precision for comparison and error reporting.",
+                "FP32 - practical baseline approximating the club's current default numerical workflow.",
+                "FP16 - reduced floating-point precision for basic mixed-precision experiments.",
+                "BF16 - reduced mantissa precision with broader dynamic-range intent than FP16.",
+                "TF32 - simulated Tensor-style reduced mantissa precision with FP32-oriented workflow semantics.",
+                "INT8, INT16, INT32 - integer quantization paths and accumulation baselines for low-precision integer operations."
+              ]
+            },
+            {
+              "heading": "Data-Type Semantics Design",
+              "bullets": [
+                "For floating-point formats, Stage 1 specifies how values are rounded when entering and leaving an operation.",
+                "For BF16 and TF32, the project will simulate reduced precision at the semantic level rather than relying on hardware-native execution.",
+                "For integer formats, support is defined through quantization rule, clipping range, accumulation rule, and dequantization rule rather than simple direct casting.",
+                "This distinction matters because direct astype(int8)-style truncation would not provide a meaningful comparison for quantitative computations.",
+                "The simulator is intended to compare numerical behavior, not just storage type labels."
+              ]
+            },
+            {
+              "heading": "Architecture Boundary",
+              "bullets": [
+                "The project will use a lightweight wrapper interface: import dtcnumpy as dnp.",
+                "The first version will expose only a minimal API needed for later risk-pipeline integration.",
+                "Stage 1 does not attempt to implement all of NumPy.",
+                "Instead, this stage prepares a small controlled framework with planned components such as core dtype handling, operation routing, linear algebra helpers, random sampling utilities, and reporting/comparison tables.",
+                "This boundary is necessary to prevent the project from turning into an uncontrolled reimplementation effort."
+              ]
+            },
+            {
+              "heading": "First Version Target Use Case",
+              "bullets": [
+                "The first intended downstream use case is the club's existing risk workflow, especially covariance estimation, Cholesky-based simulation paths, portfolio-loss aggregation, and VaR/CVaR output comparison.",
+                "Stage 1 does not yet run these kernels. Instead, it prepares the semantic rules required so those kernels can be integrated consistently in later stages."
+              ]
+            },
+            {
+              "heading": "Expected Output Of Stage 1",
+              "bullets": [
+                "A frozen scope definition for dtcnumpy v0.1.",
+                "A written semantics table for all supported data types.",
+                "A fixed project distinction between what dtcnumpy is and what dtcnumpy is not.",
+                "A first draft of the package structure and minimal API boundary.",
+                "A comparison philosophy centered on value drift, percentage error, and later decision-level impact analysis."
+              ]
+            },
+            {
+              "heading": "Acceptance Check For This Stage",
+              "bullets": [
+                "Stage 1 is considered complete when the project can answer clearly what dtcnumpy is supposed to do, what is intentionally excluded, which data types are supported in v0.1, how each type is semantically modeled, and what reference precision will be used for later comparisons.",
+                "If these answers are not fixed, later implementation will not be stable enough for reproducible benchmarking."
+              ]
+            },
+            {
+              "heading": "Next Step",
+              "bullets": [
+                "Implement the base container and creation functions for dtcnumpy, including array, asarray, and astype.",
+                "Build the first comparison-ready object representation so later stages can evaluate how the same input behaves under multiple simulated data-type paths.",
+                "Start with reporting before advanced math so the project can validate semantic correctness early."
+              ]
+            },
+            {
+              "heading": "Published Artifacts",
+              "bullets": [
+                "Planned Stage 1 project note describing dtcnumpy scope and version boundary.",
+                "Planned semantics draft for FP64, FP32, FP16, BF16, TF32, INT8, INT16, and INT32.",
+                "Planned architecture sketch for the minimal API and module layout.",
+                "Planned Stage 1 summary for website publication."
+              ]
+            }
+          ]
         }
       },
       {

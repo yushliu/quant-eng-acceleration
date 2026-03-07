@@ -9,6 +9,10 @@
     "Algorithm/Display/test_pipeline_smoke.py",
     "Algorithm/Display/test_var_cvar.py",
     "Algorithm/README.md",
+    "Infrastructure/Display/__init__.py",
+    "Infrastructure/Display/core.py",
+    "Infrastructure/Display/dtypes.py",
+    "Infrastructure/Display/report.py",
     "Infrastructure/README.md"
   ]
 }

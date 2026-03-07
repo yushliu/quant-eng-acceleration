@@ -401,6 +401,28 @@ const RUN_GUIDE_HTML_RISK_STAGE1 = `
   </section>
 `;
 
+const RUN_GUIDE_HTML_RISK_STAGE1_INFRA = `
+  <h2 class="text-lg font-semibold tracking-tight text-gray-900">How to Use These Artifacts</h2>
+  <p class="mt-3 text-sm leading-6 text-gray-600">
+    This Infrastructure view records the dtcnumpy Stage 1 scope definition, data-type semantics design, and version boundary decisions.
+  </p>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">What Is Included</h3>
+    <ul class="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-gray-600">
+      <li><code>summary.md</code>: short Stage 1 scope and semantics overview</li>
+      <li><code>params.json</code>: traceability for the selected model set, portfolio setup, and evaluation rules already published in this update</li>
+    </ul>
+  </section>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">What This View Covers</h3>
+    <p class="mt-2 text-sm leading-6 text-gray-600">
+      Use this view to review what dtcnumpy is, what is intentionally excluded from v0.1, which formats are supported, and how semantic behavior will be defined before implementation expands.
+    </p>
+  </section>
+`;
+
 const RUN_GUIDE_HTML_RISK_STAGE2 = `
   <h2 class="text-lg font-semibold tracking-tight text-gray-900">How to Use These Artifacts</h2>
   <p class="mt-3 text-sm leading-6 text-gray-600">
@@ -441,6 +463,28 @@ const RUN_GUIDE_HTML_RISK_STAGE2 = `
   </section>
 `;
 
+const RUN_GUIDE_HTML_RISK_STAGE2_INFRA = `
+  <h2 class="text-lg font-semibold tracking-tight text-gray-900">How to Use These Artifacts</h2>
+  <p class="mt-3 text-sm leading-6 text-gray-600">
+    This Infrastructure view records the dtcnumpy Stage 2 base container, dtype conversion API, and current validation status.
+  </p>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">What Is Included</h3>
+    <ul class="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-gray-600">
+      <li><code>summary.md</code>: short Stage 2 implementation overview</li>
+      <li><code>Display/</code>: current draft source files for the dtcnumpy package components published in this release</li>
+    </ul>
+  </section>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">Validation Status</h3>
+    <p class="mt-2 text-sm leading-6 text-gray-600">
+      Structure is implemented, but full execution verification is still pending because <code>numpy</code> and <code>pytest</code> are not installed in the current environment.
+    </p>
+  </section>
+`;
+
 const RUN_GUIDE_HTML_RISK_STAGE3 = `
   <h2 class="text-lg font-semibold tracking-tight text-gray-900">How to Use These Artifacts</h2>
   <p class="mt-3 text-sm leading-6 text-gray-600">
@@ -472,14 +516,23 @@ const RUN_GUIDE_HTML_RISK_STAGE3 = `
   </section>
 `;
 
-const RUN_GUIDE_HTML_BY_ITEM_ID = {
-  "risk-model-comparison-stage3-2026-01-2": RUN_GUIDE_HTML_RISK_STAGE3,
-  "risk-model-comparison-stage2-2026-01-1": RUN_GUIDE_HTML_RISK_STAGE2,
-  "risk-model-comparison-stage1-2025-12-2": RUN_GUIDE_HTML_RISK_STAGE1,
-  "pricing-no-arbitrage-cpu-vs-gpu-2025-12": RUN_GUIDE_HTML_PRICING,
-  "yfinance-rate-limit-patch-2025-11": RUN_GUIDE_HTML_PATCH,
-  "ewma-mcvar-backtest-2025-11": RUN_GUIDE_HTML_GPU,
-  "ewma-mcvar-backtest-2025-10": RUN_GUIDE_HTML_GPU
+const RUN_GUIDE_HTML_EMPTY_INFRA = `
+  <h2 class="text-lg font-semibold tracking-tight text-gray-900">How to Use These Artifacts</h2>
+  <p class="mt-3 text-sm leading-6 text-gray-600">
+    No Infrastructure-specific artifact package has been published yet for this update.
+  </p>
+`;
+
+const RUN_GUIDE_HTML_BY_KEY = {
+  risk_stage1_algorithm: RUN_GUIDE_HTML_RISK_STAGE1,
+  risk_stage1_infrastructure: RUN_GUIDE_HTML_RISK_STAGE1_INFRA,
+  risk_stage2_algorithm: RUN_GUIDE_HTML_RISK_STAGE2,
+  risk_stage2_infrastructure: RUN_GUIDE_HTML_RISK_STAGE2_INFRA,
+  risk_stage3_algorithm: RUN_GUIDE_HTML_RISK_STAGE3,
+  empty_infra: RUN_GUIDE_HTML_EMPTY_INFRA,
+  pricing: RUN_GUIDE_HTML_PRICING,
+  patch: RUN_GUIDE_HTML_PATCH,
+  gpu: RUN_GUIDE_HTML_GPU
 };
 
 function getGithubConfig() {
@@ -544,6 +597,33 @@ function syncSelectedItemView(item, preferredViewId = "") {
 
 function getSelectedItemView(item) {
   return getItemViews(item).find((view) => view && view.id === selectedItemViewId) || null;
+}
+
+function getSelectedItemTitle(item) {
+  const selectedView = getSelectedItemView(item);
+  return selectedView && selectedView.title ? selectedView.title : (item.title || "Code Viewer");
+}
+
+function getSelectedItemDescription(item) {
+  const selectedView = getSelectedItemView(item);
+  return selectedView && selectedView.description ? selectedView.description : (item.short || "");
+}
+
+function getRunGuideHtml(item) {
+  const selectedView = getSelectedItemView(item);
+  const guideKey = selectedView && selectedView.guideKey ? selectedView.guideKey : "";
+  if (guideKey && RUN_GUIDE_HTML_BY_KEY[guideKey]) {
+    return RUN_GUIDE_HTML_BY_KEY[guideKey];
+  }
+
+  const fallbackKeyByItemId = {
+    "pricing-no-arbitrage-cpu-vs-gpu-2025-12": "pricing",
+    "yfinance-rate-limit-patch-2025-11": "patch",
+    "ewma-mcvar-backtest-2025-11": "gpu",
+    "ewma-mcvar-backtest-2025-10": "gpu"
+  };
+  const fallbackKey = fallbackKeyByItemId[item.id];
+  return RUN_GUIDE_HTML_BY_KEY[fallbackKey] || RUN_GUIDE_HTML_GPU;
 }
 
 function getVisibleFiles(item) {
@@ -647,6 +727,7 @@ function removeRunGuideSection() {
 function ensureRunGuideSection(runGuideHtml = RUN_GUIDE_HTML_GPU) {
   const existing = document.getElementById("run-guide");
   if (existing) {
+    existing.innerHTML = runGuideHtml;
     return existing;
   }
 
@@ -706,7 +787,7 @@ async function updateSourceExplorer(item) {
       return;
     }
 
-    const runGuideHtml = RUN_GUIDE_HTML_BY_ITEM_ID[item.id] || RUN_GUIDE_HTML_GPU;
+    const runGuideHtml = getRunGuideHtml(item);
     ensureRunGuideSection(runGuideHtml);
 
     const containerEl = ensureSourceExplorerSection();
@@ -869,12 +950,16 @@ function updateViewerHeader(item) {
   const selectedView = getSelectedItemView(item);
 
   if (titleEl) {
-    titleEl.textContent = item.title || "Code Viewer";
+    titleEl.textContent = getSelectedItemTitle(item);
   }
 
   if (subtitleEl) {
     const viewLabel = selectedView ? `${selectedView.label} · ` : "";
-    subtitleEl.textContent = `${item.id} · ${viewLabel}${selectedFilePath || "No file selected"}`;
+    const description = getSelectedItemDescription(item);
+    const pathText = selectedFilePath || "No file selected";
+    subtitleEl.textContent = description
+      ? `${description} · ${viewLabel}${pathText}`
+      : `${item.id} · ${viewLabel}${pathText}`;
   }
 }
 

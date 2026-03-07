@@ -9,12 +9,20 @@
         {
           "id": "infrastructure",
           "label": "Infrastructure",
-          "filePrefixes": [],
+          "title": "Meeting Record - Stage 3 Infrastructure",
+          "description": "No infrastructure update has been published yet for this Stage 3 release.",
+          "guideKey": "empty_infra",
+          "filePrefixes": [
+            "artifacts/2026-1-2/Infrastructure/"
+          ],
           "sourcePrefixes": []
         },
         {
           "id": "algorithm",
           "label": "Algorithm",
+          "title": "Meeting Record - Stage 3 Final Comparison and Recommendation",
+          "description": "Final comparison record, ranking tables, tradeoff discussion, and recommendation for the Stage 3 Algorithm release.",
+          "guideKey": "risk_stage3_algorithm",
           "filePrefixes": [
             "artifacts/2026-1-2/Algorithm/"
           ],
@@ -53,12 +61,22 @@
         {
           "id": "infrastructure",
           "label": "Infrastructure",
-          "filePrefixes": [],
-          "sourcePrefixes": []
+          "title": "Meeting Record - dtcnumpy Stage 2 Base Container + Data-Type Conversion API",
+          "description": "Infrastructure meeting record for the dtcnumpy Stage 2 package draft, container model, conversion API, and validation status.",
+          "guideKey": "risk_stage2_infrastructure",
+          "filePrefixes": [
+            "artifacts/2026-1-1/Infrastructure/"
+          ],
+          "sourcePrefixes": [
+            "Infrastructure/Display/"
+          ]
         },
         {
           "id": "algorithm",
           "label": "Algorithm",
+          "title": "Meeting Record - Stage 2 Implementation and Preliminary Results",
+          "description": "Algorithm meeting record for the first completed comparison workflow and baseline portfolio result package.",
+          "guideKey": "risk_stage2_algorithm",
           "filePrefixes": [
             "artifacts/2026-1-1/Algorithm/"
           ],
@@ -68,6 +86,11 @@
         }
       ],
       "files": [
+        {
+          "label": "infrastructure_summary.md",
+          "path": "artifacts/2026-1-1/Infrastructure/summary.md",
+          "lang": "markdown"
+        },
         {
           "label": "stage2_meeting_record.md",
           "path": "artifacts/2026-1-1/Algorithm/stage2_meeting_record.md",
@@ -104,6 +127,9 @@
         {
           "id": "infrastructure",
           "label": "Infrastructure",
+          "title": "Meeting Record - dtcnumpy Stage 1 Scope Definition + Data-Type Semantics Design",
+          "description": "Infrastructure meeting record for dtcnumpy scope freezing, supported formats, and semantic design rules.",
+          "guideKey": "risk_stage1_infrastructure",
           "filePrefixes": [
             "artifacts/2025-12-2/Infrastructure/"
           ],
@@ -112,6 +138,9 @@
         {
           "id": "algorithm",
           "label": "Algorithm",
+          "title": "Meeting Record - Stage 1 Research Design + Specification",
+          "description": "Algorithm meeting record for the Stage 1 research design, model cards, and evaluation framework.",
+          "guideKey": "risk_stage1_algorithm",
           "filePrefixes": [
             "artifacts/2025-12-2/Algorithm/"
           ],
