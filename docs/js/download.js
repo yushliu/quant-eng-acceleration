@@ -10,6 +10,10 @@ let sourceExplorerRequestId = 0;
 let sourceExplorerModulePromise = null;
 
 const SOURCE_EXPLORER_ITEM_CONFIG = {
+  "risk-model-comparison-stage4-2026-02-1": {
+    indexPath: "artifacts/2026-2-1/files.json",
+    baseRootPath: "artifacts/2026-2-1"
+  },
   "risk-model-comparison-stage3-2026-01-2": {
     indexPath: "artifacts/2026-1-2/files.json",
     baseRootPath: "artifacts/2026-1-2"
@@ -544,6 +548,42 @@ const RUN_GUIDE_HTML_RISK_STAGE3_INFRA = `
     </p>
 `;
 
+const RUN_GUIDE_HTML_RISK_STAGE4_INFRA = `
+  <h2 class="text-lg font-semibold tracking-tight text-gray-900">How to Use These Artifacts</h2>
+  <p class="mt-3 text-sm leading-6 text-gray-600">
+    This Infrastructure view records the Stage 4 dtcnumpy preparation scope for advanced linear algebra and controlled random-module support before later risk-kernel integration.
+  </p>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">What Is Included</h3>
+    <ul class="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-gray-600">
+      <li><code>summary.md</code>: short Stage 4 infrastructure overview</li>
+      <li><code>Infrastructure/Display/</code>: placeholder directory for the upcoming Stage 4 display source files</li>
+    </ul>
+  </section>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">Stage 4 Focus</h3>
+    <p class="mt-2 text-sm leading-6 text-gray-600">
+      Stage 4 is scoped around <code>dtcnumpy.linalg.cholesky</code>, <code>dtcnumpy.linalg.eigh</code>, and <code>dtcnumpy.random.standard_normal</code> as the minimum preparation layer needed for later covariance, scenario-generation, and portfolio-loss risk workflows.
+    </p>
+  </section>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">Scope Boundary</h3>
+    <p class="mt-2 text-sm leading-6 text-gray-600">
+      This stage still simulates dtype semantics only. It does not add hardware execution modeling, Tensor Core scheduling, or performance benchmarking.
+    </p>
+  </section>
+`;
+
+const RUN_GUIDE_HTML_EMPTY_ALGORITHM = `
+  <h2 class="text-lg font-semibold tracking-tight text-gray-900">How to Use These Artifacts</h2>
+  <p class="mt-3 text-sm leading-6 text-gray-600">
+    No Algorithm-specific artifact package has been published yet for this update.
+  </p>
+`;
+
 const RUN_GUIDE_HTML_BY_KEY = {
   risk_stage1_algorithm: RUN_GUIDE_HTML_RISK_STAGE1,
   risk_stage1_infrastructure: RUN_GUIDE_HTML_RISK_STAGE1_INFRA,
@@ -551,6 +591,8 @@ const RUN_GUIDE_HTML_BY_KEY = {
   risk_stage2_infrastructure: RUN_GUIDE_HTML_RISK_STAGE2_INFRA,
   risk_stage3_algorithm: RUN_GUIDE_HTML_RISK_STAGE3,
   risk_stage3_infrastructure: RUN_GUIDE_HTML_RISK_STAGE3_INFRA,
+  risk_stage4_infrastructure: RUN_GUIDE_HTML_RISK_STAGE4_INFRA,
+  empty_algorithm: RUN_GUIDE_HTML_EMPTY_ALGORITHM,
   pricing: RUN_GUIDE_HTML_PRICING,
   patch: RUN_GUIDE_HTML_PATCH,
   gpu: RUN_GUIDE_HTML_GPU

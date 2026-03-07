@@ -1,6 +1,45 @@
 {
   "downloadItems": [
     {
+      "id": "risk-model-comparison-stage4-2026-02-1",
+      "title": "2026-2-1 Meeting Record",
+      "short": "",
+      "tag": "Update",
+      "views": [
+        {
+          "id": "infrastructure",
+          "label": "Infrastructure",
+          "title": "Meeting Record - dtcnumpy Stage 4 Advanced Linear Algebra and Random Module Preparation",
+          "description": "Infrastructure meeting record for the dtcnumpy Stage 4 preparation layer: advanced linear algebra, random module design, and risk-kernel readiness scope.",
+          "guideKey": "risk_stage4_infrastructure",
+          "filePrefixes": [
+            "artifacts/2026-2-1/Infrastructure/"
+          ],
+          "sourcePrefixes": [
+            "Infrastructure/Display/"
+          ]
+        },
+        {
+          "id": "algorithm",
+          "label": "Algorithm",
+          "title": "2026-2-1 Algorithm View",
+          "description": "No algorithm meeting record has been published yet for the 2026-2-1 release.",
+          "guideKey": "empty_algorithm",
+          "filePrefixes": [
+            "artifacts/2026-2-1/Algorithm/"
+          ],
+          "sourcePrefixes": []
+        }
+      ],
+      "files": [
+        {
+          "label": "infrastructure_summary.md",
+          "path": "artifacts/2026-2-1/Infrastructure/summary.md",
+          "lang": "markdown"
+        }
+      ]
+    },
+    {
       "id": "risk-model-comparison-stage3-2026-01-2",
       "title": "2026-1-2 Meeting Record",
       "short": "",

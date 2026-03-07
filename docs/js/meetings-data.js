@@ -3,6 +3,237 @@
 // - detail: full version used by Plan > meeting detail cards
 window.COMMUNITY_MEETINGS = [
   {
+    "id": "2026-02-1",
+    "ym": "2026-02",
+    "shortTag": "INFRA",
+    "defaultViewId": "infrastructure",
+    "status": "IN PROGRESS",
+    "downloadItemId": "risk-model-comparison-stage4-2026-02-1",
+    "latestViews": [
+      {
+        "id": "infrastructure",
+        "label": "Infrastructure",
+        "latest": {
+          "date": "2026-02-01",
+          "title": "dtcnumpy Stage 4 - Advanced Linear Algebra and Random Module Preparation",
+          "points": [
+            "Defined Stage 4 as the preparation layer between higher-level dtype-aware ops and later risk-kernel integration.",
+            "Fixed the Stage 4 scope around `linalg.cholesky`, `linalg.eigh`, low-precision matrix stability analysis, and `random.standard_normal` for controlled Monte Carlo-style inputs.",
+            "Kept the project inside semantic dtype simulation and explicitly out of CUDA hardware execution, Tensor Core scheduling, and performance benchmarking."
+          ]
+        }
+      },
+      {
+        "id": "algorithm",
+        "label": "Algorithm",
+        "latest": {
+          "date": "2026-02-01",
+          "title": "2026-2-1 Algorithm View",
+          "points": [
+            "No algorithm meeting record has been published yet for this release."
+          ]
+        }
+      }
+    ],
+    "detailViews": [
+      {
+        "id": "infrastructure",
+        "label": "Infrastructure",
+        "detail": {
+          "title": "dtcnumpy Stage 4 - Advanced Linear Algebra and Random Module Preparation",
+          "cards": [
+            {
+              "heading": "What This Build Did",
+              "bullets": [
+                "Defined Stage 4 as the transition from basic numeric operations to the first risk-kernel-critical infrastructure layer inside `dtcnumpy`.",
+                "Fixed the Stage 4 scope around advanced linear algebra support and controlled random sampling support before later risk-pipeline integration.",
+                "Positioned this stage as the preparation layer for covariance factorization, scenario generation, portfolio-loss simulation, and VaR / CVaR computation workflows."
+              ]
+            },
+            {
+              "heading": "Why This Stage Matters",
+              "bullets": [
+                "Stage 2 made dtype-aware objects observable, and Stage 3 made dtype-aware operation outputs comparable.",
+                "Stage 4 is the first stage focused on the most numerically sensitive building blocks used in quantitative risk systems.",
+                "Without Stage 4, the project still cannot test how reduced-precision semantics propagate through matrix factorization, repair logic, and simulated scenario generation."
+              ]
+            },
+            {
+              "heading": "Stage 4 Scope That Is Followed",
+              "bullets": [
+                "Stage 4 focuses on advanced linear algebra preparation, random-sampling preparation, and dtype-sensitive stability analysis.",
+                "Stage 4 does not yet include full risk-pipeline integration, full covariance API expansion, performance benchmarking, CUDA hardware execution simulation, Tensor Core scheduling logic, or full random-module compatibility.",
+                "The purpose of this stage is to prepare the simulator for the hardest numerical kernels before final model-level integration."
+              ]
+            },
+            {
+              "heading": "Target Modules For This Stage",
+              "bullets": [
+                "`dtcnumpy.linalg.cholesky`",
+                "`dtcnumpy.linalg.eigh`",
+                "`dtcnumpy.random.standard_normal`"
+              ]
+            },
+            {
+              "heading": "Advanced Linear Algebra Focus",
+              "bullets": [
+                "`linalg.cholesky` is required because Cholesky-style factorization is central to correlated Monte Carlo path generation.",
+                "`linalg.eigh` is required because low-precision covariance inputs may lose numerical stability and need eigenvalue-based repair paths.",
+                "Stage 4 is expected to clarify how dtype semantics affect matrix conditioning, factorization success or failure, eigenvalue clipping behavior, and reconstruction stability after repair."
+              ]
+            },
+            {
+              "heading": "Random Module Focus",
+              "bullets": [
+                "`random.standard_normal` is introduced because later Monte Carlo workflows require a reproducible source of scenario generation.",
+                "All dtype paths should begin from the same base random stream and then apply dtype semantics consistently after generation.",
+                "This keeps the comparison fair across dtypes and avoids mixing random-stream differences with precision-semantics differences."
+              ]
+            },
+            {
+              "heading": "Expected Numerical Questions",
+              "bullets": [
+                "Does reduced precision make covariance-like matrices more likely to fail factorization?",
+                "Do BF16, TF32, or FP16-style semantics change eigenvalue spectra enough to require more frequent repair?",
+                "When the same random stream is mapped through different dtype semantics, how large is the resulting drift in simulated outputs?",
+                "Which dtype families appear stable enough to continue into later risk-kernel integration, and which ones require caution?"
+              ]
+            },
+            {
+              "heading": "Acceptance Target",
+              "bullets": [
+                "Advanced linear algebra results can be produced for all supported dtypes under a shared comparison structure.",
+                "Cholesky-style and eigenvalue-style workflows can be analyzed under reduced-precision semantics.",
+                "Random sampling can be generated reproducibly in a way that supports later Monte Carlo comparisons.",
+                "The simulator remains within semantic-simulation scope and is ready to move into risk-kernel integration in the following stage."
+              ]
+            },
+            {
+              "heading": "Known Limitations At This Stage",
+              "bullets": [
+                "Stage 4 still compares semantic numerical behavior, not real CUDA device execution.",
+                "It does not simulate Tensor Core scheduling, warp behavior, throughput differences, or memory hierarchy effects.",
+                "Integer support remains comparison-oriented and full model-level validation is still deferred until later risk-kernel integration."
+              ]
+            },
+            {
+              "heading": "Next Step According To Plan",
+              "bullets": [
+                "Connect the advanced-linear-algebra and random infrastructure to the club's core risk kernels.",
+                "Begin controlled integration with covariance estimation workflows, scenario generation workflows, portfolio-loss pipelines, and VaR / CVaR comparison paths.",
+                "Use the results of Stage 4 to identify which dtypes should be prioritized, tolerated, or restricted in later risk-model experiments."
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "algorithm",
+        "label": "Algorithm",
+        "detail": {
+          "title": "2026-2-1 Algorithm View",
+          "cards": []
+        }
+      }
+    ],
+    "latest": {
+      "date": "2026-02-01",
+      "title": "dtcnumpy Stage 4 - Advanced Linear Algebra and Random Module Preparation",
+      "points": [
+        "Defined Stage 4 as the preparation layer between higher-level dtype-aware ops and later risk-kernel integration.",
+        "Fixed the Stage 4 scope around advanced linear algebra, random-module design, and dtype-sensitive matrix-stability analysis.",
+        "Kept this milestone inside semantic dtype simulation and out of hardware execution modeling."
+      ]
+    },
+    "detail": {
+      "title": "dtcnumpy Stage 4 - Advanced Linear Algebra and Random Module Preparation",
+      "cards": [
+        {
+          "heading": "What This Build Did",
+          "bullets": [
+            "Defined Stage 4 as the transition from basic numeric operations to the first risk-kernel-critical infrastructure layer inside `dtcnumpy`.",
+            "Fixed the Stage 4 scope around advanced linear algebra support and controlled random sampling support before later risk-pipeline integration.",
+            "Positioned this stage as the preparation layer for covariance factorization, scenario generation, portfolio-loss simulation, and VaR / CVaR computation workflows."
+          ]
+        },
+        {
+          "heading": "Why This Stage Matters",
+          "bullets": [
+            "Stage 2 made dtype-aware objects observable, and Stage 3 made dtype-aware operation outputs comparable.",
+            "Stage 4 is the first stage focused on the most numerically sensitive building blocks used in quantitative risk systems.",
+            "Without Stage 4, the project still cannot test how reduced-precision semantics propagate through matrix factorization, repair logic, and simulated scenario generation."
+          ]
+        },
+        {
+          "heading": "Stage 4 Scope That Is Followed",
+          "bullets": [
+            "Stage 4 focuses on advanced linear algebra preparation, random-sampling preparation, and dtype-sensitive stability analysis.",
+            "Stage 4 does not yet include full risk-pipeline integration, full covariance API expansion, performance benchmarking, CUDA hardware execution simulation, Tensor Core scheduling logic, or full random-module compatibility.",
+            "The purpose of this stage is to prepare the simulator for the hardest numerical kernels before final model-level integration."
+          ]
+        },
+        {
+          "heading": "Target Modules For This Stage",
+          "bullets": [
+            "`dtcnumpy.linalg.cholesky`",
+            "`dtcnumpy.linalg.eigh`",
+            "`dtcnumpy.random.standard_normal`"
+          ]
+        },
+        {
+          "heading": "Advanced Linear Algebra Focus",
+          "bullets": [
+            "`linalg.cholesky` is required because Cholesky-style factorization is central to correlated Monte Carlo path generation.",
+            "`linalg.eigh` is required because low-precision covariance inputs may lose numerical stability and need eigenvalue-based repair paths.",
+            "Stage 4 is expected to clarify how dtype semantics affect matrix conditioning, factorization success or failure, eigenvalue clipping behavior, and reconstruction stability after repair."
+          ]
+        },
+        {
+          "heading": "Random Module Focus",
+          "bullets": [
+            "`random.standard_normal` is introduced because later Monte Carlo workflows require a reproducible source of scenario generation.",
+            "All dtype paths should begin from the same base random stream and then apply dtype semantics consistently after generation.",
+            "This keeps the comparison fair across dtypes and avoids mixing random-stream differences with precision-semantics differences."
+          ]
+        },
+        {
+          "heading": "Expected Numerical Questions",
+          "bullets": [
+            "Does reduced precision make covariance-like matrices more likely to fail factorization?",
+            "Do BF16, TF32, or FP16-style semantics change eigenvalue spectra enough to require more frequent repair?",
+            "When the same random stream is mapped through different dtype semantics, how large is the resulting drift in simulated outputs?",
+            "Which dtype families appear stable enough to continue into later risk-kernel integration, and which ones require caution?"
+          ]
+        },
+        {
+          "heading": "Acceptance Target",
+          "bullets": [
+            "Advanced linear algebra results can be produced for all supported dtypes under a shared comparison structure.",
+            "Cholesky-style and eigenvalue-style workflows can be analyzed under reduced-precision semantics.",
+            "Random sampling can be generated reproducibly in a way that supports later Monte Carlo comparisons.",
+            "The simulator remains within semantic-simulation scope and is ready to move into risk-kernel integration in the following stage."
+          ]
+        },
+        {
+          "heading": "Known Limitations At This Stage",
+          "bullets": [
+            "Stage 4 still compares semantic numerical behavior, not real CUDA device execution.",
+            "It does not simulate Tensor Core scheduling, warp behavior, throughput differences, or memory hierarchy effects.",
+            "Integer support remains comparison-oriented and full model-level validation is still deferred until later risk-kernel integration."
+          ]
+        },
+        {
+          "heading": "Next Step According To Plan",
+          "bullets": [
+            "Connect the advanced-linear-algebra and random infrastructure to the club's core risk kernels.",
+            "Begin controlled integration with covariance estimation workflows, scenario generation workflows, portfolio-loss pipelines, and VaR / CVaR comparison paths.",
+            "Use the results of Stage 4 to identify which dtypes should be prioritized, tolerated, or restricted in later risk-model experiments."
+          ]
+        }
+      ]
+    }
+  },
+  {
     "id": "2026-01-2",
     "ym": "2026-01",
     "shortTag": "INFRA",
