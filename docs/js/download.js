@@ -11,8 +11,8 @@ let sourceExplorerModulePromise = null;
 
 const SOURCE_EXPLORER_ITEM_CONFIG = {
   "risk-model-comparison-stage3-2026-01-2": {
-    indexPath: "artifacts/2026-1-2-source/files.json",
-    baseRootPath: "artifacts/2026-1-2-source"
+    indexPath: "artifacts/2026-1-2/files.json",
+    baseRootPath: "artifacts/2026-1-2"
   },
   "risk-model-comparison-stage2-2026-01-1": {
     indexPath: "artifacts/2026-1-1-source/files.json",
@@ -516,11 +516,32 @@ const RUN_GUIDE_HTML_RISK_STAGE3 = `
   </section>
 `;
 
-const RUN_GUIDE_HTML_EMPTY_INFRA = `
+const RUN_GUIDE_HTML_RISK_STAGE3_INFRA = `
   <h2 class="text-lg font-semibold tracking-tight text-gray-900">How to Use These Artifacts</h2>
   <p class="mt-3 text-sm leading-6 text-gray-600">
-    No Infrastructure-specific artifact package has been published yet for this update.
+    This Infrastructure view records the Stage 3 datatype comparison architecture update: higher-level numerical ops, reporting scope, special design rules, and validation status.
   </p>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">What Is Included</h3>
+    <ul class="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-gray-600">
+      <li><code>summary.md</code>: short Stage 3 infrastructure overview</li>
+      <li><code>Display/</code>: placeholder directory for the upcoming Stage 3 source files</li>
+    </ul>
+  </section>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">Main Stage 3 Changes</h3>
+    <p class="mt-2 text-sm leading-6 text-gray-600">
+      The key architectural update is <code>DTCArray.from_versions(...)</code>, which is intended to build Stage 3 outputs directly from precomputed per-dtype results so the Stage 2 conversion path is not applied a second time.
+    </p>
+  </section>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">Validation Status</h3>
+    <p class="mt-2 text-sm leading-6 text-gray-600">
+      The record notes source-level validation and a pending runtime test pass in an environment with <code>numpy</code> and <code>pytest</code> installed.
+    </p>
 `;
 
 const RUN_GUIDE_HTML_BY_KEY = {
@@ -529,7 +550,7 @@ const RUN_GUIDE_HTML_BY_KEY = {
   risk_stage2_algorithm: RUN_GUIDE_HTML_RISK_STAGE2,
   risk_stage2_infrastructure: RUN_GUIDE_HTML_RISK_STAGE2_INFRA,
   risk_stage3_algorithm: RUN_GUIDE_HTML_RISK_STAGE3,
-  empty_infra: RUN_GUIDE_HTML_EMPTY_INFRA,
+  risk_stage3_infrastructure: RUN_GUIDE_HTML_RISK_STAGE3_INFRA,
   pricing: RUN_GUIDE_HTML_PRICING,
   patch: RUN_GUIDE_HTML_PATCH,
   gpu: RUN_GUIDE_HTML_GPU

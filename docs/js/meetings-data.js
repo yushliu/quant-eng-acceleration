@@ -5,7 +5,8 @@ window.COMMUNITY_MEETINGS = [
   {
     "id": "2026-01-2",
     "ym": "2026-01",
-    "shortTag": "ALGORITHM",
+    "shortTag": "INFRA",
+    "defaultViewId": "infrastructure",
     "status": "COMPLETED",
     "downloadItemId": "risk-model-comparison-stage3-2026-01-2",
     "latestViews": [
@@ -14,10 +15,11 @@ window.COMMUNITY_MEETINGS = [
         "label": "Infrastructure",
         "latest": {
           "date": "2026-01 (2nd)",
-          "title": "Meeting Record - Stage 3 Infrastructure",
+          "title": "Datatype Comparison Stage 3 - Higher-Level Numerical Ops and Reporting",
           "points": [
-            "No infrastructure update published yet for this view.",
-            "Algorithm view contains the finalized Stage 3 comparison and recommendation content for this release."
+            "Recorded the Stage 3 datatype comparison infrastructure milestone around higher-level numerical ops, reporting, and the correct precomputed per-dtype output path.",
+            "Highlighted `DTCArray.from_versions(...)` as the architectural fix that avoids accidental double-rounding when Stage 3 operations produce outputs.",
+            "Documented reductions/statistics, algebra, and utility operations together with the restricted `einsum` scope and pending dependency-enabled runtime verification."
           ]
         }
       },
@@ -40,8 +42,90 @@ window.COMMUNITY_MEETINGS = [
         "id": "infrastructure",
         "label": "Infrastructure",
         "detail": {
-          "title": "Meeting Record - Stage 3 Infrastructure",
-          "cards": []
+          "title": "Datatype Comparison Stage 3 - Higher-Level Numerical Ops and Reporting",
+          "cards": [
+            {
+              "heading": "Meeting Objective",
+              "bullets": [
+                "Recorded the completion target for Stage 3 of the datatype comparison project.",
+                "Extended the Stage 2 per-dtype array comparison framework into a higher-level numerical operation layer while preserving the semantics of precomputed dtype versions.",
+                "Kept Stage 3 scoped to numerical operations and reporting rather than hardware execution modeling or Stage 4 workflow integration."
+              ]
+            },
+            {
+              "heading": "Core Architecture Update",
+              "bullets": [
+                "Added `DTCArray.from_versions(...)` as the Stage 3 construction path for operation outputs.",
+                "The purpose of this constructor is to reuse already-computed per-dtype results directly instead of routing them through the Stage 2 conversion path again.",
+                "This avoids accidental double-rounding and keeps `versions[\"fp64\"]` as the reference version."
+              ]
+            },
+            {
+              "heading": "Stage 3 Operation Set",
+              "bullets": [
+                "Reductions and statistics: `sum`, `mean`, `std`, `quantile`.",
+                "Algebra: `dot`, `matmul`, `outer`, restricted `einsum`.",
+                "Utilities: `reshape`, `transpose`, `.T`, `diag`, `eye`, `clip`, `isfinite`."
+              ],
+              "table": {
+                "columns": ["Category", "Operations"],
+                "rows": [
+                  ["Reductions / Statistics", "`sum`, `mean`, `std`, `quantile`"],
+                  ["Algebra", "`dot`, `matmul`, `outer`, restricted `einsum`"],
+                  ["Utilities", "`reshape`, `transpose`, `.T`, `diag`, `eye`, `clip`, `isfinite`"]
+                ]
+              }
+            },
+            {
+              "heading": "Special Design Rules",
+              "bullets": [
+                "Restricted `einsum` support to the explicit patterns `\"ij,j->i\"` and `\"ij,kj->ki\"` so Stage 3 stays within a controlled comparison scope.",
+                "`isfinite` is intentionally treated as a per-dtype diagnostic helper and returns `dict[str, np.ndarray]` rather than a `DTCArray`."
+              ]
+            },
+            {
+              "heading": "Files Recorded For This Stage",
+              "bullets": [
+                "`dtcnumpy/core.py` for the Stage 3 output-construction logic.",
+                "`dtcnumpy/ops.py` for Stage 3 higher-level operations.",
+                "`dtcnumpy/__init__.py` and `dtcnumpy/report.py` for public API exposure and reporting.",
+                "`tests/test_stage3_ops.py` for the dedicated Stage 3 test suite."
+              ]
+            },
+            {
+              "heading": "Functional Completion Checklist",
+              "bullets": [
+                "Stage 3 output constructor: completed.",
+                "Double-rounding avoidance for Stage 3 outputs: completed.",
+                "Reductions/statistics, algebra, utilities, and scope controls: completed.",
+                "Source-level compile validation: completed.",
+                "Dependency-enabled runtime tests: pending environment."
+              ]
+            },
+            {
+              "heading": "Validation Record",
+              "bullets": [
+                "Provided run instructions: `python3 -m pip install numpy pytest` and `python3 -m pytest -q`.",
+                "Recorded source-level validation with `python3 -m py_compile dtcnumpy/__init__.py dtcnumpy/core.py dtcnumpy/dtypes.py dtcnumpy/ops.py dtcnumpy/report.py tests/test_stage2_array.py tests/test_stage3_ops.py`.",
+                "Runtime execution remains pending in an environment where `numpy` and `pytest` are installed."
+              ]
+            },
+            {
+              "heading": "Scope Boundaries Preserved",
+              "bullets": [
+                "No hardware execution modeling or Tensor Core scheduling simulation.",
+                "No advanced linear algebra, no random sampling, and no covariance or Stage 4 risk workflow integration.",
+                "No general einsum engine and no full ndarray compatibility target."
+              ]
+            },
+            {
+              "heading": "Meeting Outcome",
+              "bullets": [
+                "Stage 3 is recorded as complete at the design and source level, with final runtime verification still pending a dependency-enabled environment.",
+                "The milestone extends the datatype comparison framework into a controlled higher-level numerical operation layer while preserving strict scope limits."
+              ]
+            }
+          ]
         }
       },
       {
@@ -202,16 +286,98 @@ window.COMMUNITY_MEETINGS = [
     ],
     "latest": {
       "date": "2026-01 (2nd)",
-      "title": "Meeting Record - Stage 3 Final Comparison and Recommendation",
+      "title": "Datatype Comparison Stage 3 - Higher-Level Numerical Ops and Reporting",
       "points": [
-        "Completed the final comparison pass across Historical Simulation, Parametric Normal, and EWMA + Monte Carlo using the shared baseline portfolio and fixed evaluation rules.",
-        "Documented ranking tables, tradeoffs, hypothesis review, and a final recommendation instead of only preliminary observations.",
-        "Selected EWMA + Monte Carlo as the strongest primary benchmark candidate under the tested setup, with Parametric Normal as the smooth reference model."
+        "Recorded the Stage 3 datatype comparison infrastructure milestone around higher-level numerical ops, reporting, and the correct precomputed per-dtype output path.",
+        "Highlighted `DTCArray.from_versions(...)` as the architectural fix that avoids accidental double-rounding when Stage 3 operations produce outputs.",
+        "Documented reductions/statistics, algebra, and utility operations together with the restricted `einsum` scope and pending dependency-enabled runtime verification."
       ]
     },
     "detail": {
-      "title": "Meeting Record - Stage 3 Final Comparison and Recommendation",
-      "cards": []
+      "title": "Datatype Comparison Stage 3 - Higher-Level Numerical Ops and Reporting",
+      "cards": [
+        {
+          "heading": "Meeting Objective",
+          "bullets": [
+            "Recorded the completion target for Stage 3 of the datatype comparison project.",
+            "Extended the Stage 2 per-dtype array comparison framework into a higher-level numerical operation layer while preserving the semantics of precomputed dtype versions.",
+            "Kept Stage 3 scoped to numerical operations and reporting rather than hardware execution modeling or Stage 4 workflow integration."
+          ]
+        },
+        {
+          "heading": "Core Architecture Update",
+          "bullets": [
+            "Added `DTCArray.from_versions(...)` as the Stage 3 construction path for operation outputs.",
+            "The purpose of this constructor is to reuse already-computed per-dtype results directly instead of routing them through the Stage 2 conversion path again.",
+            "This avoids accidental double-rounding and keeps `versions[\"fp64\"]` as the reference version."
+          ]
+        },
+        {
+          "heading": "Stage 3 Operation Set",
+          "bullets": [
+            "Reductions and statistics: `sum`, `mean`, `std`, `quantile`.",
+            "Algebra: `dot`, `matmul`, `outer`, restricted `einsum`.",
+            "Utilities: `reshape`, `transpose`, `.T`, `diag`, `eye`, `clip`, `isfinite`."
+          ],
+          "table": {
+            "columns": ["Category", "Operations"],
+            "rows": [
+              ["Reductions / Statistics", "`sum`, `mean`, `std`, `quantile`"],
+              ["Algebra", "`dot`, `matmul`, `outer`, restricted `einsum`"],
+              ["Utilities", "`reshape`, `transpose`, `.T`, `diag`, `eye`, `clip`, `isfinite`"]
+            ]
+          }
+        },
+        {
+          "heading": "Special Design Rules",
+          "bullets": [
+            "Restricted `einsum` support to the explicit patterns `\"ij,j->i\"` and `\"ij,kj->ki\"` so Stage 3 stays within a controlled comparison scope.",
+            "`isfinite` is intentionally treated as a per-dtype diagnostic helper and returns `dict[str, np.ndarray]` rather than a `DTCArray`."
+          ]
+        },
+        {
+          "heading": "Files Recorded For This Stage",
+          "bullets": [
+            "`dtcnumpy/core.py` for the Stage 3 output-construction logic.",
+            "`dtcnumpy/ops.py` for Stage 3 higher-level operations.",
+            "`dtcnumpy/__init__.py` and `dtcnumpy/report.py` for public API exposure and reporting.",
+            "`tests/test_stage3_ops.py` for the dedicated Stage 3 test suite."
+          ]
+        },
+        {
+          "heading": "Functional Completion Checklist",
+          "bullets": [
+            "Stage 3 output constructor: completed.",
+            "Double-rounding avoidance for Stage 3 outputs: completed.",
+            "Reductions/statistics, algebra, utilities, and scope controls: completed.",
+            "Source-level compile validation: completed.",
+            "Dependency-enabled runtime tests: pending environment."
+          ]
+        },
+        {
+          "heading": "Validation Record",
+          "bullets": [
+            "Provided run instructions: `python3 -m pip install numpy pytest` and `python3 -m pytest -q`.",
+            "Recorded source-level validation with `python3 -m py_compile dtcnumpy/__init__.py dtcnumpy/core.py dtcnumpy/dtypes.py dtcnumpy/ops.py dtcnumpy/report.py tests/test_stage2_array.py tests/test_stage3_ops.py`.",
+            "Runtime execution remains pending in an environment where `numpy` and `pytest` are installed."
+          ]
+        },
+        {
+          "heading": "Scope Boundaries Preserved",
+          "bullets": [
+            "No hardware execution modeling or Tensor Core scheduling simulation.",
+            "No advanced linear algebra, no random sampling, and no covariance or Stage 4 risk workflow integration.",
+            "No general einsum engine and no full ndarray compatibility target."
+          ]
+        },
+        {
+          "heading": "Meeting Outcome",
+          "bullets": [
+            "Stage 3 is recorded as complete at the design and source level, with final runtime verification still pending a dependency-enabled environment.",
+            "The milestone extends the datatype comparison framework into a controlled higher-level numerical operation layer while preserving strict scope limits."
+          ]
+        }
+      ]
     }
   },
 

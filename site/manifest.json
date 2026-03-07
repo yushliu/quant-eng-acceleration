@@ -2,20 +2,22 @@
   "downloadItems": [
     {
       "id": "risk-model-comparison-stage3-2026-01-2",
-      "title": "Meeting Record - Stage 3 Final Comparison and Recommendation",
+      "title": "2026-1-2 Meeting Record",
       "short": "",
       "tag": "Update",
       "views": [
         {
           "id": "infrastructure",
           "label": "Infrastructure",
-          "title": "Meeting Record - Stage 3 Infrastructure",
-          "description": "No infrastructure update has been published yet for this Stage 3 release.",
-          "guideKey": "empty_infra",
+          "title": "Meeting Record - Datatype Comparison Stage 3 Higher-Level Numerical Ops and Reporting",
+          "description": "Infrastructure meeting record for the Stage 3 datatype comparison architecture, higher-level operation set, reporting layer, and validation status.",
+          "guideKey": "risk_stage3_infrastructure",
           "filePrefixes": [
             "artifacts/2026-1-2/Infrastructure/"
           ],
-          "sourcePrefixes": []
+          "sourcePrefixes": [
+            "Infrastructure/Display/"
+          ]
         },
         {
           "id": "algorithm",
@@ -30,6 +32,11 @@
         }
       ],
       "files": [
+        {
+          "label": "infrastructure_summary.md",
+          "path": "artifacts/2026-1-2/Infrastructure/summary.md",
+          "lang": "markdown"
+        },
         {
           "label": "stage3_meeting_record.md",
           "path": "artifacts/2026-1-2/Algorithm/stage3_meeting_record.md",
@@ -54,7 +61,7 @@
     },
     {
       "id": "risk-model-comparison-stage2-2026-01-1",
-      "title": "Meeting Record - Stage 2 Implementation and Preliminary Results",
+      "title": "2026-1-1 Meeting Record",
       "short": "",
       "tag": "Update",
       "views": [
@@ -120,7 +127,7 @@
     },
     {
       "id": "risk-model-comparison-stage1-2025-12-2",
-      "title": "Meeting Record - Stage 1 Research Design + Specification",
+      "title": "2025-12-2 Meeting Record",
       "short": "",
       "tag": "Update",
       "views": [

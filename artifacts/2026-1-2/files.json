@@ -1,0 +1,15 @@
+{
+  "root": "artifacts/2026-1-2",
+  "files": [
+    "Algorithm/stage3_comparison_summary.csv",
+    "Algorithm/stage3_meeting_record.md",
+    "Algorithm/stage3_ranking_table.csv",
+    "Algorithm/summary.md",
+    "Infrastructure/Display/__init__.py",
+    "Infrastructure/Display/core.py",
+    "Infrastructure/Display/dtypes.py",
+    "Infrastructure/Display/ops.py",
+    "Infrastructure/Display/report.py",
+    "Infrastructure/summary.md"
+  ]
+}

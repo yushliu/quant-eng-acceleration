@@ -3,6 +3,7 @@
   "files": [
     "README.md",
     "Algorithm/README.md",
+    "Infrastructure/Display/README.md",
     "Infrastructure/README.md"
   ]
 }

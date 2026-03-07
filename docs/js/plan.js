@@ -105,6 +105,16 @@ function getDefaultMeetingViewId(meeting) {
     return "";
   }
 
+  const configuredDefault = typeof (meeting && meeting.defaultViewId) === "string"
+    ? meeting.defaultViewId
+    : "";
+  const configuredView = configuredDefault
+    ? views.find((view) => view && view.id === configuredDefault)
+    : null;
+  if (configuredView) {
+    return configuredView.id || "";
+  }
+
   const algorithmView = views.find((view) => view && view.id === "algorithm");
   return algorithmView ? algorithmView.id : (views[0].id || "");
 }

@@ -300,7 +300,10 @@ export async function mountSourceExplorer({ containerEl, indexUrl, baseRoot, hlj
   });
 
   const treeRoot = buildTree(displayFilePaths);
-  const expandedFolders = new Set([""]);
+  const expandedFolders = new Set([
+    "",
+    ...Array.from(treeRoot.folders.values()).map((folderNode) => folderNode.relPath)
+  ]);
   let selectedPath = "";
   let selectedPreviewText = "";
   let selectedCanCopy = false;
