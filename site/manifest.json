@@ -1,6 +1,45 @@
 {
   "downloadItems": [
     {
+      "id": "risk-model-comparison-stage5-2026-02-2",
+      "title": "2026-2-2 Meeting Record",
+      "short": "",
+      "tag": "Update",
+      "views": [
+        {
+          "id": "infrastructure",
+          "label": "Infrastructure",
+          "title": "Meeting Record - dtcnumpy Stage 5 User Examples and Demo Workflows",
+          "description": "Infrastructure meeting record for the dtcnumpy Stage 5 usage layer: published example scripts, demo workflows, and lightweight usage notes before larger project integration.",
+          "guideKey": "risk_stage5_infrastructure",
+          "filePrefixes": [
+            "artifacts/2026-2-2/Infrastructure/"
+          ],
+          "sourcePrefixes": [
+            "Infrastructure/Display/"
+          ]
+        },
+        {
+          "id": "algorithm",
+          "label": "Algorithm",
+          "title": "2026-2-2 Algorithm View",
+          "description": "Algorithm display placeholder for the upcoming dtcnumpy example scripts and README files.",
+          "guideKey": "empty_algorithm",
+          "filePrefixes": [
+            "artifacts/2026-2-2/Algorithm/"
+          ],
+          "sourcePrefixes": []
+        }
+      ],
+      "files": [
+        {
+          "label": "infrastructure_summary.md",
+          "path": "artifacts/2026-2-2/Infrastructure/summary.md",
+          "lang": "markdown"
+        }
+      ]
+    },
+    {
       "id": "risk-model-comparison-stage4-2026-02-1",
       "title": "2026-2-1 Meeting Record",
       "short": "",

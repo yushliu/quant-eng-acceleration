@@ -10,6 +10,10 @@ let sourceExplorerRequestId = 0;
 let sourceExplorerModulePromise = null;
 
 const SOURCE_EXPLORER_ITEM_CONFIG = {
+  "risk-model-comparison-stage5-2026-02-2": {
+    indexPath: "artifacts/2026-2-2/files.json",
+    baseRootPath: "artifacts/2026-2-2"
+  },
   "risk-model-comparison-stage4-2026-02-1": {
     indexPath: "artifacts/2026-2-1/files.json",
     baseRootPath: "artifacts/2026-2-1"
@@ -577,6 +581,46 @@ const RUN_GUIDE_HTML_RISK_STAGE4_INFRA = `
   </section>
 `;
 
+const RUN_GUIDE_HTML_RISK_STAGE5_INFRA = `
+  <h2 class="text-lg font-semibold tracking-tight text-gray-900">How to Use These Artifacts</h2>
+  <p class="mt-3 text-sm leading-6 text-gray-600">
+    This Infrastructure view records the Stage 5 dtcnumpy usage layer: user examples, demo workflows, and lightweight usage notes intended for meetings, onboarding, and internal explanation.
+  </p>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">What Is Included</h3>
+    <ul class="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-gray-600">
+      <li><code>summary.md</code>: short Stage 5 infrastructure overview</li>
+      <li><code>Infrastructure/Display/README_examples.md</code>: example guide with run commands, scope notes, and file-by-file explanation</li>
+      <li><code>Infrastructure/Display/demo_basic.py</code>, <code>demo_ops.py</code>, <code>demo_quant.py</code>: published meeting-ready example scripts</li>
+    </ul>
+  </section>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">Stage 5 Focus</h3>
+    <p class="mt-2 text-sm leading-6 text-gray-600">
+      Stage 5 is scoped around meeting-ready examples such as <code>demo_basic.py</code>, <code>demo_ops.py</code>, <code>demo_quant.py</code>, and a lightweight example README so new users can understand how to use <code>dtcnumpy</code> without reading internal implementation files first.
+    </p>
+  </section>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">How To Run</h3>
+    <pre class="mt-2 overflow-auto rounded-md border border-gray-200 bg-white p-3 text-xs leading-6 text-gray-800 shadow-sm"><code>python3 examples/demo_basic.py
+python3 examples/demo_ops.py
+python3 examples/demo_quant.py</code></pre>
+    <p class="mt-2 text-sm leading-6 text-gray-600">
+      The examples are intentionally small and are meant for local demos, onboarding, and internal presentation rather than full risk-project integration.
+    </p>
+  </section>
+
+  <section class="mt-5">
+    <h3 class="text-sm font-semibold text-gray-900">Scope Boundary</h3>
+    <p class="mt-2 text-sm leading-6 text-gray-600">
+      This stage does not add full project integration, new benchmark infrastructure, packaging redesign, or performance measurement. It is intentionally focused on usability and presentation.
+    </p>
+  </section>
+`;
+
 const RUN_GUIDE_HTML_EMPTY_ALGORITHM = `
   <h2 class="text-lg font-semibold tracking-tight text-gray-900">How to Use These Artifacts</h2>
   <p class="mt-3 text-sm leading-6 text-gray-600">
@@ -592,6 +636,7 @@ const RUN_GUIDE_HTML_BY_KEY = {
   risk_stage3_algorithm: RUN_GUIDE_HTML_RISK_STAGE3,
   risk_stage3_infrastructure: RUN_GUIDE_HTML_RISK_STAGE3_INFRA,
   risk_stage4_infrastructure: RUN_GUIDE_HTML_RISK_STAGE4_INFRA,
+  risk_stage5_infrastructure: RUN_GUIDE_HTML_RISK_STAGE5_INFRA,
   empty_algorithm: RUN_GUIDE_HTML_EMPTY_ALGORITHM,
   pricing: RUN_GUIDE_HTML_PRICING,
   patch: RUN_GUIDE_HTML_PATCH,

@@ -3,6 +3,223 @@
 // - detail: full version used by Plan > meeting detail cards
 window.COMMUNITY_MEETINGS = [
   {
+    "id": "2026-02-2",
+    "ym": "2026-02",
+    "shortTag": "INFRA",
+    "defaultViewId": "infrastructure",
+    "status": "IN PROGRESS",
+    "downloadItemId": "risk-model-comparison-stage5-2026-02-2",
+    "latestViews": [
+      {
+        "id": "infrastructure",
+        "label": "Infrastructure",
+        "latest": {
+          "date": "2026-02-01",
+          "title": "dtcnumpy Stage 5 - User Examples and Demo Workflows",
+          "points": [
+            "Reframed the current final stage of the roadmap away from immediate project integration and toward user-facing examples, demo workflows, and usage notes.",
+            "Published the first example set under Infrastructure Display: `demo_basic.py`, `demo_ops.py`, `demo_quant.py`, and `README_examples.md`.",
+            "Positioned this stage as a presentation and onboarding layer so the package can be explained clearly before later project-level integration."
+          ]
+        }
+      },
+      {
+        "id": "algorithm",
+        "label": "Algorithm",
+        "latest": {
+          "date": "2026-02-01",
+          "title": "2026-2-2 Algorithm View",
+          "points": [
+            "Example display files will be published in a later update."
+          ]
+        }
+      }
+    ],
+    "detailViews": [
+      {
+        "id": "infrastructure",
+        "label": "Infrastructure",
+        "detail": {
+          "title": "dtcnumpy Stage 5 - User Examples and Demo Workflows",
+          "cards": [
+            {
+              "heading": "What This Build Did",
+              "bullets": [
+                "Reframed the final stage of the current `dtcnumpy` roadmap away from immediate project integration and toward user-facing examples and demo workflows.",
+                "Defined Stage 5 as the first presentation-oriented stage of the project, focused on showing how `dtcnumpy` can be used in practice through small, controlled examples.",
+                "Fixed the Stage 5 scope around example-driven usage covering base array creation, dtype comparison, `astype(...)`, operation-level drift, and lightweight quant-style examples.",
+                "Published the first example set under `Infrastructure/Display/`: `demo_basic.py`, `demo_ops.py`, `demo_quant.py`, and `README_examples.md`."
+              ]
+            },
+            {
+              "heading": "Why This Stage Matters",
+              "bullets": [
+                "Stages 1 through 4 focused on semantic rules, container design, basic operations, and numerically sensitive infrastructure preparation.",
+                "At this point, the project has enough core functionality that a new user should be able to see what `dtcnumpy` does without first reading internal implementation files.",
+                "Stage 5 is intended to turn `dtcnumpy` from an internal prototype into a usable, explainable tool."
+              ]
+            },
+            {
+              "heading": "Stage 5 Scope That Is Followed",
+              "bullets": [
+                "Stage 5 focuses on user-facing examples, demo scripts, simple workflow explanations, and lightweight usage documentation.",
+                "Stage 5 does not include full project integration, end-to-end risk-pipeline merge, new benchmark infrastructure, performance measurement, or packaging redesign.",
+                "The purpose of this stage is to show how the package is used before it is integrated into larger workflows."
+              ]
+            },
+            {
+              "heading": "Target Examples For This Stage",
+              "bullets": [
+                "`demo_basic.py` demonstrates array creation, reporting, and dtype switching.",
+                "`demo_ops.py` demonstrates operation-level drift using supported Stage 3 functions.",
+                "`demo_quant.py` demonstrates lightweight quant-style examples without requiring full project integration.",
+                "`README_examples.md` explains how to run and interpret the examples."
+              ]
+            },
+            {
+              "heading": "What The Published Examples Cover",
+              "bullets": [
+                "`demo_basic.py` covers scalar creation, vector creation, comparison printing, and `astype(...)` on a small array.",
+                "`demo_ops.py` covers `mean`, `dot`, and `quantile` so users can see operation-level drift instead of only raw input drift.",
+                "`demo_quant.py` covers portfolio weighted return, tail-style quantile checking, and a compact matrix aggregation example based on `matmul` and `mean`."
+              ]
+            },
+            {
+              "heading": "Example Design Goals",
+              "bullets": [
+                "Show the simplest possible entry point to `dtcnumpy`.",
+                "Demonstrate that the package compares multiple dtype semantics under one interface.",
+                "Show that operation outputs, not only raw inputs, can drift across dtypes.",
+                "Give at least one small quantitative example so the project remains tied to the club's quant-engineering mission.",
+                "Keep all examples small enough to run in a meeting without depending on the full risk codebase."
+              ]
+            },
+            {
+              "heading": "Expected Example Coverage",
+              "bullets": [
+                "Basic input comparison through `array(...)` and `print(...)`.",
+                "Dtype switching through `astype(...)`.",
+                "Operation-level examples such as `sum`, `mean`, `dot`, `matmul`, and `quantile`.",
+                "Lightweight quant-style examples such as portfolio weighted return, mini tail-risk checks, and compact matrix aggregation."
+              ]
+            },
+            {
+              "heading": "What Users Should Learn",
+              "bullets": [
+                "How to create a `dtcnumpy` object.",
+                "How FP64 is used as the reference.",
+                "How reduced-precision and quantized formats are compared against the reference.",
+                "How operation outputs can differ across dtypes and why those differences matter for quantitative computation."
+              ]
+            },
+            {
+              "heading": "How To Run Each Example",
+              "bullets": [
+                "From the project root, run `python3 examples/demo_basic.py`.",
+                "Run `python3 examples/demo_ops.py` for supported operation-level examples.",
+                "Run `python3 examples/demo_quant.py` for lightweight quant-style examples.",
+                "Use `README_examples.md` as the short guide for scope, commands, and file-by-file explanation."
+              ]
+            },
+            {
+              "heading": "Acceptance Target",
+              "bullets": [
+                "At least three example scripts are available.",
+                "A new user can understand the basic workflow without reading internal source files first.",
+                "The examples demonstrate both raw value comparison and operation-level comparison.",
+                "At least one example shows a clear quantitative use case."
+              ]
+            },
+            {
+              "heading": "Known Limitations At This Stage",
+              "bullets": [
+                "Stage 5 still does not integrate `dtcnumpy` into the full risk project.",
+                "The examples are intentionally small and controlled.",
+                "The goal is usability and explanation, not end-to-end model deployment.",
+                "Hardware execution, throughput, and CUDA kernel behavior are still outside the scope of the package.",
+                "Advanced linear algebra, random sampling, and full risk-project integration are still outside the user example scope."
+              ]
+            },
+            {
+              "heading": "Next Step According To Plan",
+              "bullets": [
+                "Use the published example suite in meetings and internal documentation first.",
+                "Add optional smoke tests around the examples if needed.",
+                "Use these examples in meetings and internal documentation first.",
+                "Consider project integration only after the usage layer is stable and easy to explain."
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "algorithm",
+        "label": "Algorithm",
+        "detail": {
+          "title": "2026-2-2 Algorithm View",
+          "cards": []
+        }
+      }
+    ],
+    "latest": {
+      "date": "2026-02-01",
+      "title": "dtcnumpy Stage 5 - User Examples and Demo Workflows",
+      "points": [
+        "Reframed the current final stage of the roadmap away from immediate project integration and toward user-facing examples and demo workflows.",
+        "Published the first example set under Infrastructure Display: `demo_basic.py`, `demo_ops.py`, `demo_quant.py`, and `README_examples.md`.",
+        "Positioned this stage as a usability and onboarding layer before later project-level integration."
+      ]
+    },
+    "detail": {
+      "title": "dtcnumpy Stage 5 - User Examples and Demo Workflows",
+      "cards": [
+        {
+          "heading": "What This Build Did",
+          "bullets": [
+            "Reframed the final stage of the current `dtcnumpy` roadmap away from immediate project integration and toward user-facing examples and demo workflows.",
+            "Defined Stage 5 as the first presentation-oriented stage of the project, focused on showing how `dtcnumpy` can be used in practice through small, controlled examples.",
+            "Fixed the Stage 5 scope around example-driven usage covering base array creation, dtype comparison, `astype(...)`, operation-level drift, and lightweight quant-style examples.",
+            "Published the first example set under `Infrastructure/Display/`: `demo_basic.py`, `demo_ops.py`, `demo_quant.py`, and `README_examples.md`."
+          ]
+        },
+        {
+          "heading": "Why This Stage Matters",
+          "bullets": [
+            "Stages 1 through 4 focused on semantic rules, container design, basic operations, and numerically sensitive infrastructure preparation.",
+            "At this point, the project has enough core functionality that a new user should be able to see what `dtcnumpy` does without first reading internal implementation files.",
+            "Stage 5 is intended to turn `dtcnumpy` from an internal prototype into a usable, explainable tool."
+          ]
+        },
+        {
+          "heading": "Target Examples For This Stage",
+          "bullets": [
+            "`demo_basic.py` demonstrates array creation, reporting, and dtype switching.",
+            "`demo_ops.py` demonstrates operation-level drift using supported Stage 3 functions.",
+            "`demo_quant.py` demonstrates lightweight quant-style examples without requiring full project integration.",
+            "`README_examples.md` explains how to run and interpret the examples."
+          ]
+        },
+        {
+          "heading": "How To Run Each Example",
+          "bullets": [
+            "From the project root, run `python3 examples/demo_basic.py`.",
+            "Run `python3 examples/demo_ops.py` for supported operation-level examples.",
+            "Run `python3 examples/demo_quant.py` for lightweight quant-style examples.",
+            "Use `README_examples.md` as the short guide for scope, commands, and file-by-file explanation."
+          ]
+        },
+        {
+          "heading": "Next Step According To Plan",
+          "bullets": [
+            "Use the published example suite in meetings and internal documentation first.",
+            "Add optional smoke tests around the examples if needed.",
+            "Consider project integration only after the usage layer is stable and easy to explain."
+          ]
+        }
+      ]
+    }
+  },
+  {
     "id": "2026-02-1",
     "ym": "2026-02",
     "shortTag": "INFRA",

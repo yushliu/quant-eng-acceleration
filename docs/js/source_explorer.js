@@ -1,4 +1,5 @@
 export const SOURCE_EXPLORER_ENABLED_IDS = new Set([
+  "risk-model-comparison-stage5-2026-02-2",
   "risk-model-comparison-stage4-2026-02-1",
   "risk-model-comparison-stage3-2026-01-2",
   "risk-model-comparison-stage2-2026-01-1",

@@ -1,0 +1,9 @@
+{
+  "root": "artifacts/2026-2-2",
+  "files": [
+    "Infrastructure/Display/README_examples.md",
+    "Infrastructure/Display/demo_basic.py",
+    "Infrastructure/Display/demo_ops.py",
+    "Infrastructure/Display/demo_quant.py"
+  ]
+}
