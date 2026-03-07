@@ -1164,6 +1164,84 @@ window.COMMUNITY_MEETINGS = [
           "title": "Meeting Record - dtcnumpy Stage 1 Scope Definition + Data-Type Semantics Design",
           "cards": [
             {
+              "heading": "dtcnumpy - Five-Stage Infrastructure Plan",
+              "stagePlan": {
+                "projectTitle": "dtcnumpy - Five-Stage Infrastructure Plan",
+                "stages": [
+                  {
+                    "id": "stage1",
+                    "label": "Stage 1",
+                    "title": "Stage 1 - Scope Definition + Data-Type Semantics Design",
+                    "subheading": "What this stage established",
+                    "bullets": [
+                      "Defined dtcnumpy as a data-type semantics simulator for quantitative computation rather than a CUDA hardware simulator.",
+                      "Fixed the first-version project boundary so the work stays focused on numerical precision comparison instead of expanding into a full NumPy replacement.",
+                      "Selected the initial supported formats for version 0.1: FP64, FP32, FP16, BF16, TF32, INT8, INT16, and INT32.",
+                      "Established FP64 as the high-precision reference and FP32 as the practical baseline for later result interpretation.",
+                      "Began drafting semantic rules for each supported format, including rounding behavior, accumulation behavior, and integer quantization / dequantization logic.",
+                      "Defined the intended user-facing interface as a lightweight NumPy-style wrapper such as `import dtcnumpy as dnp`."
+                    ]
+                  },
+                  {
+                    "id": "stage2",
+                    "label": "Stage 2",
+                    "title": "Stage 2 - Base Container + Data-Type Conversion API",
+                    "subheading": "What this stage will implement",
+                    "bullets": [
+                      "Implement the base `DTCArray` container for dtcnumpy.",
+                      "Add the first user-facing creation and conversion functions: `array`, `asarray`, and `astype`.",
+                      "Precompute and store simulated dtype versions for all supported formats under one shared object.",
+                      "Add the first comparison-ready reporting layer so users can inspect value drift against FP64.",
+                      "Keep the implementation limited to creation, conversion, and reporting only, without adding arithmetic kernels yet.",
+                      "Use this stage to verify that the semantic rules from Stage 1 can be represented consistently in code."
+                    ]
+                  },
+                  {
+                    "id": "stage3",
+                    "label": "Stage 3",
+                    "title": "Stage 3 - Higher-Level Numerical Ops + Reporting",
+                    "subheading": "What this stage expands",
+                    "bullets": [
+                      "Add the first MVP operation layer for dtcnumpy, including reductions and core numeric functions.",
+                      "Support comparison-ready outputs for simple operations such as `sum`, `mean`, `std`, `quantile`, `dot`, `matmul`, `outer`, and restricted `einsum`.",
+                      "Ensure operation results are wrapped correctly without accidental double-rounding.",
+                      "Extend reporting so operation-level drift can be inspected, not only input-level drift.",
+                      "Keep Stage 3 limited to the club's currently needed numerical patterns rather than trying to recreate all of NumPy.",
+                      "Use this stage to make dtcnumpy meaningfully usable for quantitative computation examples."
+                    ]
+                  },
+                  {
+                    "id": "stage4",
+                    "label": "Stage 4",
+                    "title": "Stage 4 - Advanced Linear Algebra + Random Module Preparation",
+                    "subheading": "What this stage prepares",
+                    "bullets": [
+                      "Prepare the advanced numerical infrastructure needed before risk-kernel-level workflows can be explored.",
+                      "Introduce the planning scope around `linalg.cholesky`, `linalg.eigh`, and `random.standard_normal`.",
+                      "Focus on matrix stability, reduced-precision factorization behavior, and controlled random-stream design.",
+                      "Keep the project within dtype-semantics simulation and explicitly out of CUDA hardware execution, Tensor Core scheduling, and throughput benchmarking.",
+                      "Use this stage as the bridge between basic operation comparison and later risk-oriented numerical workflows.",
+                      "Clarify which dtype families appear stable or unstable under more sensitive numerical routines."
+                    ]
+                  },
+                  {
+                    "id": "stage5",
+                    "label": "Stage 5",
+                    "title": "Stage 5 - User Examples + Demo Workflows + Usage Notes",
+                    "subheading": "What this stage demonstrates",
+                    "bullets": [
+                      "Shift the final stage away from immediate full-project integration and toward user-facing examples, demos, and documentation.",
+                      "Build simple example scripts that show how to use dtcnumpy for array creation, dtype switching, comparison reporting, and operation-level drift.",
+                      "Add lightweight quant-style examples such as portfolio weighted return and mini quantile / tail-risk style demonstrations.",
+                      "Prepare a short usage README so the package can be explained clearly to team members and new contributors.",
+                      "Use this stage as a presentation and onboarding layer before later integration into a larger quantitative project.",
+                      "Treat this stage as the first polished explanation layer for the dtcnumpy tool."
+                    ]
+                  }
+                ]
+              }
+            },
+            {
               "heading": "What This Build Did",
               "bullets": [
                 "Defined dtcnumpy as a data-type semantics simulator for quantitative computation rather than a CUDA hardware simulator.",
@@ -1274,12 +1352,55 @@ window.COMMUNITY_MEETINGS = [
           "title": "Meeting Record - Stage 1 Research Design + Specification",
           "cards": [
             {
-              "heading": "Report",
-              "bullets": [
-                "Risk",
-                "Model Comparison Stage 1 - Research Design + Specification",
-                "Report"
-              ]
+              "heading": "Risk Model Comparison - Three-Stage Plan",
+              "stagePlan": {
+                "projectTitle": "Risk Model Comparison - Three-Stage Plan",
+                "stages": [
+                  {
+                    "id": "stage1",
+                    "label": "Stage 1",
+                    "title": "Stage 1 - Research Design + Specification",
+                    "subheading": "What this stage established",
+                    "bullets": [
+                      "Defined the first formal comparison framework for the club's Risk Team under the existing reproducible multi-asset pipeline.",
+                      "Selected three Phase 1 risk models for comparison: Historical Simulation VaR/CVaR, Parametric VaR/CVaR, and EWMA + Monte Carlo VaR/CVaR.",
+                      "Locked the baseline portfolio as SPY, QQQ, TLT, GLD with equal weights.",
+                      "Locked the comparison portfolio as SPY, QQQ, IWM, TLT with equal weights.",
+                      "Standardized the comparison setup: 1-day horizon, alpha = 0.99, shared rolling design, and common evaluation rules.",
+                      "Defined the main evaluation metrics: breach rate, breach rate gap, exceedance severity, CVaR stability, responsiveness, and conservativeness.",
+                      "Established the design report, model cards, portfolio definition, and implementation handoff for later stages."
+                    ]
+                  },
+                  {
+                    "id": "stage2",
+                    "label": "Stage 2",
+                    "title": "Stage 2 - Shared-Schema Implementation + Preliminary Runs",
+                    "subheading": "What this stage will do",
+                    "bullets": [
+                      "Implement the three selected models under the same output schema and artifact structure.",
+                      "Run the first full comparison on the baseline portfolio before extending to the comparison portfolio.",
+                      "Generate preliminary daily VaR/CVaR series for all models using the same date range, rolling design, and shared reporting format.",
+                      "Produce the first backtest metrics and confirm all models can be compared under the same workflow.",
+                      "Verify that differences observed at this stage reflect model behavior rather than setup inconsistency.",
+                      "Prepare an initial cross-model summary before deeper interpretation."
+                    ]
+                  },
+                  {
+                    "id": "stage3",
+                    "label": "Stage 3",
+                    "title": "Stage 3 - Cross-Model Review + Benchmark Recommendation",
+                    "subheading": "What this stage is intended to conclude",
+                    "bullets": [
+                      "Interpret the differences across Historical Simulation, Parametric VaR/CVaR, and EWMA + Monte Carlo VaR/CVaR.",
+                      "Compare model behavior in terms of stability, responsiveness, conservativeness, and tail-risk control.",
+                      "Extend the comparison from the baseline portfolio to the comparison portfolio.",
+                      "Review whether model behavior remains consistent across allocation styles.",
+                      "Identify the strongest candidate for the club's future benchmark baseline.",
+                      "Publish the final recommendation and summarize tradeoffs clearly for future club releases."
+                    ]
+                  }
+                ]
+              }
             },
             {
               "heading": "What This Build Did",

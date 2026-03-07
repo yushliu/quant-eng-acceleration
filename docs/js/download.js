@@ -709,6 +709,7 @@ const RUN_GUIDE_HTML_RISK_STAGE5_INFRA = `
     <h3 class="text-sm font-semibold text-gray-900">What Is Included</h3>
     <ul class="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-gray-600">
       <li><code>summary.md</code>: short Stage 5 infrastructure overview</li>
+      <li><code>Infrastructure/Display/dtcnumpy_manual_2026-02-02.md</code>: user-facing manual covering package scope, object model, public API, usage notes, limitations, and quick-start examples</li>
       <li><code>Infrastructure/Display/README_examples.md</code>: example guide with run commands, scope notes, and file-by-file explanation</li>
       <li><code>Infrastructure/Display/demo_basic.py</code>, <code>demo_ops.py</code>, <code>demo_quant.py</code>: published meeting-ready example scripts</li>
     </ul>
@@ -778,6 +779,14 @@ python3 examples/demo_quant.py</code></pre>
       This stage does not add full project integration, new benchmark infrastructure, packaging redesign, or performance measurement. It is intentionally focused on usability and presentation.
     </p>
   </section>
+
+  <section class="mt-5" id="stage5-manual-inline">
+    <h3 class="text-sm font-semibold text-gray-900">dtcnumpy Manual</h3>
+    <p class="mt-2 text-sm leading-6 text-gray-600">
+      The full user-facing manual is shown directly below for inline reading on the Download page.
+    </p>
+    <div class="mt-4 rounded-md border border-gray-200 bg-white p-5" data-role="manual-content">Loading manual...</div>
+  </section>
 `;
 
 const RUN_GUIDE_HTML_EMPTY_ALGORITHM = `
@@ -829,6 +838,15 @@ function buildLocalUrl(path) {
 
 function buildContentUrl(path) {
   return isLocalPreview() ? buildLocalUrl(path) : buildRawUrl(path);
+}
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 function getFilename(path) {
@@ -1022,6 +1040,160 @@ function applyCodeHighlight(codeEl, language = "") {
   }
 }
 
+function renderInlineMarkdownTable(lines) {
+  if (lines.length < 2) {
+    return "";
+  }
+
+  const rows = lines.map((line) =>
+    line
+      .trim()
+      .replace(/^\|/, "")
+      .replace(/\|$/, "")
+      .split("|")
+      .map((cell) => escapeHtml(cell.trim()))
+  );
+
+  const header = rows[0];
+  const body = rows.slice(2);
+
+  return `
+    <div class="mt-4 overflow-x-auto rounded-md border border-gray-200">
+      <table class="min-w-full bg-white">
+        <thead class="bg-gray-50">
+          <tr>${header.map((cell) => `<th class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-[0.08em] text-gray-500">${cell}</th>`).join("")}</tr>
+        </thead>
+        <tbody>
+          ${body.map((row) => `<tr class="border-t border-gray-200">${row.map((cell) => `<td class="px-3 py-2 text-sm text-gray-600 align-top">${cell}</td>`).join("")}</tr>`).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderSimpleMarkdown(markdown) {
+  const lines = String(markdown || "").replace(/\r\n/g, "\n").split("\n");
+  const chunks = [];
+  let index = 0;
+
+  while (index < lines.length) {
+    const line = lines[index];
+    const trimmed = line.trim();
+
+    if (!trimmed) {
+      index += 1;
+      continue;
+    }
+
+    if (trimmed.startsWith("```")) {
+      const codeLines = [];
+      const language = trimmed.slice(3).trim() || "plaintext";
+      index += 1;
+      while (index < lines.length && !lines[index].trim().startsWith("```")) {
+        codeLines.push(lines[index]);
+        index += 1;
+      }
+      index += 1;
+      chunks.push(`<pre class="mt-4 overflow-auto rounded-md border border-gray-200 bg-gray-950 p-3 text-xs leading-6 text-gray-100"><code class="language-${escapeHtml(language)}">${escapeHtml(codeLines.join("\n"))}</code></pre>`);
+      continue;
+    }
+
+    if (trimmed.startsWith("|") && index + 1 < lines.length && lines[index + 1].trim().startsWith("|")) {
+      const tableLines = [line, lines[index + 1]];
+      index += 2;
+      while (index < lines.length && lines[index].trim().startsWith("|")) {
+        tableLines.push(lines[index]);
+        index += 1;
+      }
+      chunks.push(renderInlineMarkdownTable(tableLines));
+      continue;
+    }
+
+    if (trimmed.startsWith("# ")) {
+      chunks.push(`<h2 class="mt-4 text-xl font-semibold tracking-tight text-gray-900">${escapeHtml(trimmed.slice(2))}</h2>`);
+      index += 1;
+      continue;
+    }
+
+    if (trimmed.startsWith("## ")) {
+      chunks.push(`<h3 class="mt-5 text-lg font-semibold tracking-tight text-gray-900">${escapeHtml(trimmed.slice(3))}</h3>`);
+      index += 1;
+      continue;
+    }
+
+    if (trimmed.startsWith("### ")) {
+      chunks.push(`<h4 class="mt-4 text-base font-semibold text-gray-900">${escapeHtml(trimmed.slice(4))}</h4>`);
+      index += 1;
+      continue;
+    }
+
+    if (trimmed.startsWith("#### ")) {
+      chunks.push(`<h5 class="mt-4 text-sm font-semibold text-gray-900">${escapeHtml(trimmed.slice(5))}</h5>`);
+      index += 1;
+      continue;
+    }
+
+    if (trimmed.startsWith("- ")) {
+      const items = [];
+      while (index < lines.length && lines[index].trim().startsWith("- ")) {
+        items.push(lines[index].trim().slice(2));
+        index += 1;
+      }
+      chunks.push(`<ul class="mt-3 list-disc space-y-1 pl-5">${items.map((item) => `<li class="text-sm leading-6 text-gray-600">${escapeHtml(item)}</li>`).join("")}</ul>`);
+      continue;
+    }
+
+    const paragraphLines = [trimmed];
+    index += 1;
+    while (index < lines.length) {
+      const next = lines[index].trim();
+      if (!next || next.startsWith("#") || next.startsWith("- ") || next.startsWith("```") || next.startsWith("|")) {
+        break;
+      }
+      paragraphLines.push(next);
+      index += 1;
+    }
+
+    chunks.push(`<p class="mt-3 text-sm leading-6 text-gray-600">${escapeHtml(paragraphLines.join(" "))}</p>`);
+  }
+
+  return chunks.join("");
+}
+
+async function mountStage5ManualInline(item) {
+  if (!item || item.id !== "risk-model-comparison-stage5-2026-02-2") {
+    return;
+  }
+
+  const selectedView = getSelectedItemView(item);
+  if (!selectedView || selectedView.id !== "infrastructure") {
+    return;
+  }
+
+  const sectionEl = document.getElementById("stage5-manual-inline");
+  if (!sectionEl) {
+    return;
+  }
+
+  const contentEl = sectionEl.querySelector('[data-role="manual-content"]');
+  if (!contentEl) {
+    return;
+  }
+
+  try {
+    const markdown = await fetchTextWithCache("artifacts/2026-2-2/Infrastructure/Display/dtcnumpy_manual_2026-02-02.md");
+    contentEl.innerHTML = renderSimpleMarkdown(markdown);
+    contentEl.querySelectorAll("pre code").forEach((codeEl) => {
+      codeEl.removeAttribute("data-highlighted");
+      if (window.hljs && typeof window.hljs.highlightElement === "function") {
+        window.hljs.highlightElement(codeEl);
+      }
+    });
+  } catch (error) {
+    contentEl.textContent = error.message || "Failed to load manual.";
+  }
+}
+
 async function mountStage5ExampleDemo(item) {
   if (!item || item.id !== "risk-model-comparison-stage5-2026-02-2") {
     return;
@@ -1117,6 +1289,7 @@ async function updateSourceExplorer(item) {
 
     const runGuideHtml = getRunGuideHtml(item);
     ensureRunGuideSection(runGuideHtml);
+    await mountStage5ManualInline(item);
     await mountStage5ExampleDemo(item);
 
     const containerEl = ensureSourceExplorerSection();

@@ -36,6 +36,11 @@
           "label": "infrastructure_summary.md",
           "path": "artifacts/2026-2-2/Infrastructure/summary.md",
           "lang": "markdown"
+        },
+        {
+          "label": "dtcnumpy_manual_2026-02-02.md",
+          "path": "artifacts/2026-2-2/Infrastructure/Display/dtcnumpy_manual_2026-02-02.md",
+          "lang": "markdown"
         }
       ]
     },

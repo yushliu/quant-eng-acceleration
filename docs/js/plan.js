@@ -91,6 +91,80 @@ function renderCardChart(chart) {
   `;
 }
 
+const stagePlanViewState = {};
+
+function renderStagePlanCard(card, cardId) {
+  const stagePlan = card && card.stagePlan ? card.stagePlan : null;
+  const stages = stagePlan && Array.isArray(stagePlan.stages) ? stagePlan.stages : [];
+  if (!stages.length) {
+    return "";
+  }
+
+  const activeStageId = stagePlanViewState[cardId] || stages[0].id || "";
+  const activeStage = stages.find((stage) => stage && stage.id === activeStageId) || stages[0];
+  const controlMarkup = stages
+    .map((stage) => {
+      const isActive = stage.id === activeStage.id;
+      const classes = isActive
+        ? "border-blue-500 bg-blue-500 text-white"
+        : "border-transparent bg-white text-gray-600 hover:bg-gray-50";
+      return `
+        <button
+          type="button"
+          class="stage-plan__tab inline-flex min-w-0 flex-1 items-center justify-center rounded-md border px-3 py-3 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-300 ${classes}"
+          data-stage-plan-card="${cardId}"
+          data-stage-plan-stage="${stage.id}"
+          aria-pressed="${isActive ? "true" : "false"}"
+        >
+          ${escapeHtml(stage.label || "")}
+        </button>
+      `;
+    })
+    .join("");
+
+  const bulletMarkup = (Array.isArray(activeStage.bullets) ? activeStage.bullets : [])
+    .map((bullet) => `<li class="text-sm leading-6 text-gray-600">${escapeHtml(bullet)}</li>`)
+    .join("");
+
+  const subheadingMarkup = activeStage.subheading
+    ? `<p class="mt-1 text-xs font-semibold uppercase tracking-[0.08em] text-gray-500">${escapeHtml(activeStage.subheading)}</p>`
+    : "";
+
+  return `
+    <article class="rounded-md border border-gray-200 bg-white p-5 shadow-sm">
+      <h3 class="text-sm font-semibold uppercase tracking-[0.12em] text-gray-500">${escapeHtml(card.heading || "")}</h3>
+      ${stagePlan.projectTitle ? `<p class="mt-3 text-base font-semibold text-gray-900">${escapeHtml(stagePlan.projectTitle)}</p>` : ""}
+      <div class="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-1">
+        <div class="grid gap-1" style="grid-template-columns:repeat(${stages.length}, minmax(0, 1fr));" role="tablist" aria-label="${escapeHtml(stagePlan.projectTitle || card.heading || "Stage Plan")}">
+          ${controlMarkup}
+        </div>
+      </div>
+      <section class="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-5">
+        <h4 class="text-base font-semibold text-gray-900">${escapeHtml(activeStage.title || "")}</h4>
+        ${subheadingMarkup}
+        <ul class="mt-3 list-disc space-y-1 pl-5">
+          ${bulletMarkup}
+        </ul>
+      </section>
+    </article>
+  `;
+}
+
+function bindStagePlanCards() {
+  document.querySelectorAll("[data-stage-plan-card][data-stage-plan-stage]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const cardId = button.getAttribute("data-stage-plan-card");
+      const stageId = button.getAttribute("data-stage-plan-stage");
+      if (!cardId || !stageId || stagePlanViewState[cardId] === stageId) {
+        return;
+      }
+
+      stagePlanViewState[cardId] = stageId;
+      renderMeetingDetails();
+    });
+  });
+}
+
 const planMeetings = getPlanMeetings();
 let activeMeetingIndex = 0;
 let activeMeetingViewId = "";
@@ -311,7 +385,12 @@ function renderMeetingDetails() {
   }
 
   cardsEl.innerHTML = cards
-    .map((card) => {
+    .map((card, index) => {
+      if (card && card.stagePlan) {
+        const cardId = `${meeting.id}:${activeMeetingViewId || "default"}:${index}`;
+        return renderStagePlanCard(card, cardId);
+      }
+
       const bullets = Array.isArray(card.bullets) ? card.bullets : [];
       const bulletMarkup = bullets
         .map((bullet) => `<li class=\"text-sm leading-6 text-gray-600\">${escapeHtml(bullet)}</li>`)
@@ -332,6 +411,8 @@ function renderMeetingDetails() {
       `;
     })
     .join("");
+
+  bindStagePlanCards();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
