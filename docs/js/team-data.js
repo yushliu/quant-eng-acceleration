@@ -1,0 +1,83 @@
+window.TEAM_DATA = {
+  hero: {
+    title: "Team",
+    description: "People behind reproducible, benchmark-driven quant engineering."
+  },
+  sections: [
+    {
+      id: "leads",
+      title: "Leads",
+      columns: "lg",
+      members: [
+        {
+          initials: "AL",
+          name: "Avery Lin",
+          role: "Organizer / Lead",
+          discipline: "Computer Engineering · Mathematics",
+          tags: ["Infra"],
+          bio: "Owns CI workflows, repo templates, and review conventions."
+        },
+        {
+          initials: "MT",
+          name: "Morgan Tate",
+          role: "Tech Lead (Infra)",
+          tags: ["Infra", "CPU"],
+          bio: "Defines engineering baselines and documents reproducible environment standards."
+        },
+        {
+          initials: "RK",
+          name: "Riley Kim",
+          role: "Benchmark Lead",
+          discipline: "Statistics · Computer Science",
+          tags: ["CPU"],
+          bio: "Defines benchmark methodology and reporting format for p50, p95, and p99."
+        },
+        {
+          initials: "JS",
+          name: "Jordan Shaw",
+          role: "FPGA-sim Lead",
+          discipline: "Electrical and Computer Engineering",
+          tags: ["FPGA-sim"],
+          bio: "Builds FPGA-sim parsers and measures end-to-end latency distribution."
+        }
+      ]
+    },
+    {
+      id: "contributors",
+      title: "Contributors",
+      columns: "lg",
+      members: [
+        {
+          initials: "NP",
+          name: "Noah Park",
+          role: "Track Lead - CPU",
+          tags: ["CPU"],
+          bio: "Implements CPU baselines and OpenMP optimization experiments with benchmark reports."
+        },
+        {
+          initials: "EV",
+          name: "Elliot Vega",
+          role: "Track Lead - GPU",
+          discipline: "Data Science · Applied Math",
+          tags: ["GPU"],
+          bio: "Prototypes GPU paths with CuPy and Numba while tracking throughput gains."
+        },
+        {
+          initials: "CG",
+          name: "Casey Grant",
+          role: "Contributor",
+          tags: ["Infra", "GPU"],
+          bio: "Maintains automation scripts and validates benchmark artifacts before merge."
+        },
+        {
+          initials: "PT",
+          name: "Parker Tran",
+          role: "Contributor",
+          discipline: "Electrical Engineering · Systems",
+          tags: ["FPGA-sim"],
+          bio: "Builds simulation validation checks and summarizes latency distributions for reviews."
+        }
+      ]
+    }
+  ]
+};
