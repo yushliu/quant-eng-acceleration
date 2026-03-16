@@ -13,34 +13,62 @@
     <section>
       <h1 class="text-2xl font-semibold tracking-tight text-gray-900 sm:text-3xl">Plan</h1>
       <p class="mt-3 max-w-2xl text-sm leading-6 text-gray-600 sm:text-base">
-        Timeline-driven meetings for benchmark delivery, review cadence, and scope control.
+        Timeline-driven meeting summaries for ongoing benchmark work.
+      </p>
+      <p class="mt-3 max-w-3xl text-sm leading-6 text-gray-600 sm:text-base">
+        Plan explains progress. Use this page to understand what changed, why it matters, and what comes next. Use Download for raw files and Release for curated outcomes.
       </p>
     </section>
 
-    <section class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[240px,1fr] lg:gap-8">
-      <aside class="rounded-lg border border-gray-200 bg-gray-50 p-4 shadow-sm lg:p-5" aria-label="Meeting timeline">
+    <section class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(320px,360px),minmax(0,1fr)] lg:gap-8">
+      <aside class="rounded-lg border border-gray-200 bg-gray-50 p-5 shadow-sm lg:p-6" aria-label="Meeting timeline">
         <h2 class="text-xs font-semibold uppercase tracking-[0.16em] text-gray-500">Timeline</h2>
+        <p class="mt-2 text-sm leading-6 text-gray-600">Select a meeting period to read the structured summary for that stage of work.</p>
+        <div id="plan-track-filter" class="mt-5"></div>
 
-        <div class="relative mt-4">
+        <div class="relative mt-5">
           <div class="pointer-events-none absolute bottom-2 left-3 top-2 hidden w-px bg-gray-200 lg:block"></div>
           <div id="plan-timeline" class="flex gap-3 overflow-x-auto pb-2 lg:block lg:space-y-2 lg:overflow-visible lg:pb-0"></div>
         </div>
       </aside>
 
       <section class="rounded-lg border border-gray-200 bg-gray-50 p-6 shadow-sm lg:p-7" aria-live="polite">
-        <header class="border-b border-gray-200 pb-4">
-          <div class="flex items-center justify-between gap-3">
-            <h2 id="meeting-title" class="text-xl font-semibold tracking-tight text-gray-900">Meeting</h2>
-            <div id="meeting-code-link"></div>
+        <header>
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-[0.16em] text-gray-500">Selected Meeting</p>
+              <h2 id="meeting-title" class="mt-2 text-xl font-semibold tracking-tight text-gray-900">Meeting</h2>
+              <p id="meeting-summary-line" class="mt-2 max-w-3xl text-sm leading-6 text-gray-600"></p>
+            </div>
           </div>
-          <div class="mt-2 flex items-center gap-2 text-sm text-gray-600">
-            <span id="meeting-month"></span>
+          <div class="mt-3 flex flex-wrap items-center gap-2 text-sm text-gray-600">
+            <span id="meeting-date" class="rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-600"></span>
             <span id="meeting-status" class="rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-600"></span>
+            <span id="meeting-topic" class="rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-600"></span>
           </div>
         </header>
 
-        <div id="meeting-view-switch" class="mt-5"></div>
-        <div id="meeting-cards" class="mt-5 space-y-4"></div>
+        <section class="mt-6 rounded-md border border-gray-200 bg-white p-5 shadow-sm">
+          <div id="meeting-summary-tabs"></div>
+          <div class="mt-5 border-t border-gray-200 pt-5">
+            <div id="meeting-summary-panel"></div>
+          </div>
+        </section>
+
+        <section class="mt-6 rounded-md border border-gray-200 bg-white p-5 shadow-sm">
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <h3 class="text-sm font-semibold uppercase tracking-[0.12em] text-gray-500">Related Files</h3>
+              <p class="mt-2 text-sm leading-6 text-gray-600">Raw notes, scripts, and small artifacts stay in Download. This page only links out to them.</p>
+            </div>
+            <div id="meeting-related-files"></div>
+          </div>
+        </section>
+
+        <section class="mt-6 rounded-md border border-gray-200 bg-white p-5 shadow-sm">
+          <h3 class="text-sm font-semibold uppercase tracking-[0.12em] text-gray-500">Supporting Notes</h3>
+          <div id="meeting-supporting-notes" class="mt-4 space-y-3"></div>
+        </section>
       </section>
     </section>
   </main>

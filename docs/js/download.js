@@ -6,6 +6,8 @@ let selectedFilePath = "";
 let selectedFileText = "";
 let selectedFileLang = "plaintext";
 let selectedItemViewId = "";
+let activeTrackFilter = "all";
+let activeFileTypeFilter = "all";
 let sourceExplorerRequestId = 0;
 let sourceExplorerModulePromise = null;
 
@@ -914,11 +916,129 @@ function getRunGuideHtml(item) {
 function getVisibleFiles(item) {
   const files = Array.isArray(item && item.files) ? item.files : [];
   const selectedView = getSelectedItemView(item);
-  if (!selectedView || !Array.isArray(selectedView.filePrefixes) || !selectedView.filePrefixes.length) {
-    return files;
+  const viewFiltered = (!selectedView || !Array.isArray(selectedView.filePrefixes) || !selectedView.filePrefixes.length)
+    ? files
+    : files.filter((file) => selectedView.filePrefixes.some((prefix) => String(file.path || "").startsWith(prefix)));
+
+  if (activeFileTypeFilter === "all") {
+    return viewFiltered;
   }
 
-  return files.filter((file) => selectedView.filePrefixes.some((prefix) => String(file.path || "").startsWith(prefix)));
+  return viewFiltered.filter((file) => getFileTypeLabel(file) === activeFileTypeFilter);
+}
+
+function getItemTracks(item) {
+  return getItemViews(item).map((view) => String(view.label || view.id || "")).filter(Boolean);
+}
+
+function getTrackValue(item) {
+  const selectedView = getSelectedItemView(item);
+  if (selectedView) {
+    return String(selectedView.id || "").toLowerCase();
+  }
+  return String(item?.tag || "all").toLowerCase();
+}
+
+function getFilteredManifestItems() {
+  if (activeTrackFilter === "all") {
+    return manifestItems;
+  }
+
+  return manifestItems.filter((item) => getItemViews(item).some((view) => String(view.id || "").toLowerCase() === activeTrackFilter));
+}
+
+function getFileTypeLabel(file) {
+  return String(file?.lang || "").toLowerCase() || "text";
+}
+
+function syncSelectedViewToTrack(item) {
+  if (!item || activeTrackFilter === "all") {
+    return;
+  }
+
+  const matchingView = getItemViews(item).find((view) => String(view?.id || "").toLowerCase() === activeTrackFilter);
+  if (matchingView) {
+    selectedItemViewId = matchingView.id;
+  }
+}
+
+function renderDownloadFilters() {
+  const meetingFilter = document.getElementById("meeting-filter");
+  const trackFilter = document.getElementById("track-filter");
+  const fileTypeFilter = document.getElementById("filetype-filter");
+  const items = getFilteredManifestItems();
+  const selectedItem = manifestItems.find((item) => item.id === selectedItemId) || items[0] || manifestItems[0] || null;
+
+  if (meetingFilter) {
+    meetingFilter.innerHTML = manifestItems
+      .map((item) => `<option value="${item.id}">${item.title}</option>`)
+      .join("");
+    meetingFilter.value = selectedItem?.id || "";
+    meetingFilter.onchange = async (event) => {
+      const nextId = event.target.value;
+      if (!nextId || nextId === selectedItemId) {
+        return;
+      }
+      await selectItem(nextId);
+    };
+  }
+
+  if (trackFilter) {
+    const trackOptions = Array.from(new Set(manifestItems.flatMap((item) => getItemViews(item).map((view) => view.id))))
+      .filter(Boolean)
+      .sort();
+    trackFilter.innerHTML = [`<option value="all">All tracks</option>`]
+      .concat(trackOptions.map((track) => `<option value="${track}">${track.charAt(0).toUpperCase()}${track.slice(1)}</option>`))
+      .join("");
+    trackFilter.value = activeTrackFilter;
+    trackFilter.onchange = async (event) => {
+      activeTrackFilter = event.target.value || "all";
+      renderCards();
+      const filteredItems = getFilteredManifestItems();
+      const currentStillVisible = filteredItems.some((item) => item.id === selectedItemId);
+      if (!currentStillVisible && filteredItems[0]) {
+        await selectItem(filteredItems[0].id);
+        return;
+      }
+      const currentItem = manifestItems.find((item) => item.id === selectedItemId);
+      if (currentItem) {
+        syncSelectedViewToTrack(currentItem);
+        renderItemViewSwitch(currentItem);
+        renderFileSelector(currentItem);
+        updateViewerHeader(currentItem);
+        renderSelectionMeta(currentItem);
+        if (selectedFilePath) {
+          await loadFileContent(selectedFilePath);
+        } else {
+          setCodeViewerText("No file found for this view.");
+        }
+      }
+    };
+  }
+
+  if (fileTypeFilter) {
+    const fileOptions = selectedItem
+      ? Array.from(new Set((Array.isArray(selectedItem.files) ? selectedItem.files : []).map(getFileTypeLabel))).sort()
+      : [];
+    fileTypeFilter.innerHTML = [`<option value="all">All file types</option>`]
+      .concat(fileOptions.map((type) => `<option value="${type}">${type.toUpperCase()}</option>`))
+      .join("");
+    fileTypeFilter.value = activeFileTypeFilter;
+    fileTypeFilter.onchange = async (event) => {
+      activeFileTypeFilter = event.target.value || "all";
+      const currentItem = manifestItems.find((item) => item.id === selectedItemId);
+      if (currentItem) {
+        renderFileSelector(currentItem);
+        updateViewerHeader(currentItem);
+        renderSelectionMeta(currentItem);
+        if (selectedFilePath) {
+          await loadFileContent(selectedFilePath);
+        } else {
+          setCodeViewerText("No file found for this view.");
+        }
+      }
+    };
+  }
 }
 
 function updateItemViewUrl(item) {
@@ -1372,17 +1492,20 @@ function renderCards() {
     return;
   }
 
-  if (!manifestItems.length) {
+  const visibleItems = getFilteredManifestItems();
+
+  if (!visibleItems.length) {
     grid.innerHTML = "<p class=\"text-sm text-gray-600\">No downloadable items found.</p>";
     return;
   }
 
-  grid.innerHTML = manifestItems
+  grid.innerHTML = visibleItems
     .map((item) => {
       const isActive = item.id === selectedItemId;
       const activeClasses = isActive
         ? "border-blue-500 bg-blue-50"
         : "border-gray-200 bg-white hover:border-blue-300";
+      const tracks = getItemTracks(item).join(" · ");
 
       return `
         <button
@@ -1394,6 +1517,7 @@ function renderCards() {
             <h3 class="text-sm font-semibold text-gray-900">${item.title}</h3>
             <span class="rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-[10px] uppercase tracking-[0.08em] text-blue-600">${item.tag || "Item"}</span>
           </div>
+          <p class="mt-2 text-xs uppercase tracking-[0.08em] text-gray-500">${tracks || "General"}</p>
           ${item.short ? `<p class="mt-2 text-xs leading-5 text-gray-600">${item.short}</p>` : ""}
         </button>
       `;
@@ -1442,6 +1566,7 @@ function renderFileSelector(item) {
     const selectedFile = files.find((file) => file.path === nextPath);
     selectedFileLang = mapHighlightLang(selectedFile ? selectedFile.lang : "");
     updateViewerHeader(item);
+    renderSelectionMeta(item);
     await loadFileContent(nextPath);
   };
 }
@@ -1463,6 +1588,22 @@ function updateViewerHeader(item) {
       ? `${description} · ${viewLabel}${pathText}`
       : `${item.id} · ${viewLabel}${pathText}`;
   }
+}
+
+function renderSelectionMeta(item) {
+  const metaEl = document.getElementById("download-selection-meta");
+  if (!metaEl || !item) {
+    return;
+  }
+
+  const files = getVisibleFiles(item);
+  const selectedView = getSelectedItemView(item);
+  metaEl.innerHTML = `
+    <p class="text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Selected Meeting</p>
+    <p class="mt-2 text-sm font-semibold text-gray-900">${escapeHtml(item.title || item.id)}</p>
+    <p class="mt-2 text-sm leading-6 text-gray-600">${escapeHtml(selectedView?.label || "General")} · ${files.length} visible file${files.length === 1 ? "" : "s"}</p>
+    <p class="mt-2 text-sm leading-6 text-gray-600">${escapeHtml(getSelectedItemDescription(item) || "Use the preview panel to inspect file contents before copying or downloading.")}</p>
+  `;
 }
 
 async function fetchTextWithCache(path) {
@@ -1503,15 +1644,18 @@ async function selectItem(itemId) {
   selectedItemId = itemId;
   const requestedViewId = new URLSearchParams(window.location.search).get("view") || "";
   syncSelectedItemView(item, requestedViewId || getDefaultItemViewId(item));
+  syncSelectedViewToTrack(item);
   const visibleFiles = getVisibleFiles(item);
   const firstFile = visibleFiles[0] || null;
   selectedFilePath = firstFile ? firstFile.path : "";
   selectedFileLang = mapHighlightLang(firstFile ? firstFile.lang : "");
 
+  renderDownloadFilters();
   renderCards();
   renderItemViewSwitch(item);
   renderFileSelector(item);
   updateViewerHeader(item);
+  renderSelectionMeta(item);
   updateItemViewUrl(item);
 
   if (!selectedFilePath) {
@@ -1610,6 +1754,7 @@ async function initDownloadPage() {
 
     const hashId = window.location.hash ? window.location.hash.slice(1) : "";
     const defaultItem = manifestItems.find((item) => item.id === hashId) || manifestItems[0];
+    renderDownloadFilters();
     await selectItem(defaultItem.id);
   } catch (error) {
     const grid = document.getElementById("download-grid");

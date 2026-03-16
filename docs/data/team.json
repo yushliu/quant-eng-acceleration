@@ -1,7 +1,7 @@
 {
   "hero": {
     "title": "Team",
-    "description": "People working on quantitative algorithms through reproducible benchmarking."
+    "description": "Meet the people behind the club's algorithm work, engineering support, and shared team structure for reproducible benchmarking."
   },
   "sections": [
     {
@@ -15,14 +15,15 @@
           "role": "Organizer / Lead",
           "discipline": "Computer Engineering · Mathematics",
           "tags": ["Infra"],
-          "bio": "Owns CI workflows, repo templates, and review conventions."
+          "bio": "Leads club direction, review conventions, and shared engineering workflows across projects."
         },
         {
           "initials": "YJ",
           "name": "Yuexin Jiang",
           "role": "Tech Lead (Infra)",
+          "discipline": "Systems Engineering · Compute Workflows",
           "tags": ["Infra", "CPU"],
-          "bio": "Defines engineering baselines and documents reproducible environment standards."
+          "bio": "Defines engineering baselines and maintains reproducible environment standards for implementation work."
         },
         {
           "initials": "CD",
@@ -30,7 +31,7 @@
           "role": "Benchmark Lead",
           "discipline": "Statistics · Computer Science",
           "tags": ["CPU"],
-          "bio": "Defines benchmark methodology and reporting format for p50, p95, and p99."
+          "bio": "Owns benchmark methodology, evaluation framing, and reporting standards across comparison work."
         },
         {
           "initials": "JS",
@@ -38,7 +39,7 @@
           "role": "FPGA-sim Lead",
           "discipline": "Electrical and Computer Engineering",
           "tags": ["FPGA-sim"],
-          "bio": "Builds FPGA-sim parsers and measures end-to-end latency distribution."
+          "bio": "Develops FPGA-simulation tooling and validates latency-focused measurement workflows."
         }
       ]
     },
@@ -51,8 +52,9 @@
           "initials": "CZ",
           "name": "Chenzixi Zhao",
           "role": "Track Lead - CPU",
+          "discipline": "CPU Evaluation · Parallel Methods",
           "tags": ["CPU"],
-          "bio": "Implements CPU baselines and OpenMP optimization experiments with benchmark reports."
+          "bio": "Builds CPU baselines and contributes benchmark-ready implementation updates."
         },
         {
           "initials": "EV",
@@ -60,14 +62,15 @@
           "role": "Track Lead - GPU",
           "discipline": "Data Science · Applied Math",
           "tags": ["GPU"],
-          "bio": "Prototypes GPU paths with CuPy and Numba while tracking throughput gains."
+          "bio": "Develops GPU-oriented paths and tracks performance behavior under shared evaluation settings."
         },
         {
           "initials": "CG",
           "name": "Casey Grant",
           "role": "Contributor",
+          "discipline": "Workflow Automation · Validation",
           "tags": ["Infra", "GPU"],
-          "bio": "Maintains automation scripts and validates benchmark artifacts before merge."
+          "bio": "Supports automation, validation, and artifact checks before benchmark outputs are published."
         },
         {
           "initials": "PT",
@@ -75,7 +78,7 @@
           "role": "Contributor",
           "discipline": "Electrical Engineering · Systems",
           "tags": ["FPGA-sim"],
-          "bio": "Builds simulation validation checks and summarizes latency distributions for reviews."
+          "bio": "Contributes simulation checks and summarizes latency results for technical review."
         }
       ]
     },
@@ -83,20 +86,20 @@
       "id": "two-track-structure",
       "type": "info-cards",
       "title": "Two-Track Structure",
-      "intro": "The club is organized into two tracks to improve technical focus, ownership, and long-term project clarity.",
+      "intro": "The club uses two tracks to keep technical ownership clear while connecting shared benchmark work.",
       "cards": [
         {
           "title": "Infrastructure",
-          "description": "Infrastructure supports tooling, data and compute workflows, reproducibility systems, and benchmarking reliability.",
+          "description": "Infrastructure keeps the club's engineering workflows stable, reviewable, and reusable.",
           "bullets": [
             "tooling and environments",
             "workflow support",
-            "release reliability"
+            "artifact and release reliability"
           ]
         },
         {
           "title": "Algorithm",
-          "description": "Algorithm focuses on quantitative models, risk logic, pricing methods, and research-oriented comparison work.",
+          "description": "Algorithm develops the quantitative methods and comparison logic the club evaluates.",
           "bullets": [
             "model implementation",
             "evaluation logic",
@@ -108,19 +111,19 @@
     {
       "id": "participation",
       "type": "participation",
-      "title": "Participation",
-      "intro": "This club welcomes students who want to contribute to algorithm-oriented technical work, reproducible benchmarking, and long-term project building.",
+      "title": "How to Get Involved",
+      "intro": "Use this section as a starting point for joining the club's algorithm, infrastructure, and benchmark-support work.",
       "groups": [
         {
           "title": "Join Us",
-          "description": "Members contribute across algorithm work, engineering support, benchmark evaluation, and reproducible release preparation."
+          "description": "The club welcomes students who want to contribute to algorithm-oriented technical work, reproducible benchmarking, and long-term project building."
         },
         {
           "title": "Current Open Roles",
           "bullets": [
-            "Algorithm Track Contributor: implement and compare quantitative methods under shared evaluation rules.",
+            "Algorithm Track Contributor: help implement and compare quantitative methods under shared evaluation rules.",
             "Infrastructure Track Contributor: support tooling, environments, and benchmark workflow reliability.",
-            "Documentation and Release Support: organize notes, release summaries, and linked artifacts for review."
+            "Documentation and Release Support: organize notes, summaries, and linked artifacts for review."
           ]
         },
         {
@@ -128,7 +131,7 @@
           "bullets": [
             "Read the Team, Plan, and Release pages.",
             "Choose a topic area or track that matches your interests.",
-            "Start with implementation, documentation, review, or experiment support tasks.",
+            "Start with implementation, documentation, review, or experiment-support tasks.",
             "Grow into deeper technical ownership over time."
           ]
         }

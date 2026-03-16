@@ -1,50 +1,9 @@
-const GITHUB_URL = "https://github.com/yushliu/quant-eng-acceleration";
-const latestUpdateViewState = {};
-
 function getMeetingData() {
   return Array.isArray(window.COMMUNITY_MEETINGS) ? window.COMMUNITY_MEETINGS : [];
 }
 
-function getLatestUpdates(limit = 3) {
-  return getMeetingData()
-    .filter((meeting) => meeting && meeting.latest && meeting.ym && meeting.latest.title)
-    .sort((a, b) => b.ym.localeCompare(a.ym))
-    .slice(0, limit)
-    .map((meeting) => ({
-      id: meeting.id,
-      ym: meeting.ym,
-      latest: meeting.latest,
-      latestViews: Array.isArray(meeting.latestViews) ? meeting.latestViews : []
-    }));
-}
-
-function getLatestViewId(item) {
-  const views = Array.isArray(item && item.latestViews) ? item.latestViews : [];
-  if (!views.length) {
-    return "";
-  }
-  const current = latestUpdateViewState[item.id];
-  if (current && views.some((view) => view && view.id === current)) {
-    return current;
-  }
-  const algorithmView = views.find((view) => view && view.id === "algorithm");
-  return algorithmView ? algorithmView.id : (views[0].id || "");
-}
-
-function getLatestViewContent(item) {
-  const views = Array.isArray(item && item.latestViews) ? item.latestViews : [];
-  if (!views.length) {
-    return item.latest || { title: "", points: [] };
-  }
-  const activeViewId = getLatestViewId(item);
-  const activeView = views.find((view) => view && view.id === activeViewId) || views[0];
-  return activeView && activeView.latest ? activeView.latest : { title: "", points: [] };
-}
-
-function getLatestPlanMeeting() {
-  return getMeetingData()
-    .filter((meeting) => meeting && meeting.id && meeting.ym && meeting.detail && Array.isArray(meeting.detail.cards))
-    .sort((a, b) => b.ym.localeCompare(a.ym))[0] || null;
+function getReleaseData() {
+  return Array.isArray(window.RELEASES_DATA) ? window.RELEASES_DATA : [];
 }
 
 function initMobileNav() {
@@ -62,90 +21,91 @@ function initMobileNav() {
   });
 }
 
-function renderLatestUpdates() {
-  const container = document.getElementById("latest-updates");
-
-  if (!container) {
-    return;
-  }
-
-  const updates = getLatestUpdates(3);
-
-  if (updates.length === 0) {
-    container.innerHTML = "<p class=\"text-sm text-gray-600\">No updates yet.</p>";
-    return;
-  }
-
-  const markup = updates
-    .map((item) => {
-      const activeViewId = getLatestViewId(item);
-      const content = getLatestViewContent(item);
-      const bulletPoints = (Array.isArray(content.points) ? content.points : [])
-        .map((point) => `<li class="text-sm leading-6 text-gray-600">${point}</li>`)
-        .join("");
-      const switchMarkup = item.latestViews.length > 1
-        ? `
-          <div class="inline-flex rounded-md border border-gray-200 bg-white p-1 shadow-sm">
-            ${item.latestViews.map((view) => {
-              const isActive = view.id === activeViewId;
-              const classes = isActive ? "bg-blue-500 text-white" : "text-gray-600 hover:bg-gray-100";
-              return `<button type="button" data-latest-id="${item.id}" data-latest-view="${view.id}" class="rounded-md px-2.5 py-1 text-[11px] font-medium transition ${classes}">${view.label}</button>`;
-            }).join("")}
-          </div>
-        `
-        : "";
-
-      return `
-        <article class="rounded-md border border-gray-200 bg-white p-5 shadow-sm">
-          <div class="flex items-start justify-between gap-3">
-            <p class="text-xs font-medium uppercase tracking-[0.14em] text-gray-500">${item.ym}</p>
-            ${switchMarkup}
-          </div>
-          <h3 class="mt-2 text-base font-semibold text-gray-900">${content.title || ""}</h3>
-          <ul class="mt-3 list-disc space-y-1 pl-5">
-            ${bulletPoints}
-          </ul>
-        </article>
-      `;
-    })
-    .join("");
-
-  container.innerHTML = markup;
-
-  container.querySelectorAll("[data-latest-id][data-latest-view]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const itemId = button.getAttribute("data-latest-id");
-      const viewId = button.getAttribute("data-latest-view");
-      if (!itemId || !viewId || latestUpdateViewState[itemId] === viewId) {
-        return;
-      }
-      latestUpdateViewState[itemId] = viewId;
-      renderLatestUpdates();
-    });
-  });
+function sortByRecency(items, getKey) {
+  return [...items].sort((a, b) => String(getKey(b) || "").localeCompare(String(getKey(a) || "")));
 }
 
-function bindGithubLink() {
-  const link = document.getElementById("view-github-link");
-  if (!link) {
-    return;
-  }
-  link.href = GITHUB_URL;
+function getLatestPlanMeeting() {
+  const meetings = getMeetingData().filter((meeting) => meeting && meeting.id && meeting.detail);
+  return sortByRecency(meetings, (meeting) => meeting.latest?.date || meeting.ym || meeting.id)[0] || null;
 }
 
-function bindViewAllUpdatesLink() {
-  const link = document.getElementById("view-all-updates-link");
-  if (!link) {
+function getLatestRelease() {
+  const releases = getReleaseData();
+  return sortByRecency(releases, (release) => release.date || release.version || release.id)[0] || null;
+}
+
+function getNextStepText(meeting) {
+  const cards = Array.isArray(meeting?.detail?.cards) ? meeting.detail.cards : [];
+  const nextCard = cards.find((card) => /next step/i.test(String(card?.heading || "")));
+  const firstBullet = Array.isArray(nextCard?.bullets) ? nextCard.bullets[0] : "";
+  return firstBullet || "Continue the current benchmark workflow and publish the next structured update.";
+}
+
+function setText(id, value) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.textContent = value;
+  }
+}
+
+function setHref(id, href) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.href = href;
+  }
+}
+
+function renderHomePage() {
+  if (!document.body || document.body.dataset.page !== "home") {
     return;
   }
 
   const latestMeeting = getLatestPlanMeeting();
-  link.href = latestMeeting ? `./plan.html#${latestMeeting.id}` : "./plan.html";
+  const latestRelease = getLatestRelease();
+
+  setText(
+    "hero-current-focus",
+    latestMeeting ? `${latestMeeting.ym} · ${latestMeeting.status}` : "Current benchmark stage summary will appear here."
+  );
+  setText(
+    "hero-workstreams",
+    "Implementation, benchmarking, and structured comparison across active club work."
+  );
+  setText(
+    "hero-latest-outcome",
+    latestRelease ? `${latestRelease.title} · ${latestRelease.version}` : "Curated benchmark outcomes are published through the Release page."
+  );
+
+  setText(
+    "snapshot-stage",
+    latestMeeting ? `${latestMeeting.ym} · ${latestMeeting.status}` : "Current stage information will appear here."
+  );
+  setText(
+    "snapshot-focus",
+    latestMeeting?.latest?.title || "Algorithm implementation and reproducible comparison work."
+  );
+  setText("snapshot-next", latestMeeting ? getNextStepText(latestMeeting) : "Next direction will appear once a new meeting summary is available.");
+  setText(
+    "snapshot-release",
+    latestRelease ? `${latestRelease.title} · ${latestRelease.status}` : "No curated release has been published yet."
+  );
+
+  if (latestRelease) {
+    setText("featured-work-title", latestRelease.title);
+    setText("featured-work-meta", `${latestRelease.category} · ${latestRelease.version} · ${latestRelease.status}`);
+    setText("featured-work-summary", latestRelease.summary);
+    setText("featured-work-scope", Array.isArray(latestRelease.scope) ? latestRelease.scope[0] : latestRelease.overview);
+    setText("featured-work-next", latestRelease.next || "Review the release and reuse its benchmark structure in later work.");
+    if (Array.isArray(latestRelease.evidence) && latestRelease.evidence[0]?.href) {
+      setHref("featured-work-link", latestRelease.evidence[0].href);
+    }
+  } else {
+    setText("featured-work-meta", "");
+  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   initMobileNav();
-  bindGithubLink();
-  bindViewAllUpdatesLink();
-  renderLatestUpdates();
+  renderHomePage();
 });
