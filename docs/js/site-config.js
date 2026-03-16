@@ -11,6 +11,7 @@ window.SITE_CONFIG = {
     { key: "home", label: "Home", href: "./index.html" },
     { key: "team", label: "Team", href: "./team.html" },
     { key: "plan", label: "Plan", href: "./plan.html" },
-    { key: "download", label: "Download", href: "./download.html" }
+    { key: "download", label: "Download", href: "./download.html" },
+    { key: "release", label: "Release", href: "./archive.html" }
   ]
 };

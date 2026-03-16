@@ -59,6 +59,92 @@ function renderTeamSection(section) {
   `;
 }
 
+function renderParticipationSection(section) {
+  const intro = section.intro
+    ? `<p class="mt-3 max-w-3xl text-sm leading-6 text-gray-700">${escapeHtml(section.intro)}</p>`
+    : "";
+  const groups = Array.isArray(section.groups) ? section.groups : [];
+  const groupsMarkup = groups.map((group) => {
+    const description = group.description
+      ? `<p class="mt-2 text-sm leading-6 text-gray-700">${escapeHtml(group.description)}</p>`
+      : "";
+    const bullets = Array.isArray(group.bullets) && group.bullets.length > 0
+      ? `
+        <ul class="mt-3 list-disc space-y-1 pl-5 text-sm leading-6 text-gray-700">
+          ${group.bullets.map((bullet) => `<li>${escapeHtml(bullet)}</li>`).join("")}
+        </ul>
+      `
+      : "";
+
+    return `
+      <article class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+        <h3 class="text-base font-semibold text-gray-900">${escapeHtml(group.title || "")}</h3>
+        ${description}
+        ${bullets}
+      </article>
+    `;
+  }).join("");
+
+  return `
+    <section class="mt-12" aria-labelledby="${escapeHtml(section.id)}-heading">
+      <h2 id="${escapeHtml(section.id)}-heading" class="text-sm font-semibold uppercase tracking-[0.16em] text-gray-500">${escapeHtml(section.title)}</h2>
+      ${intro}
+      <div class="mt-4 grid grid-cols-1 gap-5 lg:grid-cols-3">
+        ${groupsMarkup}
+      </div>
+    </section>
+  `;
+}
+
+function renderInfoCardsSection(section) {
+  const intro = section.intro
+    ? `<p class="mt-3 max-w-3xl text-sm leading-6 text-gray-700">${escapeHtml(section.intro)}</p>`
+    : "";
+  const cards = Array.isArray(section.cards) ? section.cards : [];
+  const cardsMarkup = cards.map((card) => {
+    const description = card.description
+      ? `<p class="mt-3 text-sm leading-6 text-gray-700">${escapeHtml(card.description)}</p>`
+      : "";
+    const bullets = Array.isArray(card.bullets) && card.bullets.length > 0
+      ? `
+        <ul class="mt-3 list-disc space-y-1 pl-5 text-sm leading-6 text-gray-700">
+          ${card.bullets.map((bullet) => `<li>${escapeHtml(bullet)}</li>`).join("")}
+        </ul>
+      `
+      : "";
+
+    return `
+      <article class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+        <h3 class="text-base font-semibold text-gray-900">${escapeHtml(card.title || "")}</h3>
+        ${description}
+        ${bullets}
+      </article>
+    `;
+  }).join("");
+
+  return `
+    <section class="mt-12" aria-labelledby="${escapeHtml(section.id)}-heading">
+      <h2 id="${escapeHtml(section.id)}-heading" class="text-sm font-semibold uppercase tracking-[0.16em] text-gray-500">${escapeHtml(section.title)}</h2>
+      ${intro}
+      <div class="mt-4 grid grid-cols-1 gap-5 md:grid-cols-2">
+        ${cardsMarkup}
+      </div>
+    </section>
+  `;
+}
+
+function renderSection(section) {
+  if (section && section.type === "participation") {
+    return renderParticipationSection(section);
+  }
+
+  if (section && section.type === "info-cards") {
+    return renderInfoCardsSection(section);
+  }
+
+  return renderTeamSection(section);
+}
+
 async function loadTeamData() {
   try {
     const response = await fetch("./data/team.json", { cache: "no-store" });
@@ -92,7 +178,7 @@ async function renderTeamPage() {
 
     heroTitle.textContent = hero.title || "Team";
     heroDescription.textContent = hero.description || "";
-    sectionsHost.innerHTML = sections.map(renderTeamSection).join("");
+    sectionsHost.innerHTML = sections.map(renderSection).join("");
   } catch (error) {
     sectionsHost.innerHTML = "";
     if (errorHost) {

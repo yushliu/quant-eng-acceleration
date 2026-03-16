@@ -1,7 +1,7 @@
 window.TEAM_DATA = {
   hero: {
     title: "Team",
-    description: "People behind reproducible, benchmark-driven quant engineering."
+    description: "People working on quantitative algorithms through reproducible benchmarking."
   },
   sections: [
     {
@@ -76,6 +76,61 @@ window.TEAM_DATA = {
           discipline: "Electrical Engineering · Systems",
           tags: ["FPGA-sim"],
           bio: "Builds simulation validation checks and summarizes latency distributions for reviews."
+        }
+      ]
+    },
+    {
+      id: "two-track-structure",
+      type: "info-cards",
+      title: "Two-Track Structure",
+      intro: "The club is organized into two tracks to improve technical focus, ownership, and long-term project clarity.",
+      cards: [
+        {
+          title: "Infrastructure",
+          description: "Infrastructure supports tooling, data and compute workflows, reproducibility systems, and benchmarking reliability.",
+          bullets: [
+            "tooling and environments",
+            "workflow support",
+            "release reliability"
+          ]
+        },
+        {
+          title: "Algorithm",
+          description: "Algorithm focuses on quantitative models, risk logic, pricing methods, and research-oriented comparison work.",
+          bullets: [
+            "model implementation",
+            "evaluation logic",
+            "comparative research work"
+          ]
+        }
+      ]
+    },
+    {
+      id: "participation",
+      type: "participation",
+      title: "Participation",
+      intro: "This club welcomes students who want to contribute to algorithm-oriented technical work, reproducible benchmarking, and long-term project building.",
+      groups: [
+        {
+          title: "Join Us",
+          description: "Members contribute across algorithm work, engineering support, benchmark evaluation, and reproducible release preparation."
+        },
+        {
+          title: "Current Open Roles",
+          bullets: [
+            "Algorithm Track Contributor: implement and compare quantitative methods under shared evaluation rules.",
+            "Infrastructure Track Contributor: support tooling, environments, and benchmark workflow reliability.",
+            "Documentation and Release Support: organize notes, release summaries, and linked artifacts for review."
+          ]
+        },
+        {
+          title: "How to Start",
+          bullets: [
+            "Read the Team, Plan, and Release pages.",
+            "Choose a topic area or track that matches your interests.",
+            "Start with implementation, documentation, review, or experiment support tasks.",
+            "Grow into deeper technical ownership over time."
+          ]
         }
       ]
     }
