@@ -21,56 +21,49 @@
     </section>
 
     <section class="mt-8 rounded-lg border border-gray-200 bg-gray-50 p-6 shadow-sm">
-      <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <h2 class="text-sm font-semibold uppercase tracking-[0.16em] text-gray-500">Release Categories</h2>
-          <p class="mt-2 text-sm leading-6 text-gray-600">Filter by topic to browse curated outcomes without mixing them with meeting-level progress updates.</p>
-        </div>
-        <div id="release-filters" class="flex flex-wrap gap-2"></div>
+      <div>
+        <h2 class="text-sm font-semibold uppercase tracking-[0.16em] text-gray-500">Projects</h2>
+        <p class="mt-2 max-w-3xl text-sm leading-6 text-gray-600">Select one of the club's small number of important projects, then read it like a compact documentation page rather than a dashboard record.</p>
       </div>
+      <div id="release-grid" class="mt-5 flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory"></div>
     </section>
 
-    <section class="mt-6 grid gap-6 lg:grid-cols-[0.95fr,1.05fr] lg:gap-8">
-      <section class="rounded-lg border border-gray-200 bg-gray-50 p-6 shadow-sm">
-        <h2 class="text-sm font-semibold uppercase tracking-[0.16em] text-gray-500">Curated Releases</h2>
-        <div id="release-grid" class="mt-4 space-y-4"></div>
-      </section>
-
-      <section class="rounded-lg border border-gray-200 bg-gray-50 p-6 shadow-sm" aria-live="polite">
-        <header class="border-b border-gray-200 pb-4">
-          <p class="text-xs font-semibold uppercase tracking-[0.16em] text-gray-500">Selected Release</p>
-          <h2 id="release-title" class="mt-2 text-xl font-semibold tracking-tight text-gray-900">Release</h2>
-          <p id="release-summary" class="mt-3 text-sm leading-6 text-gray-600"></p>
-          <div class="mt-3 flex flex-wrap gap-2">
-            <span id="release-category" class="rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-600"></span>
-            <span id="release-version" class="rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-600"></span>
-            <span id="release-status" class="rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-600"></span>
-          </div>
-        </header>
-
-        <div class="mt-5 space-y-4">
-          <section class="rounded-md border border-gray-200 bg-white p-5 shadow-sm">
-            <h3 class="text-sm font-semibold uppercase tracking-[0.12em] text-gray-500">Overview</h3>
-            <p id="release-overview" class="mt-3 text-sm leading-6 text-gray-700"></p>
-          </section>
-          <section class="rounded-md border border-gray-200 bg-white p-5 shadow-sm">
-            <h3 class="text-sm font-semibold uppercase tracking-[0.12em] text-gray-500">Scope</h3>
-            <ul id="release-scope" class="mt-3 list-disc space-y-1 pl-5 text-sm leading-6 text-gray-700"></ul>
-          </section>
-          <section class="rounded-md border border-gray-200 bg-white p-5 shadow-sm">
-            <h3 class="text-sm font-semibold uppercase tracking-[0.12em] text-gray-500">Key Findings</h3>
-            <ul id="release-findings" class="mt-3 list-disc space-y-1 pl-5 text-sm leading-6 text-gray-700"></ul>
-          </section>
-          <section class="rounded-md border border-gray-200 bg-white p-5 shadow-sm">
-            <h3 class="text-sm font-semibold uppercase tracking-[0.12em] text-gray-500">Supporting Evidence</h3>
-            <div id="release-evidence" class="mt-3 flex flex-wrap gap-2"></div>
-          </section>
-          <section class="rounded-md border border-gray-200 bg-white p-5 shadow-sm">
-            <h3 class="text-sm font-semibold uppercase tracking-[0.12em] text-gray-500">Next Stage or Reuse</h3>
-            <p id="release-next" class="mt-3 text-sm leading-6 text-gray-700"></p>
-          </section>
+    <section class="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-6 shadow-sm" aria-live="polite">
+      <header class="border-b border-gray-200 pb-5">
+        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-gray-500">Selected Project</p>
+        <h2 id="release-title" class="mt-2 text-2xl font-semibold tracking-tight text-gray-900">Project</h2>
+        <p id="release-summary" class="mt-3 max-w-4xl text-sm leading-6 text-gray-600"></p>
+        <div class="mt-4 flex flex-wrap gap-2">
+          <span id="release-category" class="rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-600"></span>
+          <span id="release-version" class="rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-600"></span>
+          <span id="release-date" class="rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-600"></span>
+          <span id="release-status" class="rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-600"></span>
         </div>
-      </section>
+        <div id="release-actions" class="mt-5 flex flex-wrap gap-2"></div>
+      </header>
+
+      <div class="mt-6 space-y-5">
+        <section class="rounded-md border border-gray-200 bg-white p-5 shadow-sm">
+          <h3 class="text-sm font-semibold uppercase tracking-[0.12em] text-gray-500">Overview</h3>
+          <p id="release-overview" class="mt-3 text-sm leading-6 text-gray-700"></p>
+        </section>
+        <section class="rounded-md border border-gray-200 bg-white p-5 shadow-sm">
+          <h3 class="text-sm font-semibold uppercase tracking-[0.12em] text-gray-500">Why It Matters</h3>
+          <ul id="release-findings" class="mt-3 list-disc space-y-1 pl-5 text-sm leading-6 text-gray-700"></ul>
+        </section>
+        <section class="rounded-md border border-gray-200 bg-white p-5 shadow-sm">
+          <h3 class="text-sm font-semibold uppercase tracking-[0.12em] text-gray-500">What’s Included</h3>
+          <ul id="release-scope" class="mt-3 list-disc space-y-1 pl-5 text-sm leading-6 text-gray-700"></ul>
+        </section>
+        <section class="rounded-md border border-gray-200 bg-white p-5 shadow-sm">
+          <h3 class="text-sm font-semibold uppercase tracking-[0.12em] text-gray-500">How to Use</h3>
+          <p id="release-next" class="mt-3 text-sm leading-6 text-gray-700"></p>
+        </section>
+        <section class="rounded-md border border-gray-200 bg-white p-5 shadow-sm">
+          <h3 class="text-sm font-semibold uppercase tracking-[0.12em] text-gray-500">Download & Files</h3>
+          <div id="release-evidence" class="mt-3 flex flex-wrap gap-2"></div>
+        </section>
+      </div>
     </section>
   </main>
 
