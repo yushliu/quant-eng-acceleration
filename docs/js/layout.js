@@ -124,6 +124,93 @@ function injectThemeTokens() {
         margin-left: 0.5rem;
       }
     }
+
+    body[data-page="home"] .home-main {
+      position: relative;
+      padding-bottom: 16vh;
+    }
+
+    body[data-page="home"] .home-stage-track {
+      position: relative;
+      min-height: calc(var(--home-stage-height, 46rem) + 250svh);
+      padding-top: 0.75rem;
+      scroll-margin-top: 5.75rem;
+    }
+
+    body[data-page="home"] .home-stage-track::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 2rem;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 18%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(148, 163, 184, 0.04));
+      opacity: 0.72;
+      pointer-events: none;
+    }
+
+    body[data-page="home"] .home-stage {
+      position: sticky;
+      top: 6.15rem;
+      min-height: var(--home-stage-height, 46rem);
+      height: var(--home-stage-height, 46rem);
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    body[data-page="home"] .home-stage-section {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      align-content: start;
+      gap: 1.75rem;
+      transform: translate3d(0, var(--stage-translate, 0px), 0) scale(var(--stage-scale, 1));
+      transform-origin: center top;
+      opacity: var(--stage-opacity, 1);
+      filter: saturate(var(--stage-saturate, 1));
+      will-change: transform, opacity;
+      transition: transform 120ms linear, opacity 120ms linear, filter 120ms linear;
+      pointer-events: none;
+    }
+
+    body[data-page="home"] .home-stage-section[data-stage-interactive="true"] {
+      pointer-events: auto;
+    }
+
+    body[data-page="home"] .home-stage-section__stack {
+      align-content: start;
+    }
+
+    @media (max-width: 1023px) {
+      body[data-page="home"] .home-main {
+        padding-bottom: 0;
+      }
+
+      body[data-page="home"] .home-stage-track {
+        min-height: auto;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+      }
+
+      body[data-page="home"] .home-stage {
+        position: relative;
+        top: auto;
+        min-height: auto;
+        height: auto;
+        overflow: visible;
+        display: grid;
+        gap: 1.5rem;
+      }
+
+      body[data-page="home"] .home-stage-section {
+        position: relative;
+        inset: auto;
+        transform: none;
+        opacity: 1;
+        filter: none;
+        pointer-events: auto;
+      }
+    }
   `;
   document.head.appendChild(style);
 }
