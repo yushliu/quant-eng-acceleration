@@ -53,17 +53,18 @@ function getDefaultMeetingViewId(meeting) {
 
 const planMeetings = getPlanMeetings();
 let activeTrackFilter = "algorithm";
-let activeMeetingId = "";
+let activeMeetingKey = "";
 let activeMeetingViewId = "";
 let activeSummaryTab = "what_changed";
 
 function getTrackMeetings(trackId) {
   return planMeetings
     .filter((meeting) => getMeetingTrackIds(meeting).includes(trackId))
-    .map((meeting) => {
+    .map((meeting, index) => {
       const matchingView = getMeetingViews(meeting).find((view) => String(view?.id || "").toLowerCase() === trackId) || null;
       return {
         ...meeting,
+        planKey: `${trackId}:${meeting.id}:${index}`,
         activeTrackView: matchingView
       };
     });
@@ -75,14 +76,14 @@ function getFilteredMeetings() {
 
 function getActiveMeeting() {
   const filtered = getFilteredMeetings();
-  return filtered.find((meeting) => meeting.id === activeMeetingId) || filtered[0] || null;
+  return filtered.find((meeting) => meeting.planKey === activeMeetingKey) || filtered[0] || null;
 }
 
 function syncActiveMeetingSelection() {
   const filtered = getFilteredMeetings();
-  const current = filtered.find((meeting) => meeting.id === activeMeetingId);
+  const current = filtered.find((meeting) => meeting.planKey === activeMeetingKey);
   const fallback = current || filtered[0] || null;
-  activeMeetingId = fallback?.id || "";
+  activeMeetingKey = fallback?.planKey || "";
   if (!fallback) {
     activeMeetingViewId = "";
     return;
@@ -258,7 +259,7 @@ function renderTrackFilter() {
         return;
       }
       activeTrackFilter = nextFilter;
-      activeMeetingId = "";
+      activeMeetingKey = "";
       activeMeetingViewId = nextFilter;
       activeSummaryTab = "what_changed";
       syncActiveMeetingSelection();
@@ -280,7 +281,7 @@ function renderTimeline() {
     return;
   }
   timeline.innerHTML = filtered.map((meeting) => {
-    const isActive = meeting.id === activeMeetingId;
+    const isActive = meeting.planKey === activeMeetingKey;
     const activeClasses = isActive
       ? "border-blue-500 bg-blue-50 text-blue-600"
       : "border-gray-200 bg-white text-gray-700 hover:border-blue-300 hover:text-blue-600";
@@ -292,7 +293,7 @@ function renderTimeline() {
       <button
         type="button"
         class="group inline-flex min-w-[168px] items-start gap-3 rounded-md border px-3 py-3 text-left shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-300 lg:min-w-0 lg:w-full ${activeClasses}"
-        data-meeting-id="${meeting.id}"
+        data-meeting-key="${meeting.planKey}"
       >
         <span class="mt-1 inline-flex h-3 w-3 shrink-0 rounded-full border ${dotClasses}"></span>
         <span class="min-w-0">
@@ -303,13 +304,13 @@ function renderTimeline() {
       </button>
     `;
   }).join("");
-  timeline.querySelectorAll("[data-meeting-id]").forEach((button) => {
+  timeline.querySelectorAll("[data-meeting-key]").forEach((button) => {
     button.addEventListener("click", () => {
-      const nextId = button.getAttribute("data-meeting-id");
-      if (!nextId || nextId === activeMeetingId) {
+      const nextKey = button.getAttribute("data-meeting-key");
+      if (!nextKey || nextKey === activeMeetingKey) {
         return;
       }
-      activeMeetingId = nextId;
+      activeMeetingKey = nextKey;
       const meeting = getActiveMeeting();
       if (meeting) {
         syncActiveMeetingView(meeting, activeTrackFilter);
@@ -442,9 +443,10 @@ function setActiveMeetingFromHash() {
   if (!hashId) {
     return;
   }
-  const meeting = planMeetings.find((entry) => entry.id === hashId);
-  if (meeting && getMeetingTrackIds(meeting).includes(activeTrackFilter)) {
-    activeMeetingId = meeting.id;
+  const filtered = getFilteredMeetings();
+  const matchingMeeting = filtered.find((entry) => entry.id === hashId);
+  if (matchingMeeting && getMeetingTrackIds(matchingMeeting).includes(activeTrackFilter)) {
+    activeMeetingKey = matchingMeeting.planKey;
   }
 }
 

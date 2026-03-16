@@ -6,8 +6,7 @@ let selectedFilePath = "";
 let selectedFileText = "";
 let selectedFileLang = "plaintext";
 let selectedItemViewId = "";
-let activeTrackFilter = "all";
-let activeFileTypeFilter = "all";
+let activeTrackFilter = "algorithm";
 let sourceExplorerRequestId = 0;
 let sourceExplorerModulePromise = null;
 
@@ -860,6 +859,28 @@ function getItemViews(item) {
   return Array.isArray(item && item.views) ? item.views : [];
 }
 
+function getLegacyItemYm(item) {
+  const match = String(item?.id || item?.title || "").match(/(20\d{2}-\d{2})/);
+  return match ? match[1] : "";
+}
+
+function getItemTrackIds(item) {
+  const trackIds = getItemViews(item)
+    .map((view) => String(view?.id || "").toLowerCase())
+    .filter((id) => id === "algorithm" || id === "infrastructure");
+
+  if (trackIds.length) {
+    return trackIds;
+  }
+
+  const legacyYm = getLegacyItemYm(item);
+  if (legacyYm && legacyYm <= "2025-12" && Array.isArray(item?.files) && item.files.length) {
+    return ["algorithm"];
+  }
+
+  return [];
+}
+
 function getDefaultItemViewId(item) {
   const views = getItemViews(item);
   if (!views.length) {
@@ -896,6 +917,38 @@ function getSelectedItemDescription(item) {
   return selectedView && selectedView.description ? selectedView.description : (item.short || "");
 }
 
+function getItemViewByTrack(item, trackId = activeTrackFilter) {
+  return getItemViews(item).find((view) => String(view?.id || "").toLowerCase() === String(trackId || "").toLowerCase()) || null;
+}
+
+function getItemTitleForTrack(item, trackId = activeTrackFilter) {
+  const matchedView = getItemViewByTrack(item, trackId);
+  return matchedView?.title || item?.title || "Meeting Record";
+}
+
+function getItemBrowserDateLabel(item) {
+  const text = String(item?.title || item?.id || "");
+  const match = text.match(/20\d{2}-\d(?:-\d)?/);
+  return match ? match[0] : String(item?.id || "Meeting");
+}
+
+function getItemBrowserShortLabel(item, trackId = activeTrackFilter) {
+  const title = getItemTitleForTrack(item, trackId);
+
+  const stageMatch = title.match(/Stage\s+\d+/i);
+  if (stageMatch) {
+    return stageMatch[0];
+  }
+
+  const trackView = getItemViewByTrack(item, trackId);
+  if (trackView?.label) {
+    return trackView.label;
+  }
+
+  const tag = String(item?.tag || "").trim();
+  return tag || "Update";
+}
+
 function getRunGuideHtml(item) {
   const selectedView = getSelectedItemView(item);
   const guideKey = selectedView && selectedView.guideKey ? selectedView.guideKey : "";
@@ -919,12 +972,7 @@ function getVisibleFiles(item) {
   const viewFiltered = (!selectedView || !Array.isArray(selectedView.filePrefixes) || !selectedView.filePrefixes.length)
     ? files
     : files.filter((file) => selectedView.filePrefixes.some((prefix) => String(file.path || "").startsWith(prefix)));
-
-  if (activeFileTypeFilter === "all") {
-    return viewFiltered;
-  }
-
-  return viewFiltered.filter((file) => getFileTypeLabel(file) === activeFileTypeFilter);
+  return viewFiltered;
 }
 
 function getItemTracks(item) {
@@ -940,11 +988,7 @@ function getTrackValue(item) {
 }
 
 function getFilteredManifestItems() {
-  if (activeTrackFilter === "all") {
-    return manifestItems;
-  }
-
-  return manifestItems.filter((item) => getItemViews(item).some((view) => String(view.id || "").toLowerCase() === activeTrackFilter));
+  return manifestItems.filter((item) => getItemTrackIds(item).includes(activeTrackFilter));
 }
 
 function getFileTypeLabel(file) {
@@ -952,7 +996,7 @@ function getFileTypeLabel(file) {
 }
 
 function syncSelectedViewToTrack(item) {
-  if (!item || activeTrackFilter === "all") {
+  if (!item) {
     return;
   }
 
@@ -962,83 +1006,66 @@ function syncSelectedViewToTrack(item) {
   }
 }
 
-function renderDownloadFilters() {
-  const meetingFilter = document.getElementById("meeting-filter");
-  const trackFilter = document.getElementById("track-filter");
-  const fileTypeFilter = document.getElementById("filetype-filter");
-  const items = getFilteredManifestItems();
-  const selectedItem = manifestItems.find((item) => item.id === selectedItemId) || items[0] || manifestItems[0] || null;
-
-  if (meetingFilter) {
-    meetingFilter.innerHTML = manifestItems
-      .map((item) => `<option value="${item.id}">${item.title}</option>`)
-      .join("");
-    meetingFilter.value = selectedItem?.id || "";
-    meetingFilter.onchange = async (event) => {
-      const nextId = event.target.value;
-      if (!nextId || nextId === selectedItemId) {
-        return;
-      }
-      await selectItem(nextId);
-    };
+function renderTrackFilter() {
+  const host = document.getElementById("download-track-filter");
+  if (!host) {
+    return;
   }
 
-  if (trackFilter) {
-    const trackOptions = Array.from(new Set(manifestItems.flatMap((item) => getItemViews(item).map((view) => view.id))))
-      .filter(Boolean)
-      .sort();
-    trackFilter.innerHTML = [`<option value="all">All tracks</option>`]
-      .concat(trackOptions.map((track) => `<option value="${track}">${track.charAt(0).toUpperCase()}${track.slice(1)}</option>`))
-      .join("");
-    trackFilter.value = activeTrackFilter;
-    trackFilter.onchange = async (event) => {
-      activeTrackFilter = event.target.value || "all";
-      renderCards();
+  const options = [
+    { id: "algorithm", label: "Algorithm" },
+    { id: "infrastructure", label: "Infrastructure" }
+  ];
+
+  host.innerHTML = `
+    <div class="inline-flex items-center rounded-md border border-gray-200 bg-white p-1 shadow-sm">
+      ${options.map((option) => {
+        const isActive = option.id === activeTrackFilter;
+        const classes = isActive ? "bg-blue-500 text-white" : "text-gray-600 hover:bg-gray-100";
+        return `<button type="button" data-track-filter="${option.id}" class="inline-flex min-w-[132px] items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition ${classes}">${option.label}</button>`;
+      }).join("")}
+    </div>
+  `;
+
+  host.querySelectorAll("[data-track-filter]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const nextTrack = button.getAttribute("data-track-filter");
+      if (!nextTrack || nextTrack === activeTrackFilter) {
+        return;
+      }
+
+      activeTrackFilter = nextTrack;
       const filteredItems = getFilteredManifestItems();
       const currentStillVisible = filteredItems.some((item) => item.id === selectedItemId);
+      renderTrackFilter();
+      renderCards();
+
       if (!currentStillVisible && filteredItems[0]) {
         await selectItem(filteredItems[0].id);
         return;
       }
-      const currentItem = manifestItems.find((item) => item.id === selectedItemId);
-      if (currentItem) {
-        syncSelectedViewToTrack(currentItem);
-        renderItemViewSwitch(currentItem);
-        renderFileSelector(currentItem);
-        updateViewerHeader(currentItem);
-        renderSelectionMeta(currentItem);
-        if (selectedFilePath) {
-          await loadFileContent(selectedFilePath);
-        } else {
-          setCodeViewerText("No file found for this view.");
-        }
-      }
-    };
-  }
 
-  if (fileTypeFilter) {
-    const fileOptions = selectedItem
-      ? Array.from(new Set((Array.isArray(selectedItem.files) ? selectedItem.files : []).map(getFileTypeLabel))).sort()
-      : [];
-    fileTypeFilter.innerHTML = [`<option value="all">All file types</option>`]
-      .concat(fileOptions.map((type) => `<option value="${type}">${type.toUpperCase()}</option>`))
-      .join("");
-    fileTypeFilter.value = activeFileTypeFilter;
-    fileTypeFilter.onchange = async (event) => {
-      activeFileTypeFilter = event.target.value || "all";
       const currentItem = manifestItems.find((item) => item.id === selectedItemId);
-      if (currentItem) {
-        renderFileSelector(currentItem);
-        updateViewerHeader(currentItem);
-        renderSelectionMeta(currentItem);
-        if (selectedFilePath) {
-          await loadFileContent(selectedFilePath);
-        } else {
-          setCodeViewerText("No file found for this view.");
-        }
+      if (!currentItem) {
+        return;
       }
-    };
-  }
+
+      syncSelectedViewToTrack(currentItem);
+      renderFileSelector(currentItem);
+      updateViewerHeader(currentItem);
+      renderSelectionMeta(currentItem);
+      updateItemViewUrl(currentItem);
+
+      if (!selectedFilePath) {
+        setCodeViewerText("No file found for this view.");
+        await updateSourceExplorer(currentItem);
+        return;
+      }
+
+      await loadFileContent(selectedFilePath);
+      await updateSourceExplorer(currentItem);
+    });
+  });
 }
 
 function updateItemViewUrl(item) {
@@ -1071,13 +1098,13 @@ function renderItemViewSwitch(item) {
   }
 
   switchEl.innerHTML = `
-    <div class="inline-flex rounded-md border border-gray-200 bg-white p-1 shadow-sm">
+    <div class="flex w-full items-center rounded-md border border-gray-200 bg-white p-1 shadow-sm sm:inline-flex sm:w-auto">
       ${views.map((view) => {
         const isActive = view.id === selectedItemViewId;
         const classes = isActive
           ? "bg-blue-500 text-white"
           : "text-gray-600 hover:bg-gray-100";
-        return `<button type="button" data-item-view="${view.id}" class="rounded-md px-3 py-1.5 text-sm font-medium transition ${classes}">${view.label}</button>`;
+        return `<button type="button" data-item-view="${view.id}" class="min-w-0 flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition sm:flex-none ${classes}">${view.label}</button>`;
       }).join("")}
     </div>
   `;
@@ -1116,7 +1143,7 @@ function getSourceExplorerModule() {
 }
 
 function removeSourceExplorerSection() {
-  const existing = document.getElementById("source-explorer");
+  const existing = document.getElementById("source-explorer-section");
   if (existing) {
     existing.remove();
   }
@@ -1377,10 +1404,17 @@ function ensureSourceExplorerSection() {
   }
 
   const section = document.createElement("section");
-  section.id = "source-explorer";
-  section.className = "source-explorer-host mt-6 rounded-lg border border-gray-200 bg-gray-50 p-6 shadow-sm";
+  section.id = "source-explorer-section";
+  section.className = "mt-6 rounded-lg border border-gray-200 bg-gray-50 p-6 shadow-sm";
+  section.innerHTML = `
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Full Source Explorer</p>
+      <p class="mt-2 text-sm leading-6 text-gray-600">Browse the complete published source tree for this meeting after reviewing the selected artifact above.</p>
+    </div>
+    <div id="source-explorer" class="source-explorer-host mt-5"></div>
+  `;
   anchorSection.insertAdjacentElement("afterend", section);
-  return section;
+  return section.querySelector("#source-explorer");
 }
 
 async function updateSourceExplorer(item) {
@@ -1503,22 +1537,18 @@ function renderCards() {
     .map((item) => {
       const isActive = item.id === selectedItemId;
       const activeClasses = isActive
-        ? "border-blue-500 bg-blue-50"
-        : "border-gray-200 bg-white hover:border-blue-300";
-      const tracks = getItemTracks(item).join(" · ");
+        ? "border-blue-500 bg-blue-50 text-blue-700"
+        : "border-gray-200 bg-white text-gray-700 hover:border-blue-300 hover:text-blue-600";
 
       return `
         <button
           type="button"
           data-item-id="${item.id}"
-          class="min-w-[280px] max-w-[320px] shrink-0 snap-start rounded-md border p-4 text-left shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-300 ${activeClasses}"
+          class="flex min-h-[112px] min-w-[244px] max-w-[280px] shrink-0 snap-start flex-col rounded-md border px-4 py-3 text-left shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-300 ${activeClasses}"
         >
-          <div class="flex items-start justify-between gap-3">
-            <h3 class="text-sm font-semibold text-gray-900">${item.title}</h3>
-            <span class="rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-[10px] uppercase tracking-[0.08em] text-blue-600">${item.tag || "Item"}</span>
-          </div>
-          <p class="mt-2 text-xs uppercase tracking-[0.08em] text-gray-500">${tracks || "General"}</p>
-          ${item.short ? `<p class="mt-2 text-xs leading-5 text-gray-600">${item.short}</p>` : ""}
+          <p class="text-xs font-semibold tracking-[0.12em]">${escapeHtml(getItemBrowserDateLabel(item))}</p>
+          <p class="mt-2 line-clamp-1 min-h-6 text-sm leading-6">${escapeHtml(getItemBrowserShortLabel(item))}</p>
+          <span class="mt-auto inline-flex rounded-full border border-gray-200 bg-white px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.08em] text-gray-600">${escapeHtml(item.tag || "Item")}</span>
         </button>
       `;
     })
@@ -1575,18 +1605,21 @@ function updateViewerHeader(item) {
   const titleEl = document.getElementById("viewer-title");
   const subtitleEl = document.getElementById("viewer-subtitle");
   const selectedView = getSelectedItemView(item);
+  const files = getVisibleFiles(item);
+  const selectedFile = files.find((file) => file.path === selectedFilePath) || files[0] || null;
 
   if (titleEl) {
-    titleEl.textContent = getSelectedItemTitle(item);
+    titleEl.textContent = selectedFile?.label || getFilename(selectedFilePath) || "Artifact Preview";
   }
 
   if (subtitleEl) {
     const viewLabel = selectedView ? `${selectedView.label} · ` : "";
     const description = getSelectedItemDescription(item);
+    const meetingText = getSelectedItemTitle(item);
     const pathText = selectedFilePath || "No file selected";
     subtitleEl.textContent = description
-      ? `${description} · ${viewLabel}${pathText}`
-      : `${item.id} · ${viewLabel}${pathText}`;
+      ? `${meetingText} · ${description} · ${viewLabel}${pathText}`
+      : `${meetingText} · ${viewLabel}${pathText}`;
   }
 }
 
@@ -1601,8 +1634,9 @@ function renderSelectionMeta(item) {
   metaEl.innerHTML = `
     <p class="text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Selected Meeting</p>
     <p class="mt-2 text-sm font-semibold text-gray-900">${escapeHtml(item.title || item.id)}</p>
-    <p class="mt-2 text-sm leading-6 text-gray-600">${escapeHtml(selectedView?.label || "General")} · ${files.length} visible file${files.length === 1 ? "" : "s"}</p>
-    <p class="mt-2 text-sm leading-6 text-gray-600">${escapeHtml(getSelectedItemDescription(item) || "Use the preview panel to inspect file contents before copying or downloading.")}</p>
+    <p class="mt-2 text-sm leading-6 text-gray-600">${escapeHtml(selectedView?.label || "Algorithm")} · ${files.length} visible file${files.length === 1 ? "" : "s"}</p>
+    <p class="mt-2 text-sm leading-6 text-gray-600">${escapeHtml(getSelectedItemTitle(item))}</p>
+    <p class="mt-2 text-sm leading-6 text-gray-600">${escapeHtml(getSelectedItemDescription(item) || "Review the selected artifact first, then use the full source explorer only when you need the deeper raw file tree.")}</p>
   `;
 }
 
@@ -1650,9 +1684,8 @@ async function selectItem(itemId) {
   selectedFilePath = firstFile ? firstFile.path : "";
   selectedFileLang = mapHighlightLang(firstFile ? firstFile.lang : "");
 
-  renderDownloadFilters();
+  renderTrackFilter();
   renderCards();
-  renderItemViewSwitch(item);
   renderFileSelector(item);
   updateViewerHeader(item);
   renderSelectionMeta(item);
@@ -1745,6 +1778,10 @@ async function initDownloadPage() {
 
   try {
     manifestItems = await loadManifest();
+    const requestedViewId = new URLSearchParams(window.location.search).get("view") || "";
+    if (requestedViewId === "algorithm" || requestedViewId === "infrastructure") {
+      activeTrackFilter = requestedViewId;
+    }
 
     if (!manifestItems.length) {
       renderCards();
@@ -1753,8 +1790,9 @@ async function initDownloadPage() {
     }
 
     const hashId = window.location.hash ? window.location.hash.slice(1) : "";
-    const defaultItem = manifestItems.find((item) => item.id === hashId) || manifestItems[0];
-    renderDownloadFilters();
+    const filteredItems = getFilteredManifestItems();
+    const defaultItem = filteredItems.find((item) => item.id === hashId) || filteredItems[0] || manifestItems[0];
+    renderTrackFilter();
     await selectItem(defaultItem.id);
   } catch (error) {
     const grid = document.getElementById("download-grid");
