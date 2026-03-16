@@ -81,6 +81,12 @@ function injectThemeTokens() {
       box-shadow: 0 16px 34px rgba(15, 23, 42, 0.08), 0 3px 10px rgba(15, 23, 42, 0.05);
       backdrop-filter: blur(20px) saturate(145%);
       -webkit-backdrop-filter: blur(20px) saturate(145%);
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .nav-shell::-webkit-scrollbar {
+      display: none;
     }
 
     .nav-item {
@@ -129,12 +135,23 @@ function injectThemeTokens() {
     }
 
     @media (max-width: 767px) {
+      .nav-shell {
+        overflow-x: auto;
+        overflow-y: hidden;
+      }
+
       .nav-brand__img {
-        height: 1.75rem;
+        height: 1.55rem;
       }
 
       .nav-item__label {
-        max-width: none;
+        max-width: 0;
+        opacity: 0;
+        margin-left: 0;
+      }
+
+      .nav-item[aria-current="page"] .nav-item__label {
+        max-width: 72px;
         opacity: 1;
         margin-left: 0.5rem;
       }
@@ -297,12 +314,8 @@ function renderSiteHeader() {
   host.innerHTML = `
     <div class="mx-auto max-w-[1100px] px-4 sm:px-6">
       <div class="relative min-h-[5rem] pt-4">
-        <button id="mobile-menu-button" type="button" aria-label="Toggle navigation" class="glass-btn-secondary absolute right-0 top-3 inline-flex items-center rounded-full border px-3 py-1.5 text-sm text-blue-600 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-300 md:hidden" aria-controls="primary-nav" aria-expanded="false">
-          Menu
-        </button>
-
-        <nav id="primary-nav" aria-label="Primary" class="hidden absolute left-0 right-0 top-full mt-2 md:top-4 md:mt-0 md:block md:left-1/2 md:right-auto md:w-auto md:-translate-x-1/2">
-          <ul class="nav-shell ml-auto flex flex-col gap-1 rounded-[1.4rem] px-2 py-2 md:ml-0 md:flex-row md:items-center md:gap-0.5">
+        <nav id="primary-nav" aria-label="Primary" class="absolute left-0 right-0 top-3 md:top-4 md:left-1/2 md:right-auto md:w-auto md:-translate-x-1/2">
+          <ul class="nav-shell mx-auto flex w-full min-w-0 items-center gap-0.5 rounded-[1.4rem] px-2 py-2 sm:w-auto sm:max-w-fit">
             <li class="nav-brand px-2 py-1 md:pr-2">
               <a href="./index.html" aria-label="Quantitative Engineering Acceleration Club home" class="inline-flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-300">
                 <img src="${logoPath}" alt="QEAC logo" class="nav-brand__img" />

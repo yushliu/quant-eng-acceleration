@@ -7,18 +7,7 @@ function getReleaseData() {
 }
 
 function initMobileNav() {
-  const button = document.getElementById("mobile-menu-button");
-  const nav = document.getElementById("primary-nav");
-
-  if (!button || !nav) {
-    return;
-  }
-
-  button.addEventListener("click", () => {
-    const isExpanded = button.getAttribute("aria-expanded") === "true";
-    button.setAttribute("aria-expanded", String(!isExpanded));
-    nav.classList.toggle("hidden", isExpanded);
-  });
+  return;
 }
 
 function sortByRecency(items, getKey) {
