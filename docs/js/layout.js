@@ -87,6 +87,17 @@ function injectThemeTokens() {
       transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 180ms ease;
     }
 
+    .nav-brand {
+      flex: 0 0 auto;
+    }
+
+    .nav-brand__img {
+      display: block;
+      height: 2rem;
+      width: auto;
+      object-fit: contain;
+    }
+
     .nav-item__label {
       max-width: 0;
       opacity: 0;
@@ -118,6 +129,10 @@ function injectThemeTokens() {
     }
 
     @media (max-width: 767px) {
+      .nav-brand__img {
+        height: 1.75rem;
+      }
+
       .nav-item__label {
         max-width: none;
         opacity: 1;
@@ -132,7 +147,7 @@ function injectThemeTokens() {
 
     body[data-page="home"] .home-stage-track {
       position: relative;
-      min-height: calc(var(--home-stage-height, 46rem) + 250svh);
+      min-height: calc(var(--home-stage-height, 46rem) + 320svh);
       padding-top: 0.75rem;
       scroll-margin-top: 5.75rem;
     }
@@ -262,6 +277,7 @@ function renderSiteHeader() {
   }
 
   const currentPage = document.body?.dataset?.page || "";
+  const logoPath = "./data/logo.PNG";
   const navItems = config.nav
     .map((item) => {
       const isActive = item.key === currentPage;
@@ -286,7 +302,12 @@ function renderSiteHeader() {
         </button>
 
         <nav id="primary-nav" aria-label="Primary" class="hidden absolute left-0 right-0 top-full mt-2 md:top-4 md:mt-0 md:block md:left-1/2 md:right-auto md:w-auto md:-translate-x-1/2">
-          <ul class="nav-shell ml-auto flex flex-col gap-1 rounded-[1.4rem] p-2 md:ml-0 md:flex-row md:items-center md:gap-1">
+          <ul class="nav-shell ml-auto flex flex-col gap-1 rounded-[1.4rem] px-2 py-2 md:ml-0 md:flex-row md:items-center md:gap-0.5">
+            <li class="nav-brand px-2 py-1 md:pr-2">
+              <a href="./index.html" aria-label="Quantitative Engineering Acceleration Club home" class="inline-flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-300">
+                <img src="${logoPath}" alt="QEAC logo" class="nav-brand__img" />
+              </a>
+            </li>
             ${navItems}
           </ul>
         </nav>

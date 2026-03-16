@@ -119,11 +119,11 @@ function initHomeStageTransitions() {
 
   const enableQuery = window.matchMedia("(min-width: 1024px)");
   const reduceMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-  const sectionTargets = [0.08, 0.56, 0.94];
+  const sectionTargets = [0.12, 0.6, 0.95];
   const sectionPhases = [
-    { holdStart: 0, holdEnd: 0.22, exitEnd: 0.5 },
-    { enterStart: 0.22, enterEnd: 0.5, holdStart: 0.5, holdEnd: 0.68, exitEnd: 0.88 },
-    { enterStart: 0.68, enterEnd: 0.88, holdStart: 0.88, holdEnd: 1 }
+    { holdStart: 0, holdEnd: 0.3, exitEnd: 0.5 },
+    { enterStart: 0.3, enterEnd: 0.5, holdStart: 0.5, holdEnd: 0.76, exitEnd: 0.9 },
+    { enterStart: 0.76, enterEnd: 0.9, holdStart: 0.9, holdEnd: 1 }
   ];
   let ticking = false;
 
