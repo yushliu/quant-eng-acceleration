@@ -48,7 +48,7 @@ function renderSiteHeader() {
   host.innerHTML = `
     <div class="mx-auto max-w-[1100px] px-4 sm:px-6">
       <div class="relative flex min-h-16 items-center justify-between py-2">
-        <a href="./index.html" class="text-sm font-semibold tracking-tight text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-300">
+        <a href="./index.html" class="text-sm font-semibold uppercase tracking-[0.18em] text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-300">
           ${config.brand}
         </a>
 
