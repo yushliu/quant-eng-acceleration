@@ -29,6 +29,68 @@ function injectThemeTokens() {
       color: #1f2937;
     }
 
+    .page-stage {
+      position: relative;
+      z-index: 0;
+      transform: translate3d(0, 0, 0) scale(1);
+      opacity: 1;
+      transition:
+        transform 340ms cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 260ms ease;
+      will-change: transform, opacity;
+    }
+
+    .page-stage--pre-enter-forward {
+      transform: translate3d(52px, 0, 0) scale(0.992);
+      opacity: 0;
+    }
+
+    .page-stage--pre-enter-backward {
+      transform: translate3d(-52px, 0, 0) scale(0.992);
+      opacity: 0;
+    }
+
+    .page-stage--enter-active {
+      transform: translate3d(0, 0, 0) scale(1);
+      opacity: 1;
+    }
+
+    .page-stage--exit-forward {
+      transform: translate3d(-56px, 0, 0) scale(0.99);
+      opacity: 0.24;
+      pointer-events: none;
+    }
+
+    .page-stage--exit-backward {
+      transform: translate3d(56px, 0, 0) scale(0.99);
+      opacity: 0.24;
+      pointer-events: none;
+    }
+
+    @media (max-width: 767px) {
+      .page-stage--pre-enter-forward {
+        transform: translate3d(28px, 0, 0) scale(0.995);
+      }
+
+      .page-stage--pre-enter-backward {
+        transform: translate3d(-28px, 0, 0) scale(0.995);
+      }
+
+      .page-stage--exit-forward {
+        transform: translate3d(-30px, 0, 0) scale(0.995);
+      }
+
+      .page-stage--exit-backward {
+        transform: translate3d(30px, 0, 0) scale(0.995);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .page-stage {
+        transition: none;
+      }
+    }
+
     .glass-panel {
       background: linear-gradient(180deg, var(--glass-fill-strong), rgba(255, 255, 255, 0.62));
       border: 1px solid var(--glass-border);
@@ -344,5 +406,190 @@ function renderSiteFooter() {
   footerParagraph.textContent = text;
 }
 
+function getTopLevelPageOrder() {
+  const config = window.SITE_CONFIG;
+  return Array.isArray(config?.nav) ? config.nav : [];
+}
+
+function normalizeTopLevelPath(href) {
+  try {
+    const url = new URL(href, window.location.href);
+    const normalized = url.pathname.replace(/\/+$/, "");
+    return normalized || "/";
+  } catch {
+    return "";
+  }
+}
+
+function getTopLevelPageMatch(href) {
+  const pages = getTopLevelPageOrder();
+  const targetPath = normalizeTopLevelPath(href);
+  if (!targetPath) {
+    return null;
+  }
+
+  const index = pages.findIndex((item) => normalizeTopLevelPath(item.href) === targetPath);
+  if (index < 0) {
+    return null;
+  }
+
+  return { ...pages[index], index };
+}
+
+function ensurePageStage() {
+  const body = document.body;
+  if (!body) {
+    return null;
+  }
+
+  const existing = body.querySelector(":scope > .page-stage");
+  if (existing) {
+    return existing;
+  }
+
+  const stage = document.createElement("div");
+  stage.className = "page-stage";
+
+  const header = document.getElementById("site-header");
+  const firstScript = body.querySelector(":scope > script");
+  body.insertBefore(stage, firstScript || null);
+
+  Array.from(body.children).forEach((child) => {
+    if (child === header || child === stage || child.tagName === "SCRIPT") {
+      return;
+    }
+    stage.appendChild(child);
+  });
+
+  return stage;
+}
+
+function initPageTransitions() {
+  const body = document.body;
+  const stage = ensurePageStage();
+  const reduceMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const transitionKey = "qeac-top-level-transition";
+
+  if (!body || !stage) {
+    return;
+  }
+
+  function getCurrentPageMatch() {
+    const currentKey = body.dataset.page || "";
+    const pages = getTopLevelPageOrder();
+    const index = pages.findIndex((item) => item.key === currentKey);
+    if (index < 0) {
+      return null;
+    }
+    return { ...pages[index], index };
+  }
+
+  function readPendingTransition() {
+    try {
+      const raw = window.sessionStorage.getItem(transitionKey);
+      if (!raw) {
+        return null;
+      }
+      return JSON.parse(raw);
+    } catch {
+      return null;
+    }
+  }
+
+  function clearPendingTransition() {
+    try {
+      window.sessionStorage.removeItem(transitionKey);
+    } catch {
+      return;
+    }
+  }
+
+  function writePendingTransition(payload) {
+    try {
+      window.sessionStorage.setItem(transitionKey, JSON.stringify(payload));
+    } catch {
+      return;
+    }
+  }
+
+  function applyEnterTransition() {
+    if (reduceMotionQuery.matches) {
+      clearPendingTransition();
+      return;
+    }
+
+    const pending = readPendingTransition();
+    const current = getCurrentPageMatch();
+    if (!pending || !current) {
+      clearPendingTransition();
+      return;
+    }
+
+    const isFresh = Date.now() - Number(pending.timestamp || 0) < 4000;
+    if (!isFresh || pending.to !== current.key || (pending.direction !== "forward" && pending.direction !== "backward")) {
+      clearPendingTransition();
+      return;
+    }
+
+    stage.classList.add(`page-stage--pre-enter-${pending.direction}`);
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        stage.classList.add("page-stage--enter-active");
+        stage.classList.remove(`page-stage--pre-enter-${pending.direction}`);
+      });
+    });
+
+    window.setTimeout(() => {
+      stage.classList.remove("page-stage--enter-active");
+    }, 380);
+
+    clearPendingTransition();
+  }
+
+  document.addEventListener("click", (event) => {
+    const link = event.target.closest("a[href]");
+    if (!link || event.defaultPrevented || reduceMotionQuery.matches) {
+      return;
+    }
+
+    if (
+      event.button !== 0 ||
+      link.target === "_blank" ||
+      link.hasAttribute("download") ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      return;
+    }
+
+    const current = getCurrentPageMatch();
+    const target = getTopLevelPageMatch(link.getAttribute("href"));
+    if (!current || !target || current.key === target.key) {
+      return;
+    }
+
+    const direction = target.index > current.index ? "forward" : "backward";
+    writePendingTransition({
+      from: current.key,
+      to: target.key,
+      direction,
+      timestamp: Date.now()
+    });
+
+    event.preventDefault();
+    stage.classList.remove("page-stage--enter-active");
+    stage.classList.add(`page-stage--exit-${direction}`);
+
+    window.setTimeout(() => {
+      window.location.href = link.href;
+    }, 230);
+  });
+
+  applyEnterTransition();
+}
+
 renderSiteHeader();
 renderSiteFooter();
+initPageTransitions();
