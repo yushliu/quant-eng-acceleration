@@ -10,23 +10,23 @@
       "columns": "lg",
       "members": [
         {
-          "initials": "AL",
-          "name": "Avery Lin",
+          "initials": "YL",
+          "name": "Yu-Hsien Liu",
           "role": "Organizer / Lead",
           "discipline": "Computer Engineering · Mathematics",
           "tags": ["Infra"],
           "bio": "Owns CI workflows, repo templates, and review conventions."
         },
         {
-          "initials": "MT",
-          "name": "Morgan Tate",
+          "initials": "YJ",
+          "name": "Yuexin Jiang",
           "role": "Tech Lead (Infra)",
           "tags": ["Infra", "CPU"],
           "bio": "Defines engineering baselines and documents reproducible environment standards."
         },
         {
-          "initials": "RK",
-          "name": "Riley Kim",
+          "initials": "CD",
+          "name": "Chengfeng Diao",
           "role": "Benchmark Lead",
           "discipline": "Statistics · Computer Science",
           "tags": ["CPU"],
