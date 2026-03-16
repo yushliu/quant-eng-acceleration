@@ -48,8 +48,8 @@
       "columns": "lg",
       "members": [
         {
-          "initials": "NP",
-          "name": "Noah Park",
+          "initials": "CZ",
+          "name": "Chenzixi Zhao",
           "role": "Track Lead - CPU",
           "tags": ["CPU"],
           "bio": "Implements CPU baselines and OpenMP optimization experiments with benchmark reports."

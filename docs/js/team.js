@@ -60,15 +60,19 @@ function renderTeamSection(section) {
 }
 
 async function loadTeamData() {
-  if (window.TEAM_DATA && typeof window.TEAM_DATA === "object") {
-    return window.TEAM_DATA;
+  try {
+    const response = await fetch("./data/team.json", { cache: "no-store" });
+    if (!response.ok) {
+      throw new Error(`Failed to load team data: ${response.status}`);
+    }
+    return response.json();
+  } catch (error) {
+    // `file://` pages usually cannot fetch sibling JSON files due to browser restrictions.
+    if (window.location.protocol === "file:" && window.TEAM_DATA && typeof window.TEAM_DATA === "object") {
+      return window.TEAM_DATA;
+    }
+    throw error;
   }
-
-  const response = await fetch("./data/team.json", { cache: "no-store" });
-  if (!response.ok) {
-    throw new Error(`Failed to load team data: ${response.status}`);
-  }
-  return response.json();
 }
 
 async function renderTeamPage() {
@@ -92,7 +96,9 @@ async function renderTeamPage() {
   } catch (error) {
     sectionsHost.innerHTML = "";
     if (errorHost) {
-      errorHost.textContent = "Unable to load team data.";
+      errorHost.textContent = window.location.protocol === "file:"
+        ? "Unable to load team.json from file://. Use a local web server or preview server."
+        : "Unable to load team data.";
       errorHost.classList.remove("hidden");
     }
     console.error(error);
