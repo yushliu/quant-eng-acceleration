@@ -515,6 +515,416 @@ function injectThemeTokens() {
         0 8px 20px rgba(59, 130, 246, 0.14);
       color: rgba(37, 99, 235, 0.96);
     }
+
+    body.project-modal-open {
+      overflow: hidden;
+    }
+
+    body[data-page="projects"] #site-header {
+      transition: opacity 180ms ease, visibility 0s linear 0s;
+    }
+
+    body[data-page="projects"].project-modal-open #site-header {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 180ms ease, visibility 0s linear 180ms;
+    }
+
+    body[data-page="projects"] .project-card {
+      min-height: 15.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    body[data-page="projects"] .project-card__cta {
+      width: clamp(11rem, 66%, 13.5rem);
+      margin-left: auto;
+      margin-right: auto;
+      min-height: 2.75rem;
+      position: relative;
+      isolation: isolate;
+      background:
+        linear-gradient(180deg, rgba(125, 180, 255, 0.56) 0%, rgba(59, 130, 246, 0.7) 44%, rgba(37, 99, 235, 0.78) 100%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.26) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border-color: rgba(191, 219, 254, 0.72);
+      box-shadow:
+        0 14px 28px rgba(37, 99, 235, 0.2),
+        0 5px 12px rgba(15, 23, 42, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.66),
+        inset 0 2px 0 rgba(255, 255, 255, 0.3),
+        inset 0 -1px 0 rgba(30, 64, 175, 0.3),
+        inset 0 -8px 12px rgba(30, 64, 175, 0.18);
+      backdrop-filter: blur(16px) saturate(160%);
+      -webkit-backdrop-filter: blur(16px) saturate(160%);
+    }
+
+    body[data-page="projects"] .project-card__cta:hover {
+      background:
+        linear-gradient(180deg, rgba(147, 197, 253, 0.62) 0%, rgba(59, 130, 246, 0.76) 44%, rgba(37, 99, 235, 0.84) 100%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.03) 100%);
+      border-color: rgba(191, 219, 254, 0.78);
+      box-shadow:
+        0 18px 30px rgba(37, 99, 235, 0.22),
+        0 6px 14px rgba(15, 23, 42, 0.11),
+        inset 0 1px 0 rgba(255, 255, 255, 0.72),
+        inset 0 -1px 0 rgba(30, 64, 175, 0.34);
+    }
+
+    body[data-page="projects"] .project-tag {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.62));
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.62);
+    }
+
+    body[data-page="projects"] #project-modal-overlay {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 180ms ease;
+    }
+
+    body[data-page="projects"] #project-modal-overlay.is-open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    body[data-page="projects"] .project-modal-backdrop {
+      background: rgba(15, 23, 42, 0.24);
+      backdrop-filter: blur(7px) saturate(118%);
+      -webkit-backdrop-filter: blur(7px) saturate(118%);
+    }
+
+    body[data-page="projects"] .project-modal-shell {
+      max-height: calc(100vh - 2.75rem);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.4)),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.05));
+      border: 1px solid rgba(255, 255, 255, 0.74);
+      box-shadow:
+        0 36px 76px rgba(15, 23, 42, 0.2),
+        0 16px 34px rgba(15, 23, 42, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.82),
+        inset 0 -1px 0 rgba(148, 163, 184, 0.1);
+      backdrop-filter: blur(34px) saturate(180%);
+      -webkit-backdrop-filter: blur(34px) saturate(180%);
+    }
+
+    body[data-page="projects"] .project-modal-header {
+      flex: 0 0 auto;
+      position: relative;
+      z-index: 10;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+      transition: border-color 160ms ease, box-shadow 160ms ease;
+    }
+
+    body[data-page="projects"] .project-modal-shell.is-body-scrolled .project-modal-header {
+      border-bottom-color: rgba(148, 163, 184, 0.2);
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.045);
+    }
+
+    body[data-page="projects"] .project-modal-body {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      position: relative;
+      z-index: 1;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(148, 163, 184, 0.44) transparent;
+    }
+
+    body[data-page="projects"] .project-modal-body::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    body[data-page="projects"] .project-modal-body::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    body[data-page="projects"] .project-modal-body::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.38);
+      border-radius: 999px;
+      border: 2px solid transparent;
+      background-clip: content-box;
+    }
+
+    body[data-page="projects"] .project-modal-sections {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+      padding-bottom: 0.25rem;
+    }
+
+    body[data-page="projects"] .project-modal-section {
+      min-height: 11rem;
+    }
+
+    body[data-page="projects"] .project-modal-section--wide {
+      grid-column: 1 / -1;
+    }
+
+    body[data-page="projects"] .project-approach-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+      gap: 1rem;
+      align-items: start;
+    }
+
+    body[data-page="projects"] .project-approach-summary {
+      padding-right: 0.35rem;
+    }
+
+    body[data-page="projects"] .project-workflow-module {
+      border-radius: 0.85rem;
+      border: 1px solid rgba(255, 255, 255, 0.64);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.54));
+      box-shadow:
+        0 10px 22px rgba(15, 23, 42, 0.045),
+        inset 0 1px 0 rgba(255, 255, 255, 0.7);
+      padding: 0.78rem;
+    }
+
+    body[data-page="projects"] .project-workflow-selector {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 0.18rem;
+      overflow-x: auto;
+      padding: 0.2rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.56);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.44), rgba(255, 255, 255, 0.2)),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.04));
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.62),
+        0 8px 18px rgba(15, 23, 42, 0.03);
+      scrollbar-width: thin;
+      scrollbar-color: rgba(148, 163, 184, 0.42) transparent;
+    }
+
+    body[data-page="projects"] .project-workflow-selector::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    body[data-page="projects"] .project-workflow-selector::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    body[data-page="projects"] .project-workflow-selector::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.36);
+      border-radius: 999px;
+    }
+
+    body[data-page="projects"] .project-workflow-step {
+      min-width: 0;
+      border: 1px solid transparent;
+      background: transparent;
+      color: rgba(71, 85, 105, 0.9);
+      box-shadow: none;
+      transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+    }
+
+    body[data-page="projects"] .project-workflow-step[aria-selected="true"] {
+      background:
+        linear-gradient(180deg, rgba(219, 234, 254, 0.72), rgba(191, 219, 254, 0.36)),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.04));
+      border-color: rgba(147, 197, 253, 0.52);
+      color: rgba(30, 64, 175, 0.94);
+      box-shadow:
+        0 8px 16px rgba(59, 130, 246, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.74);
+    }
+
+    body[data-page="projects"] .project-workflow-detail {
+      border: 1px solid rgba(255, 255, 255, 0.64);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.55));
+      box-shadow:
+        0 10px 20px rgba(15, 23, 42, 0.04),
+        inset 0 1px 0 rgba(255, 255, 255, 0.72);
+      min-height: 11.2rem;
+      height: 11.2rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: stretch;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(148, 163, 184, 0.36) transparent;
+    }
+
+    body[data-page="projects"] .project-workflow-detail::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    body[data-page="projects"] .project-workflow-detail::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    body[data-page="projects"] .project-workflow-detail::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.34);
+      border-radius: 999px;
+    }
+
+    body[data-page="projects"] .project-workflow-detail-row {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 0.55rem;
+    }
+
+    body[data-page="projects"] .project-workflow-nav {
+      width: 2rem;
+      min-height: 8.2rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.26);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.62));
+      color: rgba(71, 85, 105, 0.9);
+      box-shadow:
+        0 8px 18px rgba(15, 23, 42, 0.04),
+        inset 0 1px 0 rgba(255, 255, 255, 0.72);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      line-height: 1;
+      transition: border-color 160ms ease, color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+    }
+
+    body[data-page="projects"] .project-workflow-nav:not(:disabled):hover {
+      border-color: rgba(147, 197, 253, 0.52);
+      color: rgba(30, 64, 175, 0.92);
+      background:
+        linear-gradient(180deg, rgba(219, 234, 254, 0.68), rgba(191, 219, 254, 0.34)),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.04));
+      box-shadow:
+        0 10px 18px rgba(59, 130, 246, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.75);
+    }
+
+    body[data-page="projects"] .project-workflow-nav:disabled {
+      opacity: 0.38;
+      cursor: default;
+      box-shadow:
+        0 4px 10px rgba(15, 23, 42, 0.02),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    body[data-page="projects"] .project-summary-table-wrap {
+      border: 1px solid rgba(255, 255, 255, 0.66);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.5));
+      box-shadow:
+        0 10px 20px rgba(15, 23, 42, 0.04),
+        inset 0 1px 0 rgba(255, 255, 255, 0.72);
+    }
+
+    body[data-page="projects"] .project-summary-table tbody tr + tr th,
+    body[data-page="projects"] .project-summary-table tbody tr + tr td {
+      border-top: 1px solid rgba(148, 163, 184, 0.2);
+    }
+
+    body[data-page="projects"] .project-summary-table th,
+    body[data-page="projects"] .project-summary-table td {
+      padding: 0.55rem 0.1rem;
+      vertical-align: top;
+      line-height: 1.25rem;
+    }
+
+    body[data-page="projects"] .project-summary-table th {
+      width: 48%;
+      color: rgba(71, 85, 105, 0.92);
+      font-weight: 600;
+      font-size: 0.77rem;
+      letter-spacing: 0.01em;
+    }
+
+    body[data-page="projects"] .project-summary-table td {
+      color: rgba(31, 41, 55, 0.94);
+      font-size: 0.82rem;
+      font-weight: 500;
+      text-align: right;
+    }
+
+    body[data-page="projects"] .project-lower-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.36fr) minmax(0, 1fr);
+      gap: 1rem;
+      align-items: stretch;
+    }
+
+    body[data-page="projects"] .project-lower-results {
+      height: 100%;
+    }
+
+    body[data-page="projects"] .project-lower-side {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 1rem;
+      min-height: 100%;
+    }
+
+    body[data-page="projects"] .project-lower-constraints,
+    body[data-page="projects"] .project-lower-next-step {
+      height: 100%;
+    }
+
+    @media (max-width: 767px) {
+      body[data-page="projects"] .project-card {
+        min-height: auto;
+      }
+
+      body[data-page="projects"] .project-card__cta {
+        width: min(16rem, 76%);
+      }
+
+      body[data-page="projects"] .project-modal-shell {
+        margin-top: 4rem;
+        max-height: calc(100vh - 4.75rem);
+        width: calc(100vw - 1.2rem);
+      }
+
+      body[data-page="projects"] .project-modal-sections {
+        grid-template-columns: 1fr;
+      }
+
+      body[data-page="projects"] .project-modal-section {
+        min-height: auto;
+      }
+
+      body[data-page="projects"] .project-approach-layout {
+        grid-template-columns: 1fr;
+      }
+
+      body[data-page="projects"] .project-lower-layout {
+        grid-template-columns: 1fr;
+      }
+
+      body[data-page="projects"] .project-lower-side {
+        grid-template-rows: auto;
+      }
+
+      body[data-page="projects"] .project-workflow-selector {
+        grid-template-columns: repeat(5, minmax(4.9rem, 1fr));
+        min-width: 31rem;
+      }
+
+      body[data-page="projects"] .project-workflow-detail {
+        min-height: 10rem;
+        height: 10rem;
+      }
+
+      body[data-page="projects"] .project-summary-table td {
+        text-align: left;
+      }
+
+      body[data-page="projects"] .project-workflow-nav {
+        min-height: 7rem;
+        width: 1.9rem;
+      }
+    }
   `;
   document.head.appendChild(style);
 }
@@ -531,6 +941,14 @@ function getNavIcon(key) {
       <svg viewBox="0 0 24 24" aria-hidden="true" class="h-4 w-4">
         <path d="M8.5 11.2a2.7 2.7 0 1 0 0-5.4 2.7 2.7 0 0 0 0 5.4Zm7 0a2.3 2.3 0 1 0 0-4.6 2.3 2.3 0 0 0 0 4.6Z" fill="none" stroke="currentColor" stroke-width="1.8"/>
         <path d="M4.8 18.2c.5-2.2 2.3-3.5 4.7-3.5s4.2 1.3 4.7 3.5M14.2 18.2c.4-1.7 1.7-2.8 3.6-2.8 1 0 1.8.2 2.4.7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8"/>
+      </svg>
+    `,
+    projects: `
+      <svg viewBox="0 0 24 24" aria-hidden="true" class="h-4 w-4">
+        <rect x="4.8" y="6.3" width="6.7" height="5.8" rx="1.4" fill="none" stroke="currentColor" stroke-width="1.7"/>
+        <rect x="12.5" y="6.3" width="6.7" height="5.8" rx="1.4" fill="none" stroke="currentColor" stroke-width="1.7"/>
+        <rect x="4.8" y="13.4" width="6.7" height="5.8" rx="1.4" fill="none" stroke="currentColor" stroke-width="1.7"/>
+        <rect x="12.5" y="13.4" width="6.7" height="5.8" rx="1.4" fill="none" stroke="currentColor" stroke-width="1.7"/>
       </svg>
     `,
     plan: `

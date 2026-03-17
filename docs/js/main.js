@@ -59,11 +59,11 @@ function renderHomePage() {
   );
   setText(
     "hero-workstreams",
-    "Implementation, benchmarking, and structured comparison across active club work."
+    "Project implementation, benchmarking, and reproducible comparison across active club tracks."
   );
   setText(
     "hero-latest-outcome",
-    latestRelease ? `${latestRelease.title} · ${latestRelease.version}` : "Curated benchmark outcomes are published through the Release page."
+    latestRelease ? `${latestRelease.title} · ${latestRelease.version}` : "Project outcomes are published through the Projects page."
   );
 
   setText(
@@ -72,7 +72,7 @@ function renderHomePage() {
   );
   setText(
     "snapshot-focus",
-    latestMeeting?.latest?.title || "Algorithm implementation and reproducible comparison work."
+    latestMeeting?.latest?.title || "Current project direction and implementation priorities."
   );
   setText("snapshot-next", latestMeeting ? getNextStepText(latestMeeting) : "Next direction will appear once a new meeting summary is available.");
   setText(
@@ -86,11 +86,10 @@ function renderHomePage() {
     setText("featured-work-summary", latestRelease.summary);
     setText("featured-work-scope", Array.isArray(latestRelease.scope) ? latestRelease.scope[0] : latestRelease.overview);
     setText("featured-work-next", latestRelease.next || "Review the release and reuse its benchmark structure in later work.");
-    if (Array.isArray(latestRelease.evidence) && latestRelease.evidence[0]?.href) {
-      setHref("featured-work-link", latestRelease.evidence[0].href);
-    }
+    setHref("featured-work-link", "./projects.html");
   } else {
     setText("featured-work-meta", "");
+    setHref("featured-work-link", "./projects.html");
   }
 }
 
