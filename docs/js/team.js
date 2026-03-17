@@ -145,41 +145,40 @@ function renderSection(section) {
   return renderTeamSection(section);
 }
 
-function renderStageCard(title, description, innerMarkup, extraClasses = "", headingKey = "") {
+function renderPagePanel(title, description, innerMarkup, extraClasses = "", headingKey = "", headingTag = "h2") {
   const baseKey = headingKey || String(title || "team");
-  const headingId = `${String(baseKey).toLowerCase().replace(/[^a-z0-9]+/g, "-")}-stage-heading`;
-  const cardClass = ["team-stage-card", extraClasses].filter(Boolean).join(" ");
+  const headingId = `${String(baseKey).toLowerCase().replace(/[^a-z0-9]+/g, "-")}-panel-heading`;
+  const cardClass = ["glass-panel", "home-stage-surface", "rounded-[1.5rem]", "p-7", extraClasses].filter(Boolean).join(" ");
+  const safeHeadingTag = headingTag === "h1" ? "h1" : "h2";
   const descriptionMarkup = description
     ? `<p class="mt-3 max-w-3xl text-sm leading-6 text-gray-600 sm:text-base">${escapeHtml(description)}</p>`
     : "";
 
   return `
     <section class="${escapeHtml(cardClass)}" aria-labelledby="${escapeHtml(headingId)}">
-      <article class="glass-panel rounded-[1.5rem] p-7">
-        <div class="max-w-3xl">
-          <h1 id="${escapeHtml(headingId)}" class="text-2xl font-semibold tracking-tight text-gray-900 sm:text-3xl">${escapeHtml(title)}</h1>
-          ${descriptionMarkup}
-        </div>
-        <div class="mt-8">
-          ${innerMarkup}
-        </div>
-      </article>
+      <div class="max-w-3xl">
+        <${safeHeadingTag} id="${escapeHtml(headingId)}" class="text-2xl font-semibold tracking-tight text-gray-900 sm:text-3xl">${escapeHtml(title)}</${safeHeadingTag}>
+        ${descriptionMarkup}
+      </div>
+      <div class="mt-8">
+        ${innerMarkup}
+      </div>
     </section>
   `;
 }
 
-function buildTeamStageMarkup(hero, sections) {
+function buildTeamPageMarkup(hero, sections) {
   const leads = sections.find((section) => section.id === "leads");
   const contributors = sections.find((section) => section.id === "contributors");
   const structure = sections.find((section) => section.id === "two-track-structure");
   const participation = sections.find((section) => section.id === "participation");
 
-  const leadCard = leads
-    ? renderStageCard(hero.title || "Team", hero.description || "", renderTeamSection(leads), "", "team-leads")
+  const leadPanel = leads
+    ? renderPagePanel(hero.title || "Team", hero.description || "", renderTeamSection(leads), "", "team-leads", "h1")
     : "";
 
-  const contributorCard = contributors
-    ? renderStageCard(
+  const contributorPanel = contributors
+    ? renderPagePanel(
       "Contributors",
       "The club relies on focused technical contributors across CPU, GPU, FPGA-simulation, and workflow support.",
       renderTeamSection(contributors),
@@ -193,17 +192,16 @@ function buildTeamStageMarkup(hero, sections) {
     .map((section) => renderSection(section))
     .join("");
 
-  const finalStageCard = finalCardSections
-    ? renderStageCard(
+  const finalPanel = finalCardSections
+    ? renderPagePanel(
       "Two-track Structure and Involvement",
       "The closing chapter explains how algorithm and infrastructure ownership fit together, then shows how new members can join that work.",
       `<div class="grid gap-10">${finalCardSections}</div>`,
-      "team-stage-card__stack",
       "team-final-stage"
     )
     : "";
 
-  return [leadCard, contributorCard, finalStageCard].filter(Boolean).join("");
+  return [leadPanel, contributorPanel, finalPanel].filter(Boolean).join("");
 }
 
 async function loadTeamData() {
@@ -223,7 +221,7 @@ async function loadTeamData() {
 }
 
 async function renderTeamPage() {
-  const sectionsHost = document.getElementById("team-stage");
+  const sectionsHost = document.getElementById("team-sections");
   const errorHost = document.getElementById("team-error");
 
   if (!sectionsHost) {
@@ -235,25 +233,7 @@ async function renderTeamPage() {
     const hero = data && typeof data.hero === "object" ? data.hero : {};
     const sections = Array.isArray(data && data.sections) ? data.sections : [];
 
-    sectionsHost.innerHTML = buildTeamStageMarkup(hero, sections);
-    if (typeof window.initVerticalStagePage === "function") {
-      window.initVerticalStagePage({
-        page: "team",
-        trackSelector: ".team-stage-track",
-        stageSelector: ".team-stage",
-        sectionSelector: ".team-stage-card",
-        profile: {
-          sectionTargets: [0.12, 0.6, 0.95],
-          sectionPhases: [
-            { holdStart: 0, holdEnd: 0.32, exitEnd: 0.52 },
-            { enterStart: 0.32, enterEnd: 0.52, holdStart: 0.52, holdEnd: 0.78, exitEnd: 0.9 },
-            { enterStart: 0.78, enterEnd: 0.9, holdStart: 0.9, holdEnd: 1 }
-          ],
-          heightProperty: "--team-stage-height",
-          translatePrefix: "--team-stage"
-        }
-      });
-    }
+    sectionsHost.innerHTML = buildTeamPageMarkup(hero, sections);
   } catch (error) {
     sectionsHost.innerHTML = "";
     if (errorHost) {
