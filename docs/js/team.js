@@ -30,7 +30,7 @@ function renderMemberCard(member, sectionId) {
     : "";
 
   return `
-    <article class="rounded-lg border border-gray-200 bg-white ${paddingClass} shadow-sm transition hover:border-gray-300 hover:shadow">
+    <article class="glass-subpanel rounded-[1.1rem] ${paddingClass} transition hover:border-gray-300 hover:shadow">
       <div class="flex items-center gap-4">
         <div class="flex ${avatarSizeClass} items-center justify-center rounded-full bg-gray-200 text-sm font-semibold text-gray-700">${escapeHtml(member.initials)}</div>
         <div>
@@ -50,7 +50,7 @@ function renderTeamSection(section) {
   const cardsMarkup = members.map((member) => renderMemberCard(member, section.id)).join("");
 
   return `
-    <section class="mt-12 first:mt-10" aria-labelledby="${escapeHtml(section.id)}-heading">
+    <section aria-labelledby="${escapeHtml(section.id)}-heading">
       <h2 id="${escapeHtml(section.id)}-heading" class="text-sm font-semibold uppercase tracking-[0.16em] text-gray-500">${escapeHtml(section.title)}</h2>
       <div class="${getTeamGridClass(section)}">
         ${cardsMarkup}
@@ -77,7 +77,7 @@ function renderParticipationSection(section) {
       : "";
 
     return `
-      <article class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+      <article class="glass-subpanel rounded-[1.1rem] p-5">
         <h3 class="text-base font-semibold text-gray-900">${escapeHtml(group.title || "")}</h3>
         ${description}
         ${bullets}
@@ -86,7 +86,7 @@ function renderParticipationSection(section) {
   }).join("");
 
   return `
-    <section class="mt-12" aria-labelledby="${escapeHtml(section.id)}-heading">
+    <section aria-labelledby="${escapeHtml(section.id)}-heading">
       <h2 id="${escapeHtml(section.id)}-heading" class="text-sm font-semibold uppercase tracking-[0.16em] text-gray-500">${escapeHtml(section.title)}</h2>
       ${intro}
       <div class="mt-4 grid grid-cols-1 gap-5 lg:grid-cols-3">
@@ -114,7 +114,7 @@ function renderInfoCardsSection(section) {
       : "";
 
     return `
-      <article class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+      <article class="glass-subpanel rounded-[1.1rem] p-5">
         <h3 class="text-base font-semibold text-gray-900">${escapeHtml(card.title || "")}</h3>
         ${description}
         ${bullets}
@@ -123,7 +123,7 @@ function renderInfoCardsSection(section) {
   }).join("");
 
   return `
-    <section class="mt-12" aria-labelledby="${escapeHtml(section.id)}-heading">
+    <section aria-labelledby="${escapeHtml(section.id)}-heading">
       <h2 id="${escapeHtml(section.id)}-heading" class="text-sm font-semibold uppercase tracking-[0.16em] text-gray-500">${escapeHtml(section.title)}</h2>
       ${intro}
       <div class="mt-4 grid grid-cols-1 gap-5 md:grid-cols-2">
@@ -145,6 +145,67 @@ function renderSection(section) {
   return renderTeamSection(section);
 }
 
+function renderStageCard(title, description, innerMarkup, extraClasses = "", headingKey = "") {
+  const baseKey = headingKey || String(title || "team");
+  const headingId = `${String(baseKey).toLowerCase().replace(/[^a-z0-9]+/g, "-")}-stage-heading`;
+  const cardClass = ["team-stage-card", extraClasses].filter(Boolean).join(" ");
+  const descriptionMarkup = description
+    ? `<p class="mt-3 max-w-3xl text-sm leading-6 text-gray-600 sm:text-base">${escapeHtml(description)}</p>`
+    : "";
+
+  return `
+    <section class="${escapeHtml(cardClass)}" aria-labelledby="${escapeHtml(headingId)}">
+      <article class="glass-panel rounded-[1.5rem] p-7">
+        <div class="max-w-3xl">
+          <h1 id="${escapeHtml(headingId)}" class="text-2xl font-semibold tracking-tight text-gray-900 sm:text-3xl">${escapeHtml(title)}</h1>
+          ${descriptionMarkup}
+        </div>
+        <div class="mt-8">
+          ${innerMarkup}
+        </div>
+      </article>
+    </section>
+  `;
+}
+
+function buildTeamStageMarkup(hero, sections) {
+  const leads = sections.find((section) => section.id === "leads");
+  const contributors = sections.find((section) => section.id === "contributors");
+  const structure = sections.find((section) => section.id === "two-track-structure");
+  const participation = sections.find((section) => section.id === "participation");
+
+  const leadCard = leads
+    ? renderStageCard(hero.title || "Team", hero.description || "", renderTeamSection(leads), "", "team-leads")
+    : "";
+
+  const contributorCard = contributors
+    ? renderStageCard(
+      "Contributors",
+      "The club relies on focused technical contributors across CPU, GPU, FPGA-simulation, and workflow support.",
+      renderTeamSection(contributors),
+      "",
+      "team-contributors"
+    )
+    : "";
+
+  const finalCardSections = [structure, participation]
+    .filter(Boolean)
+    .map((section) => renderSection(section))
+    .join("");
+
+  const finalStageCard = finalCardSections
+    ? renderStageCard(
+      "Two-track Structure and Involvement",
+      "The closing chapter explains how algorithm and infrastructure ownership fit together, then shows how new members can join that work.",
+      `<div class="grid gap-10">${finalCardSections}</div>`,
+      "team-stage-card__stack",
+      "team-final-stage"
+    )
+    : "";
+
+  return [leadCard, contributorCard, finalStageCard].filter(Boolean).join("");
+}
+
 async function loadTeamData() {
   try {
     const response = await fetch("./data/team.json", { cache: "no-store" });
@@ -162,12 +223,10 @@ async function loadTeamData() {
 }
 
 async function renderTeamPage() {
-  const heroTitle = document.getElementById("team-title");
-  const heroDescription = document.getElementById("team-description");
-  const sectionsHost = document.getElementById("team-sections");
+  const sectionsHost = document.getElementById("team-stage");
   const errorHost = document.getElementById("team-error");
 
-  if (!heroTitle || !heroDescription || !sectionsHost) {
+  if (!sectionsHost) {
     return;
   }
 
@@ -176,9 +235,25 @@ async function renderTeamPage() {
     const hero = data && typeof data.hero === "object" ? data.hero : {};
     const sections = Array.isArray(data && data.sections) ? data.sections : [];
 
-    heroTitle.textContent = hero.title || "Team";
-    heroDescription.textContent = hero.description || "";
-    sectionsHost.innerHTML = sections.map(renderSection).join("");
+    sectionsHost.innerHTML = buildTeamStageMarkup(hero, sections);
+    if (typeof window.initVerticalStagePage === "function") {
+      window.initVerticalStagePage({
+        page: "team",
+        trackSelector: ".team-stage-track",
+        stageSelector: ".team-stage",
+        sectionSelector: ".team-stage-card",
+        profile: {
+          sectionTargets: [0.12, 0.6, 0.95],
+          sectionPhases: [
+            { holdStart: 0, holdEnd: 0.32, exitEnd: 0.52 },
+            { enterStart: 0.32, enterEnd: 0.52, holdStart: 0.52, holdEnd: 0.78, exitEnd: 0.9 },
+            { enterStart: 0.78, enterEnd: 0.9, holdStart: 0.9, holdEnd: 1 }
+          ],
+          heightProperty: "--team-stage-height",
+          translatePrefix: "--team-stage"
+        }
+      });
+    }
   } catch (error) {
     sectionsHost.innerHTML = "";
     if (errorHost) {

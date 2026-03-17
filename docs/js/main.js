@@ -94,26 +94,40 @@ function renderHomePage() {
   }
 }
 
-function initHomeStageTransitions() {
-  if (!document.body || document.body.dataset.page !== "home") {
+function createStageProfile(options = {}) {
+  return {
+    sectionTargets: options.sectionTargets || [0.12, 0.6, 0.95],
+    sectionPhases: options.sectionPhases || [
+      { holdStart: 0, holdEnd: 0.3, exitEnd: 0.5 },
+      { enterStart: 0.3, enterEnd: 0.5, holdStart: 0.5, holdEnd: 0.76, exitEnd: 0.9 },
+      { enterStart: 0.76, enterEnd: 0.9, holdStart: 0.9, holdEnd: 1 }
+    ],
+    heightProperty: options.heightProperty || "--home-stage-height",
+    translatePrefix: options.translatePrefix || "--stage"
+  };
+}
+
+function initVerticalStagePage(config) {
+  if (!document.body || document.body.dataset.page !== config.page) {
     return;
   }
 
-  const track = document.querySelector(".home-stage-track");
-  const stage = document.querySelector(".home-stage");
-  const sections = Array.from(document.querySelectorAll(".home-stage-section"));
+  const track = document.querySelector(config.trackSelector);
+  const stage = document.querySelector(config.stageSelector);
+  const sections = Array.from(document.querySelectorAll(config.sectionSelector));
   if (!track || !stage || !sections.length) {
     return;
   }
 
+  if (track.dataset.stageControllerReady === "true") {
+    return;
+  }
+  track.dataset.stageControllerReady = "true";
+
   const enableQuery = window.matchMedia("(min-width: 1024px)");
   const reduceMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-  const sectionTargets = [0.12, 0.6, 0.95];
-  const sectionPhases = [
-    { holdStart: 0, holdEnd: 0.3, exitEnd: 0.5 },
-    { enterStart: 0.3, enterEnd: 0.5, holdStart: 0.5, holdEnd: 0.76, exitEnd: 0.9 },
-    { enterStart: 0.76, enterEnd: 0.9, holdStart: 0.9, holdEnd: 1 }
-  ];
+  const profile = createStageProfile(config.profile);
+  const { sectionTargets, sectionPhases } = profile;
   let ticking = false;
 
   function clamp(value, min, max) {
@@ -149,12 +163,12 @@ function initHomeStageTransitions() {
   }
 
   function resetSections() {
-    track.style.removeProperty("--home-stage-height");
+    track.style.removeProperty(profile.heightProperty);
     sections.forEach((section) => {
-      section.style.removeProperty("--stage-translate");
-      section.style.removeProperty("--stage-scale");
-      section.style.removeProperty("--stage-opacity");
-      section.style.removeProperty("--stage-saturate");
+      section.style.removeProperty(`${profile.translatePrefix}-translate`);
+      section.style.removeProperty(`${profile.translatePrefix}-scale`);
+      section.style.removeProperty(`${profile.translatePrefix}-opacity`);
+      section.style.removeProperty(`${profile.translatePrefix}-saturate`);
       section.style.removeProperty("z-index");
       if (!enableQuery.matches || reduceMotionQuery.matches) {
         section.dataset.stageInteractive = "true";
@@ -172,7 +186,7 @@ function initHomeStageTransitions() {
 
     const stageHeight = sections.reduce((maxHeight, section) => Math.max(maxHeight, section.scrollHeight), 0);
     const resolvedHeight = Math.max(stageHeight, 640);
-    track.style.setProperty("--home-stage-height", `${resolvedHeight}px`);
+    track.style.setProperty(profile.heightProperty, `${resolvedHeight}px`);
     stage.style.height = previousHeight;
     stage.style.minHeight = previousMinHeight;
   }
@@ -290,10 +304,10 @@ function initHomeStageTransitions() {
         }
       }
 
-      section.style.setProperty("--stage-translate", `${translate.toFixed(2)}px`);
-      section.style.setProperty("--stage-scale", scale.toFixed(4));
-      section.style.setProperty("--stage-opacity", opacity.toFixed(4));
-      section.style.setProperty("--stage-saturate", saturate.toFixed(4));
+      section.style.setProperty(`${profile.translatePrefix}-translate`, `${translate.toFixed(2)}px`);
+      section.style.setProperty(`${profile.translatePrefix}-scale`, scale.toFixed(4));
+      section.style.setProperty(`${profile.translatePrefix}-opacity`, opacity.toFixed(4));
+      section.style.setProperty(`${profile.translatePrefix}-saturate`, saturate.toFixed(4));
       section.style.setProperty("z-index", String(zIndex));
     });
   }
@@ -321,7 +335,7 @@ function initHomeStageTransitions() {
       return false;
     }
 
-    const targetSection = target.closest(".home-stage-section");
+    const targetSection = target.closest(config.sectionSelector);
     if (!targetSection) {
       return false;
     }
@@ -375,6 +389,21 @@ function initHomeStageTransitions() {
     });
   }
 }
+
+function initHomeStageTransitions() {
+  initVerticalStagePage({
+    page: "home",
+    trackSelector: ".home-stage-track",
+    stageSelector: ".home-stage",
+    sectionSelector: ".home-stage-section",
+    profile: {
+      heightProperty: "--home-stage-height",
+      translatePrefix: "--stage"
+    }
+  });
+}
+
+window.initVerticalStagePage = initVerticalStagePage;
 
 document.addEventListener("DOMContentLoaded", () => {
   initMobileNav();

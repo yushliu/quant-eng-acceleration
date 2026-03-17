@@ -29,59 +29,67 @@ function injectThemeTokens() {
       color: #1f2937;
     }
 
-    .page-stage {
+    .page-stage-shell {
       position: relative;
       z-index: 0;
-      transform: translate3d(0, 0, 0) scale(1);
+      min-height: var(--page-stage-height, auto);
+    }
+
+    .page-stage {
+      position: relative;
+      transform: translateX(0);
+      transform-origin: center top;
       opacity: 1;
       transition:
         transform 340ms cubic-bezier(0.22, 1, 0.36, 1),
         opacity 260ms ease;
       will-change: transform, opacity;
+      backface-visibility: hidden;
+      contain: layout paint;
     }
 
     .page-stage--pre-enter-forward {
-      transform: translate3d(52px, 0, 0) scale(0.992);
+      transform: translateX(52px);
       opacity: 0;
     }
 
     .page-stage--pre-enter-backward {
-      transform: translate3d(-52px, 0, 0) scale(0.992);
+      transform: translateX(-52px);
       opacity: 0;
     }
 
     .page-stage--enter-active {
-      transform: translate3d(0, 0, 0) scale(1);
+      transform: translateX(0);
       opacity: 1;
     }
 
     .page-stage--exit-forward {
-      transform: translate3d(-56px, 0, 0) scale(0.99);
+      transform: translateX(-56px);
       opacity: 0.24;
       pointer-events: none;
     }
 
     .page-stage--exit-backward {
-      transform: translate3d(56px, 0, 0) scale(0.99);
+      transform: translateX(56px);
       opacity: 0.24;
       pointer-events: none;
     }
 
     @media (max-width: 767px) {
       .page-stage--pre-enter-forward {
-        transform: translate3d(28px, 0, 0) scale(0.995);
+        transform: translateX(28px);
       }
 
       .page-stage--pre-enter-backward {
-        transform: translate3d(-28px, 0, 0) scale(0.995);
+        transform: translateX(-28px);
       }
 
       .page-stage--exit-forward {
-        transform: translate3d(-30px, 0, 0) scale(0.995);
+        transform: translateX(-30px);
       }
 
       .page-stage--exit-backward {
-        transform: translate3d(30px, 0, 0) scale(0.995);
+        transform: translateX(30px);
       }
     }
 
@@ -305,6 +313,97 @@ function injectThemeTokens() {
         pointer-events: auto;
       }
     }
+
+    body[data-page="team"] .team-main {
+      position: relative;
+      padding-bottom: 0;
+    }
+
+    body[data-page="team"] .team-stage-track {
+      position: relative;
+      min-height: calc(var(--team-stage-height, 42rem) + 380svh);
+      padding-top: 0.75rem;
+      scroll-margin-top: 6.5rem;
+    }
+
+    body[data-page="team"] .team-stage-track::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 2rem;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 20%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(148, 163, 184, 0.035));
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    body[data-page="team"] .team-stage {
+      position: sticky;
+      top: 6.85rem;
+      min-height: var(--team-stage-height, 42rem);
+      height: var(--team-stage-height, 42rem);
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    body[data-page="team"] .team-stage-card {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      align-content: start;
+      gap: 1.75rem;
+      transform: translate3d(0, var(--team-stage-translate, 0px), 0) scale(var(--team-stage-scale, 1));
+      transform-origin: center top;
+      opacity: var(--team-stage-opacity, 1);
+      filter: saturate(var(--team-stage-saturate, 1));
+      will-change: transform, opacity;
+      transition: transform 120ms linear, opacity 120ms linear, filter 120ms linear;
+      pointer-events: none;
+    }
+
+    body[data-page="team"] .team-stage-card[data-stage-interactive="true"] {
+      pointer-events: auto;
+    }
+
+    body[data-page="team"] .team-stage-card__stack section + section {
+      margin-top: 2.5rem;
+    }
+
+    @media (max-width: 1023px) {
+      body[data-page="team"] .team-main {
+        padding-bottom: 0;
+      }
+
+      body[data-page="team"] .team-stage-track {
+        min-height: auto;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+      }
+
+      body[data-page="team"] .team-stage {
+        position: relative;
+        top: auto;
+        min-height: auto;
+        height: auto;
+        overflow: visible;
+        display: grid;
+        gap: 1.5rem;
+      }
+
+      body[data-page="team"] .team-stage-card {
+        position: relative;
+        inset: auto;
+        transform: none;
+        opacity: 1;
+        filter: none;
+        pointer-events: auto;
+      }
+    }
+
+    body[data-page="team"] footer {
+      display: none;
+    }
   `;
   document.head.appendChild(style);
 }
@@ -442,20 +541,23 @@ function ensurePageStage() {
     return null;
   }
 
-  const existing = body.querySelector(":scope > .page-stage");
+  const existing = body.querySelector(":scope > .page-stage-shell > .page-stage");
   if (existing) {
     return existing;
   }
 
+  const shell = document.createElement("div");
+  shell.className = "page-stage-shell";
   const stage = document.createElement("div");
   stage.className = "page-stage";
 
   const header = document.getElementById("site-header");
   const firstScript = body.querySelector(":scope > script");
-  body.insertBefore(stage, firstScript || null);
+  shell.appendChild(stage);
+  body.insertBefore(shell, firstScript || null);
 
   Array.from(body.children).forEach((child) => {
-    if (child === header || child === stage || child.tagName === "SCRIPT") {
+    if (child === header || child === shell || child.tagName === "SCRIPT") {
       return;
     }
     stage.appendChild(child);
@@ -467,11 +569,16 @@ function ensurePageStage() {
 function initPageTransitions() {
   const body = document.body;
   const stage = ensurePageStage();
+  const shell = stage?.parentElement;
   const reduceMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
   const transitionKey = "qeac-top-level-transition";
 
-  if (!body || !stage) {
+  if (!body || !stage || !shell) {
     return;
+  }
+
+  function syncStageShellHeight() {
+    shell.style.setProperty("--page-stage-height", `${stage.offsetHeight}px`);
   }
 
   function getCurrentPageMatch() {
@@ -513,6 +620,8 @@ function initPageTransitions() {
   }
 
   function applyEnterTransition() {
+    syncStageShellHeight();
+
     if (reduceMotionQuery.matches) {
       clearPendingTransition();
       return;
@@ -579,6 +688,7 @@ function initPageTransitions() {
     });
 
     event.preventDefault();
+    syncStageShellHeight();
     stage.classList.remove("page-stage--enter-active");
     stage.classList.add(`page-stage--exit-${direction}`);
 
@@ -587,6 +697,9 @@ function initPageTransitions() {
     }, 230);
   });
 
+  window.addEventListener("resize", syncStageShellHeight);
+  window.addEventListener("load", syncStageShellHeight);
+  syncStageShellHeight();
   applyEnterTransition();
 }
 
