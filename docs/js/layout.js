@@ -146,20 +146,40 @@ function injectThemeTokens() {
     }
 
     .nav-shell {
+      position: relative;
+      isolation: isolate;
       background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.38), rgba(255, 255, 255, 0.14)),
-        linear-gradient(180deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.03));
-      border: 1px solid rgba(255, 255, 255, 0.56);
+        linear-gradient(180deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.08) 48%, rgba(255, 255, 255, 0.03) 100%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.68);
       box-shadow:
-        0 24px 56px rgba(15, 23, 42, 0.09),
-        0 10px 24px rgba(15, 23, 42, 0.048),
-        inset 0 1px 0 rgba(255, 255, 255, 0.66),
-        inset 0 8px 16px rgba(255, 255, 255, 0.08),
-        inset 0 -1px 0 rgba(148, 163, 184, 0.08);
-      backdrop-filter: blur(42px) saturate(200%);
-      -webkit-backdrop-filter: blur(42px) saturate(200%);
+        0 30px 70px rgba(15, 23, 42, 0.11),
+        0 14px 30px rgba(15, 23, 42, 0.06),
+        0 2px 8px rgba(255, 255, 255, 0.16),
+        inset 0 1px 0 rgba(255, 255, 255, 0.86),
+        inset 0 2px 0 rgba(255, 255, 255, 0.34),
+        inset 0 -1px 0 rgba(148, 163, 184, 0.2),
+        inset 0 -8px 14px rgba(148, 163, 184, 0.1),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(50px) saturate(225%);
+      -webkit-backdrop-filter: blur(50px) saturate(225%);
       scrollbar-width: none;
       -ms-overflow-style: none;
+    }
+
+    .nav-shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.46) 0%, rgba(255, 255, 255, 0.12) 24%, rgba(255, 255, 255, 0) 46%),
+        linear-gradient(0deg, rgba(148, 163, 184, 0.14) 0%, rgba(148, 163, 184, 0) 22%);
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.24),
+        inset 0 -1px 0 rgba(148, 163, 184, 0.2);
+      opacity: 0.9;
     }
 
     .nav-shell::-webkit-scrollbar {
@@ -269,6 +289,155 @@ function injectThemeTokens() {
         inset 0 -1px 0 rgba(148, 163, 184, 0.08);
       backdrop-filter: blur(30px) saturate(170%);
       -webkit-backdrop-filter: blur(30px) saturate(170%);
+    }
+
+    body[data-page="home"] .home-card-hero {
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.36)),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.06));
+      border-color: rgba(255, 255, 255, 0.74);
+      box-shadow:
+        0 34px 72px rgba(15, 23, 42, 0.12),
+        0 14px 30px rgba(15, 23, 42, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.82),
+        inset 0 10px 18px rgba(255, 255, 255, 0.12),
+        inset 0 -1px 0 rgba(148, 163, 184, 0.1);
+    }
+
+    body[data-page="home"] .home-card-overview {
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.34)),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.04));
+      border-color: rgba(255, 255, 255, 0.68);
+      box-shadow:
+        0 26px 54px rgba(15, 23, 42, 0.09),
+        0 10px 22px rgba(15, 23, 42, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.76),
+        inset 0 -1px 0 rgba(148, 163, 184, 0.08);
+    }
+
+    body[data-page="home"] .home-card-explore {
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.64), rgba(255, 255, 255, 0.35)),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
+      border-color: rgba(255, 255, 255, 0.7);
+      box-shadow:
+        0 30px 64px rgba(15, 23, 42, 0.1),
+        0 12px 26px rgba(15, 23, 42, 0.055),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8),
+        inset 0 -1px 0 rgba(148, 163, 184, 0.09);
+    }
+
+    body[data-page="home"] .home-card-explore .glass-subpanel {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.66));
+      border-color: rgba(255, 255, 255, 0.72);
+      box-shadow:
+        0 12px 24px rgba(15, 23, 42, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(12px) saturate(130%);
+      -webkit-backdrop-filter: blur(12px) saturate(130%);
+    }
+
+    body[data-page="home"] .home-card-support {
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.56), rgba(255, 255, 255, 0.3)),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.04));
+      border-color: rgba(255, 255, 255, 0.64);
+      box-shadow:
+        0 24px 50px rgba(15, 23, 42, 0.08),
+        0 8px 18px rgba(15, 23, 42, 0.045),
+        inset 0 1px 0 rgba(255, 255, 255, 0.74);
+    }
+
+    body[data-page="team"] .team-workflow-grid {
+      position: relative;
+      z-index: 1;
+    }
+
+    body[data-page="team"] .team-workflow-marker {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    body[data-page="team"] .team-workflow-marker__label {
+      align-items: center;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.64));
+      border: 1px solid rgba(148, 163, 184, 0.26);
+      border-radius: 999px;
+      color: rgba(71, 85, 105, 0.9);
+      display: inline-flex;
+      font-size: 0.69rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      padding: 0.22rem 0.62rem;
+      text-transform: uppercase;
+    }
+
+    body[data-page="team"] .team-workflow-card {
+      border-color: rgba(255, 255, 255, 0.72);
+      box-shadow:
+        0 14px 28px rgba(15, 23, 42, 0.055),
+        inset 0 1px 0 rgba(255, 255, 255, 0.74);
+    }
+
+    body[data-page="home"] .glass-btn-primary {
+      position: relative;
+      isolation: isolate;
+      background:
+        linear-gradient(180deg, rgba(125, 180, 255, 0.56) 0%, rgba(59, 130, 246, 0.7) 44%, rgba(37, 99, 235, 0.78) 100%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.26) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border-color: rgba(191, 219, 254, 0.72);
+      box-shadow:
+        0 14px 28px rgba(37, 99, 235, 0.2),
+        0 5px 12px rgba(15, 23, 42, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.66),
+        inset 0 2px 0 rgba(255, 255, 255, 0.3),
+        inset 0 -1px 0 rgba(30, 64, 175, 0.3),
+        inset 0 -8px 12px rgba(30, 64, 175, 0.18);
+      backdrop-filter: blur(16px) saturate(160%);
+      -webkit-backdrop-filter: blur(16px) saturate(160%);
+    }
+
+    body[data-page="home"] .glass-btn-primary:hover {
+      background:
+        linear-gradient(180deg, rgba(147, 197, 253, 0.62) 0%, rgba(59, 130, 246, 0.76) 44%, rgba(37, 99, 235, 0.84) 100%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.03) 100%);
+      border-color: rgba(191, 219, 254, 0.78);
+      box-shadow:
+        0 18px 30px rgba(37, 99, 235, 0.22),
+        0 6px 14px rgba(15, 23, 42, 0.11),
+        inset 0 1px 0 rgba(255, 255, 255, 0.72),
+        inset 0 -1px 0 rgba(30, 64, 175, 0.34);
+    }
+
+    body[data-page="home"] .glass-btn-secondary {
+      position: relative;
+      isolation: isolate;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.64) 0%, rgba(255, 255, 255, 0.36) 58%, rgba(255, 255, 255, 0.22) 100%),
+        linear-gradient(180deg, rgba(219, 234, 254, 0.22) 0%, rgba(219, 234, 254, 0.04) 100%);
+      border-color: rgba(191, 219, 254, 0.54);
+      box-shadow:
+        0 10px 22px rgba(15, 23, 42, 0.07),
+        0 3px 10px rgba(15, 23, 42, 0.045),
+        inset 0 1px 0 rgba(255, 255, 255, 0.82),
+        inset 0 2px 0 rgba(255, 255, 255, 0.34),
+        inset 0 -1px 0 rgba(148, 163, 184, 0.24),
+        inset 0 -8px 12px rgba(148, 163, 184, 0.1);
+      backdrop-filter: blur(16px) saturate(148%);
+      -webkit-backdrop-filter: blur(16px) saturate(148%);
+    }
+
+    body[data-page="home"] .glass-btn-secondary:hover {
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.44) 58%, rgba(255, 255, 255, 0.28) 100%),
+        linear-gradient(180deg, rgba(219, 234, 254, 0.26) 0%, rgba(219, 234, 254, 0.06) 100%);
+      border-color: rgba(191, 219, 254, 0.62);
+      box-shadow:
+        0 12px 24px rgba(15, 23, 42, 0.08),
+        0 4px 10px rgba(15, 23, 42, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.88),
+        inset 0 -1px 0 rgba(148, 163, 184, 0.28);
     }
 
     body[data-page="plan"] .plan-major-panel {
