@@ -518,6 +518,7 @@ function injectThemeTokens() {
 
     body.project-modal-open {
       overflow: hidden;
+      touch-action: none;
     }
 
     body[data-page="projects"] #site-header {
@@ -579,6 +580,14 @@ function injectThemeTokens() {
     }
 
     body[data-page="projects"] #project-modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: clamp(0.85rem, 3.1vh, 1.8rem) 0.8rem 0.9rem;
+      overflow: hidden;
       opacity: 0;
       pointer-events: none;
       transition: opacity 180ms ease;
@@ -596,7 +605,8 @@ function injectThemeTokens() {
     }
 
     body[data-page="projects"] .project-modal-shell {
-      max-height: calc(100vh - 2.75rem);
+      margin-top: 0;
+      max-height: calc(100dvh - clamp(1.75rem, 6.2vh, 3.6rem));
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -686,13 +696,17 @@ function injectThemeTokens() {
         0 10px 22px rgba(15, 23, 42, 0.045),
         inset 0 1px 0 rgba(255, 255, 255, 0.7);
       padding: 0.78rem;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
     }
 
     body[data-page="projects"] .project-workflow-selector {
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 0.18rem;
-      overflow-x: auto;
+      overflow: hidden;
       padding: 0.2rem;
       border-radius: 999px;
       border: 1px solid rgba(255, 255, 255, 0.56);
@@ -704,6 +718,8 @@ function injectThemeTokens() {
         0 8px 18px rgba(15, 23, 42, 0.03);
       scrollbar-width: thin;
       scrollbar-color: rgba(148, 163, 184, 0.42) transparent;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     body[data-page="projects"] .project-workflow-selector::-webkit-scrollbar {
@@ -725,6 +741,9 @@ function injectThemeTokens() {
       background: transparent;
       color: rgba(71, 85, 105, 0.9);
       box-shadow: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
       transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
     }
 
@@ -774,6 +793,7 @@ function injectThemeTokens() {
       grid-template-columns: auto minmax(0, 1fr) auto;
       align-items: center;
       gap: 0.55rem;
+      width: 100%;
     }
 
     body[data-page="projects"] .project-workflow-nav {
@@ -821,6 +841,37 @@ function injectThemeTokens() {
         inset 0 1px 0 rgba(255, 255, 255, 0.72);
     }
 
+    body[data-page="projects"] .project-chart-card,
+    body[data-page="projects"] .project-results-group {
+      border: 1px solid rgba(255, 255, 255, 0.62);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.54));
+      box-shadow:
+        0 10px 20px rgba(15, 23, 42, 0.035),
+        inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    }
+
+    body[data-page="projects"] .project-chart-figure {
+      border: 1px solid rgba(255, 255, 255, 0.62);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.5));
+      border-radius: 0.8rem;
+      min-height: 12rem;
+      padding: 0.45rem;
+      box-shadow:
+        0 8px 18px rgba(15, 23, 42, 0.03),
+        inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    }
+
+    body[data-page="projects"] .project-chart-placeholder {
+      align-items: center;
+      color: rgba(71, 85, 105, 0.9);
+      display: flex;
+      height: 100%;
+      justify-content: center;
+      min-height: 10.5rem;
+      text-align: center;
+      padding: 0.75rem;
+    }
+
     body[data-page="projects"] .project-summary-table tbody tr + tr th,
     body[data-page="projects"] .project-summary-table tbody tr + tr td {
       border-top: 1px solid rgba(148, 163, 184, 0.2);
@@ -848,26 +899,27 @@ function injectThemeTokens() {
       text-align: right;
     }
 
-    body[data-page="projects"] .project-lower-layout {
+    body[data-page="projects"] .project-results-primary {
+      width: 100%;
+    }
+
+    body[data-page="projects"] .project-results-block {
+      border: 1px solid rgba(255, 255, 255, 0.58);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.64), rgba(255, 255, 255, 0.46));
+      box-shadow:
+        0 10px 24px rgba(15, 23, 42, 0.035),
+        inset 0 1px 0 rgba(255, 255, 255, 0.62);
+    }
+
+    body[data-page="projects"] .project-support-row {
       display: grid;
-      grid-template-columns: minmax(0, 1.36fr) minmax(0, 1fr);
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: 1rem;
       align-items: stretch;
     }
 
-    body[data-page="projects"] .project-lower-results {
-      height: 100%;
-    }
-
-    body[data-page="projects"] .project-lower-side {
-      display: grid;
-      grid-template-rows: auto 1fr;
-      gap: 1rem;
-      min-height: 100%;
-    }
-
-    body[data-page="projects"] .project-lower-constraints,
-    body[data-page="projects"] .project-lower-next-step {
+    body[data-page="projects"] .project-support-card {
       height: 100%;
     }
 
@@ -880,9 +932,12 @@ function injectThemeTokens() {
         width: min(16rem, 76%);
       }
 
+      body[data-page="projects"] #project-modal-overlay {
+        padding: clamp(0.6rem, 2.2vh, 1rem) 0.55rem 0.65rem;
+      }
+
       body[data-page="projects"] .project-modal-shell {
-        margin-top: 4rem;
-        max-height: calc(100vh - 4.75rem);
+        max-height: calc(100dvh - 1.5rem);
         width: calc(100vw - 1.2rem);
       }
 
@@ -898,17 +953,8 @@ function injectThemeTokens() {
         grid-template-columns: 1fr;
       }
 
-      body[data-page="projects"] .project-lower-layout {
+      body[data-page="projects"] .project-support-row {
         grid-template-columns: 1fr;
-      }
-
-      body[data-page="projects"] .project-lower-side {
-        grid-template-rows: auto;
-      }
-
-      body[data-page="projects"] .project-workflow-selector {
-        grid-template-columns: repeat(5, minmax(4.9rem, 1fr));
-        min-width: 31rem;
       }
 
       body[data-page="projects"] .project-workflow-detail {
