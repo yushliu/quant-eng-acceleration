@@ -21,18 +21,18 @@
     </section>
 
     <section class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(320px,360px),minmax(0,1fr)] lg:gap-8">
-      <aside class="rounded-lg border border-gray-200 bg-gray-50 p-5 shadow-sm lg:p-6" aria-label="Meeting timeline">
+      <aside class="glass-panel plan-major-panel rounded-[1.5rem] p-5 lg:p-6" aria-label="Meeting timeline">
         <h2 class="text-xs font-semibold uppercase tracking-[0.16em] text-gray-500">Timeline</h2>
         <p class="mt-2 text-sm leading-6 text-gray-600">Select a meeting period to read the structured summary for that stage of work.</p>
         <div id="plan-track-filter" class="mt-5"></div>
 
-        <div class="relative mt-5">
+        <div class="plan-motion-viewport relative mt-5">
           <div class="pointer-events-none absolute bottom-2 left-3 top-2 hidden w-px bg-gray-200 lg:block"></div>
-          <div id="plan-timeline" class="flex gap-3 overflow-x-auto pb-2 lg:block lg:space-y-2 lg:overflow-visible lg:pb-0"></div>
+          <div id="plan-timeline"></div>
         </div>
       </aside>
 
-      <section class="rounded-lg border border-gray-200 bg-gray-50 p-6 shadow-sm lg:p-7" aria-live="polite">
+      <section class="glass-panel plan-major-panel rounded-[1.5rem] p-6 lg:p-7" aria-live="polite">
         <header>
           <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
@@ -48,14 +48,14 @@
           </div>
         </header>
 
-        <section class="mt-6 rounded-md border border-gray-200 bg-white p-5 shadow-sm">
+        <section class="glass-subpanel mt-6 rounded-[1.15rem] p-5">
           <div id="meeting-summary-tabs"></div>
           <div class="mt-5 border-t border-gray-200 pt-5">
-            <div id="meeting-summary-panel"></div>
+            <div id="meeting-summary-panel" class="plan-motion-viewport"></div>
           </div>
         </section>
 
-        <section class="mt-6 rounded-md border border-gray-200 bg-white p-5 shadow-sm">
+        <section class="glass-subpanel mt-6 rounded-[1.15rem] p-5">
           <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <h3 class="text-sm font-semibold uppercase tracking-[0.12em] text-gray-500">Related Files</h3>
@@ -65,7 +65,7 @@
           </div>
         </section>
 
-        <section class="mt-6 rounded-md border border-gray-200 bg-white p-5 shadow-sm">
+        <section class="glass-subpanel mt-6 rounded-[1.15rem] p-5">
           <h3 class="text-sm font-semibold uppercase tracking-[0.12em] text-gray-500">Supporting Notes</h3>
           <div id="meeting-supporting-notes" class="mt-4 space-y-3"></div>
         </section>

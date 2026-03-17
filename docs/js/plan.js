@@ -56,6 +56,66 @@ let activeTrackFilter = "algorithm";
 let activeMeetingKey = "";
 let activeMeetingViewId = "";
 let activeSummaryTab = "what_changed";
+let previousTrackFilter = "algorithm";
+let previousSummaryTab = "what_changed";
+
+function getDirectionalTransition(fromIndex, toIndex) {
+  if (fromIndex === toIndex) {
+    return "none";
+  }
+  return toIndex > fromIndex ? "forward" : "backward";
+}
+
+function renderWithHorizontalTransition(host, nextMarkup, direction) {
+  if (!host) {
+    return;
+  }
+
+  const currentMarkup = host.innerHTML.trim();
+  if (!currentMarkup || direction === "none") {
+    host.innerHTML = nextMarkup;
+    return;
+  }
+
+  const height = host.offsetHeight;
+  host.style.minHeight = `${height}px`;
+  host.classList.add("is-animating");
+
+  const currentPane = document.createElement("div");
+  currentPane.className = "plan-motion-pane plan-motion-pane--current";
+  currentPane.innerHTML = currentMarkup;
+
+  const nextPane = document.createElement("div");
+  nextPane.className = "plan-motion-pane plan-motion-pane--next";
+  nextPane.innerHTML = nextMarkup;
+
+  const offset = direction === "forward" ? 36 : -36;
+  currentPane.style.transform = "translateX(0)";
+  currentPane.style.opacity = "1";
+  nextPane.style.transform = `translateX(${offset}px)`;
+  nextPane.style.opacity = "0";
+
+  host.innerHTML = "";
+  host.appendChild(currentPane);
+  host.appendChild(nextPane);
+
+  const finish = () => {
+    host.classList.remove("is-animating");
+    host.style.minHeight = "";
+    host.innerHTML = nextMarkup;
+  };
+
+  window.requestAnimationFrame(() => {
+    currentPane.style.transition = "transform 220ms cubic-bezier(0.22, 1, 0.36, 1), opacity 180ms ease";
+    nextPane.style.transition = "transform 220ms cubic-bezier(0.22, 1, 0.36, 1), opacity 180ms ease";
+    currentPane.style.transform = `translateX(${direction === "forward" ? -36 : 36}px)`;
+    currentPane.style.opacity = "0";
+    nextPane.style.transform = "translateX(0)";
+    nextPane.style.opacity = "1";
+  });
+
+  window.setTimeout(finish, 240);
+}
 
 function getTrackMeetings(trackId) {
   return planMeetings
@@ -244,11 +304,10 @@ function renderTrackFilter() {
     { id: "infrastructure", label: "Infrastructure" }
   ];
   host.innerHTML = `
-    <div class="flex w-full items-center justify-center rounded-md border border-gray-200 bg-white p-1 shadow-sm">
+    <div class="plan-segmented flex w-full items-center justify-center rounded-full p-1.5">
       ${options.map((option) => {
         const isActive = option.id === activeTrackFilter;
-        const classes = isActive ? "bg-blue-500 text-white" : "text-gray-600 hover:bg-gray-100";
-        return `<button type="button" data-track-filter="${option.id}" class="inline-flex min-w-0 flex-1 items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition ${classes}">${option.label}</button>`;
+        return `<button type="button" data-track-filter="${option.id}" data-active="${isActive ? "true" : "false"}" class="plan-segmented__button inline-flex min-w-0 flex-1 items-center justify-center rounded-full border border-transparent px-4 py-2.5 text-sm font-medium">${option.label}</button>`;
       }).join("")}
     </div>
   `;
@@ -258,6 +317,7 @@ function renderTrackFilter() {
       if (!nextFilter || nextFilter === activeTrackFilter) {
         return;
       }
+      previousTrackFilter = activeTrackFilter;
       activeTrackFilter = nextFilter;
       activeMeetingKey = "";
       activeMeetingViewId = nextFilter;
@@ -280,11 +340,11 @@ function renderTimeline() {
     timeline.innerHTML = "<p class=\"text-sm text-gray-600\">No meetings available for this track.</p>";
     return;
   }
-  timeline.innerHTML = filtered.map((meeting) => {
+  const timelineItems = filtered.map((meeting) => {
     const isActive = meeting.planKey === activeMeetingKey;
     const activeClasses = isActive
-      ? "border-blue-500 bg-blue-50 text-blue-600"
-      : "border-gray-200 bg-white text-gray-700 hover:border-blue-300 hover:text-blue-600";
+      ? "border-blue-300 bg-white/80 text-blue-600 shadow-[0_10px_22px_rgba(59,130,246,0.08),inset_0_1px_0_rgba(255,255,255,0.6)]"
+      : "border-white/70 bg-white/60 text-gray-700 hover:border-blue-200 hover:text-blue-600";
     const dotClasses = isActive ? "border-blue-500 bg-blue-500" : "border-gray-300 bg-white";
     const statusClasses = isCompletedStatus(meeting.status)
       ? "border-gray-200 bg-white text-gray-600"
@@ -304,6 +364,14 @@ function renderTimeline() {
       </button>
     `;
   }).join("");
+  const timelineMarkup = `<div class="flex gap-3 overflow-x-auto pb-2 lg:block lg:space-y-2 lg:overflow-visible lg:pb-0">${timelineItems}</div>`;
+  const trackOrder = ["algorithm", "infrastructure"];
+  renderWithHorizontalTransition(
+    timeline,
+    timelineMarkup,
+    getDirectionalTransition(trackOrder.indexOf(previousTrackFilter), trackOrder.indexOf(activeTrackFilter))
+  );
+  previousTrackFilter = activeTrackFilter;
   timeline.querySelectorAll("[data-meeting-key]").forEach((button) => {
     button.addEventListener("click", () => {
       const nextKey = button.getAttribute("data-meeting-key");
@@ -337,27 +405,34 @@ function renderSummaryTabs(summary) {
     activeSummaryTab = "what_changed";
   }
   tabsEl.innerHTML = `
-    <div class="flex w-full items-center rounded-md border border-gray-200 bg-white p-1 shadow-sm">
+    <div class="plan-segmented flex w-full items-center rounded-full p-1.5">
       ${tabConfig.map((tab) => {
         const isActive = tab.id === activeSummaryTab;
-        const classes = isActive ? "bg-blue-500 text-white" : "text-gray-600 hover:bg-gray-100";
-        return `<button type="button" data-summary-tab="${tab.id}" class="inline-flex min-w-0 flex-1 items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition ${classes}">${tab.label}</button>`;
+        return `<button type="button" data-summary-tab="${tab.id}" data-active="${isActive ? "true" : "false"}" class="plan-segmented__button inline-flex min-w-0 flex-1 items-center justify-center rounded-full border border-transparent px-4 py-2.5 text-sm font-medium">${tab.label}</button>`;
       }).join("")}
     </div>
   `;
   const activeTab = tabConfig.find((tab) => tab.id === activeSummaryTab) || tabConfig[0];
-  panelEl.innerHTML = `
+  const panelMarkup = `
     <div>
       <h3 class="text-sm font-semibold uppercase tracking-[0.12em] text-gray-500">${activeTab.label}</h3>
       <div class="mt-3">${renderBulletItems(activeTab.items, activeTab.fallback)}</div>
     </div>
   `;
+  const summaryOrder = tabConfig.map((tab) => tab.id);
+  renderWithHorizontalTransition(
+    panelEl,
+    panelMarkup,
+    getDirectionalTransition(summaryOrder.indexOf(previousSummaryTab), summaryOrder.indexOf(activeSummaryTab))
+  );
+  previousSummaryTab = activeSummaryTab;
   tabsEl.querySelectorAll("[data-summary-tab]").forEach((button) => {
     button.addEventListener("click", () => {
       const nextTab = button.getAttribute("data-summary-tab");
       if (!nextTab || nextTab === activeSummaryTab) {
         return;
       }
+      previousSummaryTab = activeSummaryTab;
       activeSummaryTab = nextTab;
       renderSummaryTabs(summary);
     });
