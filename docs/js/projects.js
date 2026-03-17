@@ -280,53 +280,428 @@ const PROJECTS_CATALOG = [
   {
     id: "derivatives-pricing-arbitrage-checks",
     title: "Derivatives Pricing and No-Arbitrage Checks",
-    summary: "Builds pricing diagnostics and no-arbitrage validation checks for option-oriented project lines.",
+    summary: "Develops a controlled pricing-validation workflow that compares analytic, tree-based, and simulation-based option pricing under explicit no-arbitrage diagnostics and implementation benchmarks.",
+    cardSummary: "This project builds a reusable derivatives pricing benchmark by combining Black–Scholes, Binomial CRR, and Monte Carlo pricing with no-arbitrage checks, numerical consistency tests, and CPU/GPU benchmarking.",
     tags: ["Algorithm", "Curated", "In Progress"],
-    overview: "The project formalizes pricing checks and sanity constraints before integrating derivatives outputs into broader risk comparisons.",
-    why: "No-arbitrage guardrails prevent invalid pricing assumptions from contaminating downstream analyses.",
+    overview: "This project develops a reusable pricing-validation workflow for option-oriented project lines by combining multiple pricing engines with explicit no-arbitrage diagnostics. Rather than relying on a single pricing output, the project compares analytic, tree-based, and Monte Carlo methods under a shared market-input setup, then tests the resulting prices against boundary conditions and parity relationships. The result is a more reliable derivatives benchmark that can support later risk comparisons, implementation checks, and pricing-oriented extensions.",
+    why: "In financial engineering, a derivatives price is only useful if it is both numerically credible and economically consistent. Agreement across pricing engines improves confidence in implementation correctness, while no-arbitrage checks help detect invalid assumptions or broken numerical behavior before those outputs flow into downstream analyses. This project matters because it creates a controlled validation layer for derivatives workflows: prices are compared across methods, simulation results are checked against stronger references, and basic arbitrage relations are enforced before results are reused elsewhere.",
+    approachIntro: "We structured this project as a controlled pricing-validation workflow in which multiple option-pricing methods were evaluated under a shared market-input setup and then tested against financial-consistency checks and implementation benchmarks.",
     approach: [
-      "Implement baseline pricing routines with transparent assumptions.",
-      "Apply no-arbitrage checks and boundary-condition tests.",
-      "Document validation outcomes for review reuse."
+      "fixed the market-input and volatility assumptions before comparing methods",
+      "priced the same European option with Black–Scholes, Binomial CRR, and Monte Carlo",
+      "validated simulation outputs against analytic references and confidence-interval checks",
+      "applied no-arbitrage diagnostics before reusing results downstream",
+      "recorded CPU/GPU benchmark outputs and reproducibility artifacts for later review"
     ],
+    workflowSteps: [
+      {
+        label: "Step 1",
+        title: "Market Input Setup",
+        bullets: [
+          "Reuse aligned SPY market data and define the shared option-pricing input configuration."
+        ]
+      },
+      {
+        label: "Step 2",
+        title: "Volatility Baseline",
+        bullets: [
+          "Estimate sigma from a 60-day historical-volatility window and annualize it with factor 252."
+        ]
+      },
+      {
+        label: "Step 3",
+        title: "Multi-Method Pricing",
+        bullets: [
+          "Price the same European option with Black–Scholes, Binomial CRR, and Monte Carlo methods under shared assumptions."
+        ]
+      },
+      {
+        label: "Step 4",
+        title: "Validation and Diagnostics",
+        bullets: [
+          "Compare simulation outputs against analytic references and apply no-arbitrage checks such as put-call parity and option bounds."
+        ]
+      },
+      {
+        label: "Step 5",
+        title: "Benchmark and Reproducibility",
+        bullets: [
+          "Compare CPU and GPU Monte Carlo behavior under the same setup and save reproducible benchmark outputs for later review."
+        ]
+      }
+    ],
+    resultsPrimaryHeading: "Project Outcomes",
     constraints: [
-      "Input quality and implied-vol assumptions directly affect diagnostics.",
-      "Edge-case handling is required for thin-liquidity symbols."
+      "pricing diagnostics remain sensitive to volatility estimation choices, contract setup, and input quality",
+      "historical-volatility baselines may differ materially from implied-volatility assumptions used in market practice",
+      "Monte Carlo benchmarking must distinguish initialization overhead from steady-state runtime",
+      "thin-liquidity symbols or noisy option inputs can make no-arbitrage diagnostics less informative unless preprocessing is carefully controlled"
     ],
     results: [
-      "Validation checklist now catches inconsistent quote scenarios.",
-      "Pricing outputs are easier to compare across implementation variants."
+      "established a reusable derivatives pricing benchmark under shared market-input assumptions",
+      "confirmed close agreement between analytic, tree-based, and simulation-based pricing outputs",
+      "passed core no-arbitrage checks including put-call parity and option bounds",
+      "produced side-by-side CPU and GPU Monte Carlo results for correctness and performance comparison",
+      "created reusable pricing, Greeks, volatility, and benchmarking artifacts for later project lines"
     ],
-    nextStep: "Integrate diagnostic summaries into project-level comparison dashboards.",
+    benchmarkChartsHeading: "Benchmark Charts",
+    benchmarkChartsIntro: "These charts summarize pricing consistency, no-arbitrage validation, and implementation benchmarking under the current derivatives setup.",
+    benchmarkCharts: [
+      {
+        kind: "pricingMethodComparison",
+        title: "Pricing Method Comparison",
+        description: "Compact comparison of option prices across Black–Scholes, Binomial CRR, Monte Carlo CPU, and Monte Carlo GPU under the same pricing setup.",
+        caption: "Pricing outputs remain closely aligned across analytic, lattice-based, and simulation-based methods, supporting implementation credibility under the shared setup."
+      },
+      {
+        kind: "mcCiVsReference",
+        title: "Monte Carlo Confidence Intervals vs Black–Scholes Reference",
+        description: "Comparison of the CPU and GPU Monte Carlo 95% confidence intervals against the Black–Scholes reference price.",
+        caption: "The Black–Scholes reference price lies within both Monte Carlo confidence intervals, supporting the numerical consistency of the simulation-based implementations."
+      },
+      {
+        kind: "noArbitrageDiagnostics",
+        title: "No-Arbitrage Diagnostics Summary",
+        description: "Compact diagnostics view covering put-call parity error and configured option-bound checks.",
+        caption: "No-arbitrage diagnostics confirm that the configured pricing outputs satisfy core economic consistency checks at numerical-noise levels."
+      },
+      {
+        kind: "runtimeComparison",
+        title: "CPU vs GPU Monte Carlo Runtime",
+        description: "Benchmark view comparing CPU timing, GPU first-run timing, and GPU steady-state timing for the same Monte Carlo path count.",
+        caption: "GPU timing includes a warm-up effect from CUDA initialization, but steady-state Monte Carlo runs are materially faster than the CPU baseline under the same path count."
+      }
+    ],
+    chartData: {
+      methodPrices: {
+        blackScholes: 183.1513408860,
+        crr: 183.1513408860,
+        mcCpu: 183.22539960,
+        mcGpu: 183.14226308
+      },
+      mcConfidenceIntervals: {
+        reference: 183.1513408860,
+        cpu: { low: 183.06722407, high: 183.38357514 },
+        gpu: { low: 182.98490125, high: 183.29962491 }
+      },
+      noArbitrageDiagnostics: {
+        parityError: 2.84e-14,
+        callWithinBounds: true,
+        putWithinBounds: true
+      },
+      runtimeComparison: {
+        cpuMean: 0.005485,
+        gpuFirst: 2.0775,
+        gpuSteady1: 0.001534,
+        gpuSteady2: 0.000933
+      }
+    },
+    resultsSecondaryHeading: "Recorded Benchmark Outputs",
+    resultsGroups: [
+      {
+        heading: "Pricing Accuracy",
+        items: [
+          "Black–Scholes call price = 183.1513408860",
+          "Binomial CRR (steps = 1000) matched Black–Scholes to numerical precision",
+          "abs error vs BS ≈ 3.7e-11"
+        ]
+      },
+      {
+        heading: "Monte Carlo Pricing",
+        items: [
+          "CPU Monte Carlo (100,000 paths): price = 183.22539960; 95% CI = [183.06722407, 183.38357514]",
+          "GPU Monte Carlo (NVIDIA Tesla T4, 100,000 paths): price = 183.14226308; 95% CI = [182.98490125, 183.29962491]"
+        ]
+      },
+      {
+        heading: "No-Arbitrage Validation",
+        items: [
+          "put-call parity abs error ≈ 2.84e-14",
+          "call within bounds = true",
+          "put within bounds = true"
+        ]
+      },
+      {
+        heading: "Performance",
+        items: [
+          "CPU Monte Carlo mean over 3 runs = 0.005485 s",
+          "GPU first run with CUDA initialization = 2.0775 s",
+          "GPU steady-state run 1 = 0.001534 s",
+          "GPU steady-state run 2 = 0.000933 s",
+          "steady-state speedup ≈ 4.5× vs CPU after warm-up"
+        ]
+      }
+    ],
+    runSummary: {
+      sections: [
+        {
+          heading: "Configuration",
+          rows: [
+            ["Underlying", "SPY"],
+            ["Volatility Window", "60 days"],
+            ["Annualization", "252"],
+            ["Option Type", "European"],
+            ["Binomial Steps", "1000"],
+            ["Monte Carlo Paths", "100,000"],
+            ["Monte Carlo Backends", "CPU and GPU (T4)"]
+          ]
+        },
+        {
+          heading: "Key Outputs",
+          rows: [
+            ["Black–Scholes Price", "183.1513408860"],
+            ["CRR Price Error vs BS", "~3.7e-11"],
+            ["CPU MC Price", "183.22539960"],
+            ["GPU MC Price", "183.14226308"],
+            ["Put-Call Parity Error", "~2.84e-14"]
+          ]
+        }
+      ]
+    },
+    nextStep: "The next step is to extend this validation layer into a broader derivatives benchmark. From here, the project can add implied-volatility inputs, richer Greeks comparisons, larger contract sets, and project-level dashboards that connect pricing accuracy, arbitrage diagnostics, and implementation performance under one shared reporting structure.",
+    artifactsIntro: "Machine-readable outputs and reproducibility files for derivatives pricing, validation, and benchmarking.",
     artifacts: [
-      { label: "Open Plan Context", href: "./plan.html" },
-      { label: "Open Legacy Release", href: "./archive.html" }
-    ]
+      { label: "price.json" },
+      { label: "greeks.json" },
+      { label: "hist_vol.json" },
+      { label: "bench.json" },
+      { label: "params.json" },
+      { label: "download_report.json" },
+      { label: "logs.txt" },
+      { label: "summary.md" }
+    ],
   },
   {
     id: "risk-model-comparison",
     title: "Risk Model Comparison",
-    summary: "Creates a shared framework to compare risk models under consistent data, metrics, and reporting templates.",
+    summary: "Develops the club’s first formal comparison benchmark for evaluating multiple VaR/CVaR model families under consistent data, portfolio construction, and reporting rules.",
+    cardSummary: "This project builds a quantitative benchmark for comparing Historical Simulation, Parametric Normal, and EWMA + Monte Carlo VaR/CVaR models under shared data, portfolio, and evaluation rules, creating a clearer basis for model selection and future club releases.",
     tags: ["Algorithm", "Curated", "Comparison"],
-    overview: "This project aggregates outputs from multiple model families and presents normalized comparison views for club decision-making.",
-    why: "Without a common comparison frame, model discussions become anecdotal and hard to reproduce.",
+    overview: "This project develops the club’s first formal risk-model comparison benchmark by evaluating multiple VaR/CVaR model families under a shared multi-asset framework. Rather than comparing models through isolated runs or anecdotal impressions, the project locks the dataset, portfolio structure, loss convention, and evaluation rules before implementation begins. Historical Simulation, Parametric Normal, and EWMA + Monte Carlo are then compared through common metrics such as breach behavior, exceedance severity, conservativeness, and stability. The result is a more rigorous basis for selecting a benchmark model for future club releases.",
+    why: "In financial engineering, model comparisons are only meaningful when the underlying assumptions remain fixed. If portfolios, loss definitions, rolling windows, or reporting logic vary across runs, apparent model differences may reflect setup inconsistency rather than true behavior. This project matters because it creates a controlled comparison benchmark for VaR/CVaR workflows: all selected models are evaluated under the same data and portfolio design, interpreted through the same metrics, and reviewed through a shared recommendation framework. That makes the final model-selection result more reproducible and easier to defend.",
+    approachIntro: "We structured this project as a staged quantitative comparison workflow in which multiple VaR/CVaR model families were evaluated under one locked benchmark configuration before moving to final interpretation and recommendation.",
     approach: [
-      "Define common inputs, outputs, and comparison metrics.",
-      "Run aligned evaluations across selected model variants.",
-      "Publish concise comparison reports with assumptions."
+      "fixed the model set, portfolio definitions, and evaluation criteria before implementation",
+      "reused a shared multi-asset returns dataset and aligned portfolio construction across all models",
+      "ran Historical Simulation, Parametric Normal, and EWMA + Monte Carlo under the same benchmark rules",
+      "compared outputs through common metrics including breach rate, breach gap, exceedance severity, CVaR stability, and conservativeness",
+      "used the final comparison results to recommend a primary benchmark baseline and supporting reference models"
     ],
-    constraints: [
-      "Metric selection can bias perceived model quality.",
-      "Cross-model normalization requires strict schema discipline."
+    workflowSteps: [
+      {
+        label: "Step 1",
+        title: "Research Design and Specification",
+        bullets: [
+          "Define the model set, portfolio definitions, loss convention, and evaluation criteria before any model comparison is run."
+        ]
+      },
+      {
+        label: "Step 2",
+        title: "Shared Dataset and Portfolio Construction",
+        bullets: [
+          "Reuse the common returns dataset and construct aligned equal-weight portfolios for consistent cross-model evaluation."
+        ]
+      },
+      {
+        label: "Step 3",
+        title: "Multi-Model Risk Execution",
+        bullets: [
+          "Run Historical Simulation, Parametric Normal, and EWMA + Monte Carlo VaR/CVaR under the same 1-day horizon, alpha level, and rolling design."
+        ]
+      },
+      {
+        label: "Step 4",
+        title: "Quantitative Comparison and Ranking",
+        bullets: [
+          "Compare model behavior through breach rate, breach gap, exceedance severity, CVaR stability, responsiveness, and conservativeness."
+        ]
+      },
+      {
+        label: "Step 5",
+        title: "Recommendation and Benchmark Selection",
+        bullets: [
+          "Interpret the full comparison results and select the most appropriate benchmark baseline for future club releases."
+        ]
+      }
     ],
+    resultsPrimaryHeading: "Project Outcomes",
     results: [
-      "Improved clarity in review meetings on tradeoffs and failure modes.",
-      "Reusable comparison templates are now available for new projects."
+      "established the club’s first formal quantitative comparison benchmark for VaR/CVaR model selection",
+      "completed a staged workflow covering design, implementation, and final recommendation",
+      "compared three selected model families under a shared multi-asset setup",
+      "produced a ranking framework covering conservativeness, coverage closeness, and smoothness",
+      "selected EWMA + Monte Carlo as the strongest primary benchmark candidate under the tested setup"
     ],
-    nextStep: "Expand comparisons to include infrastructure cost and runtime metrics.",
+    resultsSecondaryHeading: "Comparison Stages",
+    resultsSecondary: [
+      "Stage 1 — Research Design + Specification: locked the model set, portfolio definitions, and evaluation framework before implementation; defined two equal-weight portfolio designs and standardized comparison rules including 1-day horizon, alpha = 0.99, rolling design, loss convention, and breach definition.",
+      "Stage 2 — Implementation and Preliminary Results: implemented the comparison runner, reused the existing returns.csv dataset, constructed the equal-weight SPY/QQQ/TLT/GLD baseline portfolio, and ran all three selected models successfully under the same aligned dates.",
+      "Stage 3 — Final Comparison and Recommendation: reviewed completed outputs, compared tradeoffs across conservativeness, breach behavior, exceedance severity, and stability, and selected the recommended benchmark baseline for future club releases."
+    ],
+    benchmarkChartsHeading: "Benchmark Charts",
+    benchmarkChartsIntro: "These charts summarize the model-selection logic, quantitative tradeoffs, and final recommendation under the shared multi-asset benchmark setup.",
+    benchmarkCharts: [
+      {
+        kind: "riskModelAvgVarCvar",
+        title: "Average VaR and CVaR by Model",
+        description: "Compare average VaR and average CVaR across Historical Simulation, Parametric Normal, and EWMA + Monte Carlo.",
+        caption: "EWMA + Monte Carlo produced the highest average VaR and CVaR under the tested setup, making it the most conservative model in the final comparison."
+      },
+      {
+        kind: "riskModelBreachStats",
+        title: "Breach Rate and Number of Breaches",
+        description: "Compare breach rate and number of breaches across all three model families.",
+        caption: "Coverage behavior differed materially across models, with EWMA + Monte Carlo recording the lowest breach count and the breach rate closest to the intended 1 percent target."
+      },
+      {
+        kind: "riskModelRankingSummary",
+        title: "Ranking Summary by Comparison Dimension",
+        description: "Summarize rankings across conservativeness, coverage closeness, and smoothness.",
+        caption: "The ranking view makes the tradeoff structure explicit: EWMA + Monte Carlo led on conservativeness and coverage closeness, while Parametric Normal ranked first on smoothness."
+      },
+      {
+        kind: "riskModelStageProgression",
+        title: "Stage Progression and Recommendation",
+        description: "Show the progression from Stage 1 design, to Stage 2 implementation, to Stage 3 recommendation, and highlight the selected benchmark baseline.",
+        caption: "The benchmark selection result reflects a full staged workflow rather than a one-step model preference."
+      }
+    ],
+    chartData: {
+      modelComparison: {
+        models: [
+          { name: "Historical Simulation", avgVar: 0.016231, avgCvar: 0.018748, breachRate: 0.037037, breaches: 7 },
+          { name: "Parametric Normal", avgVar: 0.016414, avgCvar: 0.01895, breachRate: 0.031746, breaches: 6 },
+          { name: "EWMA + Monte Carlo", avgVar: 0.017063, avgCvar: 0.019541, breachRate: 0.015873, breaches: 3 }
+        ],
+        rankings: {
+          conservativeness: ["EWMA + Monte Carlo", "Parametric Normal", "Historical Simulation"],
+          coverageCloseness: ["EWMA + Monte Carlo", "Parametric Normal", "Historical Simulation"],
+          smoothness: ["Parametric Normal", "Historical Simulation", "EWMA + Monte Carlo"]
+        },
+        stages: [
+          "Stage 1 Design",
+          "Stage 2 Implementation",
+          "Stage 3 Recommendation"
+        ],
+        recommendation: "EWMA + Monte Carlo"
+      }
+    },
+    resultsGroups: [
+      {
+        heading: "Recorded Comparison Outputs — Shared Experimental Setup",
+        items: [
+          "input file: returns.csv",
+          "baseline portfolio: SPY, QQQ, TLT, GLD, equal weights",
+          "comparison portfolio design: SPY, QQQ, IWM, TLT, equal weights",
+          "horizon: 1-day",
+          "alpha: 0.99",
+          "rolling / initial window: 60 trading days",
+          "loss definition: portfolio_loss = - portfolio_return",
+          "breach definition: realized loss > estimated VaR",
+          "aligned observations: 189"
+        ]
+      },
+      {
+        heading: "Final Comparison Summary — Historical Simulation",
+        items: [
+          "avg VaR = 0.016231",
+          "avg CVaR = 0.018748",
+          "breach rate = 0.037037",
+          "breach gap = 0.027037",
+          "exceedance severity = 0.005207",
+          "CVaR stability proxy = 0.001666",
+          "breaches = 7"
+        ]
+      },
+      {
+        heading: "Final Comparison Summary — Parametric Normal",
+        items: [
+          "avg VaR = 0.016414",
+          "avg CVaR = 0.018950",
+          "breach rate = 0.031746",
+          "breach gap = 0.021746",
+          "exceedance severity = 0.006153",
+          "CVaR stability proxy = 0.001046",
+          "breaches = 6"
+        ]
+      },
+      {
+        heading: "Final Comparison Summary — EWMA + Monte Carlo",
+        items: [
+          "avg VaR = 0.017063",
+          "avg CVaR = 0.019541",
+          "breach rate = 0.015873",
+          "breach gap = 0.005873",
+          "exceedance severity = 0.008273",
+          "CVaR stability proxy = 0.001979",
+          "breaches = 3"
+        ]
+      },
+      {
+        heading: "Ranking Summary",
+        items: [
+          "Conservativeness: 1) EWMA + Monte Carlo, 2) Parametric Normal, 3) Historical Simulation",
+          "Coverage Closeness: 1) EWMA + Monte Carlo, 2) Parametric Normal, 3) Historical Simulation",
+          "Smoothness: 1) Parametric Normal, 2) Historical Simulation, 3) EWMA + Monte Carlo"
+        ]
+      },
+      {
+        heading: "Final Recommendation",
+        items: [
+          "Primary Benchmark Baseline — EWMA + Monte Carlo: selected because it produced the highest average VaR/CVaR, the lowest breach count, and the smallest breach gap under the tested setup.",
+          "Smooth Reference Model — Parametric Normal: retained as the smoothest model, with the smallest CVaR stability proxy.",
+          "Empirical Baseline — Historical Simulation: retained as the most direct and intuitive empirical reference model."
+        ]
+      }
+    ],
+    runSummary: {
+      sections: [
+        {
+          heading: "Configuration",
+          rows: [
+            ["Dataset Source", "reused returns.csv from prior risk pipeline"],
+            ["Baseline Portfolio", "SPY, QQQ, TLT, GLD"],
+            ["Comparison Portfolio Design", "SPY, QQQ, IWM, TLT"],
+            ["Weighting Rule", "equal weight"],
+            ["Horizon", "1-day"],
+            ["Alpha", "0.99"],
+            ["Rolling / Init Window", "60"],
+            ["Aligned Observations", "189"]
+          ]
+        },
+        {
+          heading: "Key Comparison Metrics",
+          rows: [
+            ["Breach Rate", "compare exceedance frequency"],
+            ["Breach Gap", "compare distance from intended coverage"],
+            ["Exceedance Severity", "compare realized losses beyond breaches"],
+            ["CVaR Stability", "compare smoothness of tail-risk outputs"],
+            ["Conservativeness", "compare relative strictness of VaR/CVaR levels"]
+          ]
+        }
+      ]
+    },
+    constraints: [
+      "conclusions currently depend on a single completed portfolio test cycle and may shift under alternative allocations",
+      "the second-portfolio robustness check has not yet been completed",
+      "the current recommendation is conditional on the fixed horizon, alpha, rolling window, and Monte Carlo configuration used in this cycle",
+      "comparison quality depends on strict schema consistency so model differences are not confused with data or reporting differences"
+    ],
+    nextStep: "The next step is to expand the benchmark beyond this first comparison cycle. From here, the project can complete the second-portfolio robustness check, add runtime and infrastructure-cost comparisons, extend the model set, and deepen the reporting layer so future club releases can compare model behavior, computational cost, and benchmark suitability under one shared framework.",
+    artifactsIntro: "Machine-readable outputs, comparison reports, and stage documents for reproducible model-selection review.",
     artifacts: [
-      { label: "Open Plan Context", href: "./plan.html" },
-      { label: "Open Download Files", href: "./download.html" }
+      { label: "stage1_report.md" },
+      { label: "model_cards.md" },
+      { label: "evaluation_design.md" },
+      { label: "portfolio_definition.md" },
+      { label: "stage2_meeting_record.md" },
+      { label: "comparison_summary.csv" },
+      { label: "comparison_analysis.md" },
+      { label: "stage3_meeting_record.md" },
+      { label: "stage3_comparison_summary.csv" },
+      { label: "stage3_ranking_table.csv" },
+      { label: "params.json" },
+      { label: "summary.md" }
     ]
   },
   {
@@ -421,7 +796,7 @@ function renderBenchmarkCharts(hostId, charts) {
   }
   const items = Array.isArray(charts) ? charts : [];
   host.innerHTML = items.map((chart) => `
-    <article class="project-chart-card rounded-[0.95rem] p-3.5">
+    <article class="project-chart-card rounded-[0.95rem] p-3.5" data-chart-kind="${escapeProjectHtml(chart.kind || "")}">
       <h5 class="text-sm font-semibold text-gray-900">${escapeProjectHtml(chart.title || "Chart")}</h5>
       <p class="mt-2 text-sm leading-6 text-gray-700">${escapeProjectHtml(chart.description || "")}</p>
       <div class="project-chart-figure mt-3"></div>
@@ -492,6 +867,46 @@ function buildGroupedBarsChart(metrics) {
   );
 }
 
+function buildPricingMethodComparisonChart(methodPrices) {
+  const categories = [
+    { label: "BS", value: Number(methodPrices?.blackScholes || 0), color: "rgba(71, 85, 105, 0.8)" },
+    { label: "CRR", value: Number(methodPrices?.crr || 0), color: "rgba(100, 116, 139, 0.8)" },
+    { label: "MC CPU", value: Number(methodPrices?.mcCpu || 0), color: "rgba(59, 130, 246, 0.78)" },
+    { label: "MC GPU", value: Number(methodPrices?.mcGpu || 0), color: "rgba(37, 99, 235, 0.86)" }
+  ];
+  const width = 560;
+  const height = 220;
+  const pad = { top: 18, right: 20, bottom: 38, left: 52 };
+  const innerW = width - pad.left - pad.right;
+  const innerH = height - pad.top - pad.bottom;
+  const maxVal = Math.max(...categories.map((c) => c.value), 1e-6) * 1.04;
+  const minVal = Math.min(...categories.map((c) => c.value), 0);
+  const range = Math.max(maxVal - minVal, 1e-6);
+  const barWidth = 72;
+  const gap = (innerW - categories.length * barWidth) / Math.max(categories.length - 1, 1);
+
+  const bars = categories.map((cat, index) => {
+    const x = pad.left + index * (barWidth + gap);
+    const h = ((cat.value - minVal) / range) * innerH;
+    const y = pad.top + innerH - h;
+    return `
+      <rect x="${x}" y="${y}" width="${barWidth}" height="${h}" rx="6" fill="${cat.color}" />
+      <text x="${x + barWidth / 2}" y="${height - 14}" text-anchor="middle" font-size="10.5" fill="rgba(71,85,105,0.9)">${cat.label}</text>
+      <text x="${x + barWidth / 2}" y="${y - 6}" text-anchor="middle" font-size="10" fill="rgba(71,85,105,0.86)">${cat.value.toFixed(6)}</text>
+    `;
+  }).join("");
+
+  return buildSvgShell(
+    width,
+    height,
+    `
+      <rect x="0" y="0" width="${width}" height="${height}" rx="10" fill="rgba(255,255,255,0.24)" />
+      <line x1="${pad.left}" y1="${pad.top + innerH}" x2="${width - pad.right}" y2="${pad.top + innerH}" stroke="rgba(100,116,139,0.5)" />
+      ${bars}
+    `
+  );
+}
+
 function buildBreachComparisonChart(breachRates) {
   const observed = Number(breachRates?.observed || 0);
   const expected = Number(breachRates?.expected || 0);
@@ -520,6 +935,288 @@ function buildBreachComparisonChart(breachRates) {
       <line x1="${pad.left}" y1="${pad.top + innerH}" x2="${width - pad.right}" y2="${pad.top + innerH}" stroke="rgba(100,116,139,0.5)" />
       ${bar(pad.left + innerW * 0.24 - 46, expected, "rgba(100, 116, 139, 0.78)", "Expected")}
       ${bar(pad.left + innerW * 0.72 - 46, observed, "rgba(59, 130, 246, 0.78)", "Observed")}
+    `
+  );
+}
+
+function buildMonteCarloCiChart(ciData) {
+  const reference = Number(ciData?.reference || 0);
+  const cpuLow = Number(ciData?.cpu?.low || 0);
+  const cpuHigh = Number(ciData?.cpu?.high || 0);
+  const gpuLow = Number(ciData?.gpu?.low || 0);
+  const gpuHigh = Number(ciData?.gpu?.high || 0);
+  const values = [reference, cpuLow, cpuHigh, gpuLow, gpuHigh].filter(Number.isFinite);
+  const minVal = Math.min(...values);
+  const maxVal = Math.max(...values);
+  const range = Math.max(maxVal - minVal, 1e-9);
+  const width = 560;
+  const height = 190;
+  const pad = { left: 80, right: 24, top: 20, bottom: 24 };
+  const innerW = width - pad.left - pad.right;
+
+  function x(v) {
+    return pad.left + ((v - minVal) / range) * innerW;
+  }
+
+  return buildSvgShell(
+    width,
+    height,
+    `
+      <rect x="0" y="0" width="${width}" height="${height}" rx="10" fill="rgba(255,255,255,0.24)" />
+      <line x1="${x(reference)}" y1="${pad.top}" x2="${x(reference)}" y2="${height - pad.bottom}" stroke="rgba(59,130,246,0.78)" stroke-width="2" stroke-dasharray="4 4"/>
+      <text x="${x(reference) + 6}" y="${pad.top + 12}" font-size="10" fill="rgba(30,64,175,0.9)">BS Ref</text>
+      <line x1="${x(cpuLow)}" y1="72" x2="${x(cpuHigh)}" y2="72" stroke="rgba(71,85,105,0.84)" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="${x(cpuLow)}" cy="72" r="4" fill="rgba(71,85,105,0.84)"/>
+      <circle cx="${x(cpuHigh)}" cy="72" r="4" fill="rgba(71,85,105,0.84)"/>
+      <text x="18" y="76" font-size="11" fill="rgba(71,85,105,0.9)">CPU 95% CI</text>
+      <line x1="${x(gpuLow)}" y1="122" x2="${x(gpuHigh)}" y2="122" stroke="rgba(59,130,246,0.84)" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="${x(gpuLow)}" cy="122" r="4" fill="rgba(59,130,246,0.84)"/>
+      <circle cx="${x(gpuHigh)}" cy="122" r="4" fill="rgba(59,130,246,0.84)"/>
+      <text x="18" y="126" font-size="11" fill="rgba(71,85,105,0.9)">GPU 95% CI</text>
+    `
+  );
+}
+
+function buildNoArbitrageDiagnosticsChart(data) {
+  const parityError = Number(data?.parityError || 0);
+  const callWithinBounds = Boolean(data?.callWithinBounds);
+  const putWithinBounds = Boolean(data?.putWithinBounds);
+  const width = 560;
+  const height = 190;
+  const statusColor = "rgba(22, 163, 74, 0.9)";
+  const muted = "rgba(71,85,105,0.88)";
+
+  return buildSvgShell(
+    width,
+    height,
+    `
+      <rect x="0" y="0" width="${width}" height="${height}" rx="10" fill="rgba(255,255,255,0.24)" />
+      <text x="22" y="40" font-size="12" fill="${muted}">Put-Call Parity Error</text>
+      <text x="22" y="60" font-size="12" font-weight="600" fill="rgba(30,64,175,0.92)">${parityError.toExponential(2)}</text>
+      <rect x="22" y="84" width="250" height="34" rx="10" fill="rgba(255,255,255,0.55)" stroke="rgba(148,163,184,0.22)"/>
+      <text x="36" y="106" font-size="12" fill="${muted}">Call within bounds:</text>
+      <text x="170" y="106" font-size="12" font-weight="600" fill="${callWithinBounds ? statusColor : "rgba(220,38,38,0.9)"}">${callWithinBounds ? "true" : "false"}</text>
+      <rect x="288" y="84" width="250" height="34" rx="10" fill="rgba(255,255,255,0.55)" stroke="rgba(148,163,184,0.22)"/>
+      <text x="302" y="106" font-size="12" fill="${muted}">Put within bounds:</text>
+      <text x="430" y="106" font-size="12" font-weight="600" fill="${putWithinBounds ? statusColor : "rgba(220,38,38,0.9)"}">${putWithinBounds ? "true" : "false"}</text>
+      <text x="22" y="148" font-size="11" fill="rgba(100,116,139,0.88)">Core no-arbitrage diagnostics remain within numerical-noise levels under current configuration.</text>
+    `
+  );
+}
+
+function buildRuntimeComparisonChart(runtimeData) {
+  const cpuMean = Number(runtimeData?.cpuMean || 0);
+  const gpuFirst = Number(runtimeData?.gpuFirst || 0);
+  const gpuSteady1 = Number(runtimeData?.gpuSteady1 || 0);
+  const gpuSteady2 = Number(runtimeData?.gpuSteady2 || 0);
+  const categories = [
+    { label: "CPU Mean", value: cpuMean, color: "rgba(71,85,105,0.82)" },
+    { label: "GPU First", value: gpuFirst, color: "rgba(59,130,246,0.72)" },
+    { label: "GPU S1", value: gpuSteady1, color: "rgba(37,99,235,0.82)" },
+    { label: "GPU S2", value: gpuSteady2, color: "rgba(29,78,216,0.9)" }
+  ];
+  const width = 560;
+  const height = 210;
+  const pad = { top: 18, right: 20, bottom: 38, left: 52 };
+  const innerW = width - pad.left - pad.right;
+  const innerH = height - pad.top - pad.bottom;
+  const maxVal = Math.max(...categories.map((c) => c.value), 1e-6) * 1.08;
+
+  const barWidth = 70;
+  const gap = (innerW - categories.length * barWidth) / Math.max(categories.length - 1, 1);
+  const bars = categories.map((cat, i) => {
+    const x = pad.left + i * (barWidth + gap);
+    const h = (cat.value / maxVal) * innerH;
+    const y = pad.top + innerH - h;
+    return `
+      <rect x="${x}" y="${y}" width="${barWidth}" height="${h}" rx="6" fill="${cat.color}" />
+      <text x="${x + barWidth / 2}" y="${height - 14}" text-anchor="middle" font-size="10.5" fill="rgba(71,85,105,0.9)">${cat.label}</text>
+      <text x="${x + barWidth / 2}" y="${y - 6}" text-anchor="middle" font-size="10" fill="rgba(71,85,105,0.86)">${cat.value.toFixed(6)} s</text>
+    `;
+  }).join("");
+
+  return buildSvgShell(
+    width,
+    height,
+    `
+      <rect x="0" y="0" width="${width}" height="${height}" rx="10" fill="rgba(255,255,255,0.24)" />
+      <line x1="${pad.left}" y1="${pad.top + innerH}" x2="${width - pad.right}" y2="${pad.top + innerH}" stroke="rgba(100,116,139,0.5)" />
+      ${bars}
+    `
+  );
+}
+
+function buildRiskModelAvgVarCvarChart(modelComparison) {
+  const rows = Array.isArray(modelComparison?.models) ? modelComparison.models : [];
+  const width = 560;
+  const height = 220;
+  const pad = { top: 18, right: 20, bottom: 40, left: 52 };
+  const innerW = width - pad.left - pad.right;
+  const innerH = height - pad.top - pad.bottom;
+  const maxVal = Math.max(...rows.flatMap((row) => [Number(row.avgVar || 0), Number(row.avgCvar || 0)]), 1e-6) * 1.12;
+  const groupW = innerW / Math.max(rows.length, 1);
+  const colW = Math.min(24, groupW * 0.22);
+
+  const bars = rows.map((row, index) => {
+    const groupX = pad.left + index * groupW + groupW * 0.24;
+    const varH = (Number(row.avgVar || 0) / maxVal) * innerH;
+    const cvarH = (Number(row.avgCvar || 0) / maxVal) * innerH;
+    const varY = pad.top + innerH - varH;
+    const cvarY = pad.top + innerH - cvarH;
+    return `
+      <rect x="${groupX}" y="${varY}" width="${colW}" height="${varH}" rx="4" fill="rgba(71, 85, 105, 0.78)" />
+      <rect x="${groupX + colW + 8}" y="${cvarY}" width="${colW}" height="${cvarH}" rx="4" fill="rgba(59, 130, 246, 0.8)" />
+      <text x="${groupX + colW + 3}" y="${height - 14}" text-anchor="middle" font-size="10" fill="rgba(71,85,105,0.88)">
+        ${(String(row.name || "")).split(" ")[0]}
+      </text>
+    `;
+  }).join("");
+
+  return buildSvgShell(
+    width,
+    height,
+    `
+      <rect x="0" y="0" width="${width}" height="${height}" rx="10" fill="rgba(255,255,255,0.24)" />
+      <line x1="${pad.left}" y1="${pad.top + innerH}" x2="${width - pad.right}" y2="${pad.top + innerH}" stroke="rgba(100,116,139,0.5)" />
+      ${bars}
+      <g transform="translate(${width - 150}, ${pad.top + 4})">
+        <rect x="0" y="-10" width="144" height="28" rx="8" fill="rgba(255,255,255,0.55)" stroke="rgba(148,163,184,0.2)" />
+        <rect x="10" y="-1" width="10" height="10" rx="2" fill="rgba(71, 85, 105, 0.78)" />
+        <text x="24" y="8" font-size="10" fill="rgba(71,85,105,0.9)">Avg VaR</text>
+        <rect x="78" y="-1" width="10" height="10" rx="2" fill="rgba(59, 130, 246, 0.8)" />
+        <text x="92" y="8" font-size="10" fill="rgba(71,85,105,0.9)">Avg CVaR</text>
+      </g>
+    `
+  );
+}
+
+function buildRiskModelBreachStatsChart(modelComparison) {
+  const rows = Array.isArray(modelComparison?.models) ? modelComparison.models : [];
+  const width = 560;
+  const height = 220;
+  const pad = { top: 20, right: 20, bottom: 40, left: 52 };
+  const innerW = width - pad.left - pad.right;
+  const innerH = height - pad.top - pad.bottom;
+  const maxRate = Math.max(...rows.map((row) => Number(row.breachRate || 0)), 1e-6) * 1.12;
+  const maxCount = Math.max(...rows.map((row) => Number(row.breaches || 0)), 1);
+  const groupW = innerW / Math.max(rows.length, 1);
+  const colW = Math.min(28, groupW * 0.24);
+
+  const bars = rows.map((row, index) => {
+    const groupX = pad.left + index * groupW + groupW * 0.2;
+    const rateH = (Number(row.breachRate || 0) / maxRate) * innerH;
+    const countH = (Number(row.breaches || 0) / maxCount) * innerH;
+    return `
+      <rect x="${groupX}" y="${pad.top + innerH - rateH}" width="${colW}" height="${rateH}" rx="4" fill="rgba(59,130,246,0.8)" />
+      <rect x="${groupX + colW + 8}" y="${pad.top + innerH - countH}" width="${colW}" height="${countH}" rx="4" fill="rgba(71,85,105,0.78)" />
+      <text x="${groupX + colW + 4}" y="${height - 14}" text-anchor="middle" font-size="10" fill="rgba(71,85,105,0.88)">
+        ${(String(row.name || "")).split(" ")[0]}
+      </text>
+    `;
+  }).join("");
+
+  return buildSvgShell(
+    width,
+    height,
+    `
+      <rect x="0" y="0" width="${width}" height="${height}" rx="10" fill="rgba(255,255,255,0.24)" />
+      <line x1="${pad.left}" y1="${pad.top + innerH}" x2="${width - pad.right}" y2="${pad.top + innerH}" stroke="rgba(100,116,139,0.5)" />
+      ${bars}
+      <g transform="translate(${width - 170}, ${pad.top + 4})">
+        <rect x="0" y="-10" width="164" height="28" rx="8" fill="rgba(255,255,255,0.55)" stroke="rgba(148,163,184,0.2)" />
+        <rect x="10" y="-1" width="10" height="10" rx="2" fill="rgba(59,130,246,0.8)" />
+        <text x="24" y="8" font-size="10" fill="rgba(71,85,105,0.9)">Breach Rate</text>
+        <rect x="92" y="-1" width="10" height="10" rx="2" fill="rgba(71,85,105,0.78)" />
+        <text x="106" y="8" font-size="10" fill="rgba(71,85,105,0.9)">Breaches</text>
+      </g>
+    `
+  );
+}
+
+function buildRiskModelRankingChart(modelComparison) {
+  const rankings = modelComparison?.rankings || {};
+  const rows = [
+    { dimension: "Conservativeness", order: rankings.conservativeness || [] },
+    { dimension: "Coverage Closeness", order: rankings.coverageCloseness || [] },
+    { dimension: "Smoothness", order: rankings.smoothness || [] }
+  ];
+  const width = 560;
+  const height = 254;
+  const rowTop = 22;
+  const rowHeight = 72;
+
+  const blocks = rows.map((row, index) => {
+    const y = rowTop + index * (rowHeight + 8);
+    const first = row.order[0] || "N/A";
+    const second = row.order[1] || "N/A";
+    const third = row.order[2] || "N/A";
+
+    return `
+      <rect x="16" y="${y}" width="528" height="${rowHeight}" rx="11" fill="rgba(255,255,255,0.5)" stroke="rgba(148,163,184,0.2)" />
+      <text x="30" y="${y + 22}" font-size="11" font-weight="600" fill="rgba(71,85,105,0.94)">${row.dimension}</text>
+
+      <rect x="190" y="${y + 8}" width="334" height="18" rx="7" fill="rgba(219,234,254,0.62)" stroke="rgba(59,130,246,0.5)" />
+      <text x="202" y="${y + 21}" font-size="10.5" font-weight="700" fill="rgba(30,64,175,0.96)">1</text>
+      <text x="220" y="${y + 21}" font-size="10.5" fill="rgba(30,64,175,0.96)">${first}</text>
+
+      <rect x="190" y="${y + 29}" width="318" height="16" rx="6" fill="rgba(255,255,255,0.64)" stroke="rgba(148,163,184,0.24)" />
+      <text x="202" y="${y + 41}" font-size="9.9" font-weight="600" fill="rgba(71,85,105,0.9)">2</text>
+      <text x="218" y="${y + 41}" font-size="9.9" fill="rgba(71,85,105,0.9)">${second}</text>
+
+      <rect x="190" y="${y + 48}" width="300" height="14" rx="6" fill="rgba(255,255,255,0.46)" stroke="rgba(148,163,184,0.18)" />
+      <text x="202" y="${y + 59}" font-size="9.4" font-weight="600" fill="rgba(100,116,139,0.86)">3</text>
+      <text x="218" y="${y + 59}" font-size="9.4" fill="rgba(100,116,139,0.86)">${third}</text>
+    `;
+  }).join("");
+
+  return buildSvgShell(
+    width,
+    height,
+    `
+      <rect x="0" y="0" width="${width}" height="${height}" rx="10" fill="rgba(255,255,255,0.24)" />
+      ${blocks}
+    `
+  );
+}
+
+function buildRiskModelStageProgressionChart(modelComparison) {
+  const stages = Array.isArray(modelComparison?.stages) ? modelComparison.stages : [];
+  const recommendation = String(modelComparison?.recommendation || "N/A");
+  const width = 560;
+  const height = 176;
+  const chips = stages.slice(0, 3);
+  const chipW = 132;
+  const chipH = 28;
+  const gap = 22;
+  const totalW = chips.length * chipW + (chips.length - 1) * gap;
+  const startX = Math.max(24, Math.round((width - totalW) / 2));
+  const topY = 34;
+
+  const nodes = chips.map((stage, index) => {
+    const x = startX + index * (chipW + gap);
+    const isLast = index === chips.length - 1;
+    const arrowX = x + chipW + 6;
+    return `
+      <rect x="${x}" y="${topY}" width="${chipW}" height="${chipH}" rx="10" fill="${isLast ? "rgba(219,234,254,0.56)" : "rgba(255,255,255,0.64)"}" stroke="${isLast ? "rgba(59,130,246,0.48)" : "rgba(148,163,184,0.24)"}" />
+      <text x="${x + chipW / 2}" y="${topY + 18}" text-anchor="middle" font-size="10.2" font-weight="${isLast ? "600" : "500"}" fill="${isLast ? "rgba(30,64,175,0.95)" : "rgba(71,85,105,0.9)"}">${stage}</text>
+      ${index < chips.length - 1 ? `<path d="M ${arrowX} ${topY + 14} L ${arrowX + 10} ${topY + 14}" stroke="rgba(100,116,139,0.56)" stroke-width="1.5" marker-end="url(#arrow-head)"/>` : ""}
+    `;
+  }).join("");
+
+  return buildSvgShell(
+    width,
+    height,
+    `
+      <defs>
+        <marker id="arrow-head" markerWidth="8" markerHeight="8" refX="6" refY="3.5" orient="auto">
+          <path d="M0,0 L7,3.5 L0,7 z" fill="rgba(100,116,139,0.6)" />
+        </marker>
+      </defs>
+      <rect x="0" y="0" width="${width}" height="${height}" rx="10" fill="rgba(255,255,255,0.24)" />
+      ${nodes}
+      <rect x="98" y="94" width="364" height="34" rx="10" fill="rgba(219,234,254,0.42)" stroke="rgba(59,130,246,0.36)" />
+      <text x="114" y="108" font-size="10.1" font-weight="600" fill="rgba(30,64,175,0.95)">Recommended Benchmark</text>
+      <text x="114" y="122" font-size="11" fill="rgba(30,64,175,0.96)">${recommendation}</text>
     `
   );
 }
@@ -627,32 +1324,67 @@ async function renderBenchmarkChartsWithFigures(hostId, project) {
     return;
   }
   const token = ++activeChartRenderToken;
-  renderBenchmarkCharts(hostId, project?.benchmarkCharts);
+  const charts = Array.isArray(project?.benchmarkCharts) ? project.benchmarkCharts : [];
+  renderBenchmarkCharts(hostId, charts);
 
   const cards = host.querySelectorAll(".project-chart-card");
   const chartData = project?.chartData || {};
-  if (cards[0]) {
-    const figure = cards[0].querySelector(".project-chart-figure");
-    if (figure) {
+  for (let i = 0; i < cards.length; i += 1) {
+    const figure = cards[i].querySelector(".project-chart-figure");
+    if (!figure) {
+      continue;
+    }
+    const kind = charts[i]?.kind || (i === 0 ? "cpuGpuMetrics" : i === 1 ? "rollingBacktest" : i === 2 ? "breachComparison" : "");
+    if (kind === "cpuGpuMetrics") {
       figure.innerHTML = buildGroupedBarsChart(chartData.cpuGpuMetrics);
+      continue;
     }
-  }
-  if (cards[2]) {
-    const figure = cards[2].querySelector(".project-chart-figure");
-    if (figure) {
-      figure.innerHTML = buildBreachComparisonChart(chartData.breachRates);
+    if (kind === "pricingMethodComparison") {
+      figure.innerHTML = buildPricingMethodComparisonChart(chartData.methodPrices);
+      continue;
     }
-  }
-  if (cards[1]) {
-    const figure = cards[1].querySelector(".project-chart-figure");
-    if (figure) {
+    if (kind === "rollingBacktest") {
       figure.innerHTML = `<div class="project-chart-placeholder"><p class="text-sm text-gray-600">Loading rolling backtest series…</p></div>`;
       const rows = await fetchRollingBacktestRows(chartData.rollingBacktest?.csvPath || "");
       if (token !== activeChartRenderToken) {
         return;
       }
       figure.innerHTML = buildRollingBacktestChart(rows || chartData.rollingBacktest?.fallbackSeries || []);
+      continue;
     }
+    if (kind === "breachComparison") {
+      figure.innerHTML = buildBreachComparisonChart(chartData.breachRates);
+      continue;
+    }
+    if (kind === "mcCiVsReference") {
+      figure.innerHTML = buildMonteCarloCiChart(chartData.mcConfidenceIntervals);
+      continue;
+    }
+    if (kind === "noArbitrageDiagnostics") {
+      figure.innerHTML = buildNoArbitrageDiagnosticsChart(chartData.noArbitrageDiagnostics);
+      continue;
+    }
+    if (kind === "runtimeComparison") {
+      figure.innerHTML = buildRuntimeComparisonChart(chartData.runtimeComparison);
+      continue;
+    }
+    if (kind === "riskModelAvgVarCvar") {
+      figure.innerHTML = buildRiskModelAvgVarCvarChart(chartData.modelComparison);
+      continue;
+    }
+    if (kind === "riskModelBreachStats") {
+      figure.innerHTML = buildRiskModelBreachStatsChart(chartData.modelComparison);
+      continue;
+    }
+    if (kind === "riskModelRankingSummary") {
+      figure.innerHTML = buildRiskModelRankingChart(chartData.modelComparison);
+      continue;
+    }
+    if (kind === "riskModelStageProgression") {
+      figure.innerHTML = buildRiskModelStageProgressionChart(chartData.modelComparison);
+      continue;
+    }
+    figure.innerHTML = `<div class="project-chart-placeholder"><p class="text-sm text-gray-600">Chart data placeholder ready for later binding.</p></div>`;
   }
 }
 
@@ -885,9 +1617,6 @@ function renderProjectsGrid() {
     <article class="project-card glass-subpanel rounded-[1.2rem] p-5">
       <h3 class="text-lg font-semibold leading-6 text-gray-900">${escapeProjectHtml(project.title)}</h3>
       <p class="mt-3 text-sm leading-6 text-gray-700">${escapeProjectHtml(project.cardSummary || project.summary)}</p>
-      <div class="mt-4 flex flex-wrap gap-2">
-        ${(project.tags || []).map((tag) => `<span class="project-tag rounded-full px-2.5 py-1 text-xs font-medium text-gray-600">${escapeProjectHtml(tag)}</span>`).join("")}
-      </div>
       <button
         type="button"
         data-project-id="${escapeProjectHtml(project.id)}"
@@ -989,6 +1718,12 @@ function openProjectModal(projectId) {
   }
 
   const artifactsHost = document.getElementById("project-modal-artifacts");
+  const artifactsIntroHost = document.getElementById("project-modal-artifacts-intro");
+  if (artifactsIntroHost) {
+    const intro = String(project.artifactsIntro || "").trim();
+    artifactsIntroHost.textContent = intro;
+    artifactsIntroHost.classList.toggle("hidden", !intro);
+  }
   if (artifactsHost) {
     const artifacts = Array.isArray(project.artifacts) ? project.artifacts : [];
     artifactsHost.innerHTML = artifacts.length
