@@ -1246,8 +1246,8 @@ const PROJECTS_CATALOG = [
     artifactsHeading: "Documentation & Artifacts",
     artifactsIntro: "Reference materials, examples, and stage documents for reproducible semantics-comparison review.",
     artifacts: [
-      { label: "Open Documentation", href: "dtcnumpy_manual_2026-02-02.md" },
-      { label: "Open Examples Guide", href: "README_examples.md" },
+      { label: "Documentation" },
+      { label: "Examples Guide" },
       { label: "demo_basic.py" },
       { label: "demo_ops.py" },
       { label: "demo_quant.py" },
