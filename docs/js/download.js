@@ -875,7 +875,7 @@ function getItemTrackIds(item) {
 
   const legacyYm = getLegacyItemYm(item);
   if (legacyYm && legacyYm <= "2025-12" && Array.isArray(item?.files) && item.files.length) {
-    return ["algorithm"];
+    return ["algorithm", "infrastructure"];
   }
 
   return [];

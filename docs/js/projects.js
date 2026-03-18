@@ -705,29 +705,340 @@ const PROJECTS_CATALOG = [
     ]
   },
   {
+    id: "yfinance-rate-limit-patch-multi-asset",
+    title: "yfinance Rate-Limit Patch and Multi-Asset Download Stitching",
+    summary: "Develops a more reliable and reproducible multi-asset download layer for the club’s risk pipeline through chunking, caching, retry logic, stitching, and per-chunk reporting.",
+    cardSummary: "This project builds a more reliable multi-asset data-ingestion layer for the club’s risk pipeline by adding chunked downloads, cache-backed retries, chronological stitching, and per-chunk reporting without changing downstream risk computations.",
+    tags: ["Infrastructure", "Curated", "Completed"],
+    overview: "This project strengthens the club’s data-ingestion layer by addressing rate-limit failures in yfinance downloads and extending the existing workflow to support multi-asset inputs more reliably. Rather than changing the VaR/CVaR and backtest logic itself, the project modifies the upstream data layer: large requests are split into smaller time-window chunks, each chunk can be cached and retried independently, and the resulting series are stitched back together in chronological order. The result is a more stable and traceable input pipeline for downstream risk workflows, especially when moving from single-asset runs to multi-asset portfolio analysis.",
+    why: "In financial engineering, downstream model comparisons and backtest results are only as reliable as the data-ingestion layer that feeds them. Transient download failures, inconsistent retries, or non-reproducible input handling can undermine otherwise well-controlled benchmark work. This project matters because it improves data-layer resilience without silently changing the risk-computation path: downloads become more robust, multi-asset runs become easier to reproduce, and each chunk-level outcome can be traced through explicit reporting artifacts.",
+    approachIntro: "We structured this project as a controlled data-layer patch that improves download reliability and multi-asset support while leaving the core risk-computation path unchanged.",
+    approach: [
+      "split each (ticker, date range) request into smaller 3-month download units",
+      "added chunk-level caching so reruns can reuse local data instead of re-downloading",
+      "added per-chunk retry logic with exponential backoff and jitter to reduce transient failures",
+      "stitched chunk outputs in chronological order and deduplicated overlapping boundary rows",
+      "merged ticker-level series into wide tables for aligned multi-asset price and return generation",
+      "aggregated wide returns into a baseline equal-weight portfolio series without changing downstream VaR/CVaR and backtest functions",
+      "recorded chunk-level outcomes and runtime parameters through explicit reporting artifacts for reproducibility"
+    ],
+    workflowSteps: [
+      {
+        label: "Step 1",
+        title: "Chunk Request Generation",
+        bullets: [
+          "Split each ticker and date-range request into smaller 3-month windows so downloads can be managed in stable atomic units."
+        ]
+      },
+      {
+        label: "Step 2",
+        title: "Cached Download and Retry",
+        bullets: [
+          "Download each chunk independently, reuse cached chunks when available, and apply retry logic with exponential backoff and jitter when transient failures occur."
+        ]
+      },
+      {
+        label: "Step 3",
+        title: "Stitching and Deduplication",
+        bullets: [
+          "Concatenate chunk-level outputs, sort them in chronological order, and deduplicate overlapping boundary dates so the final series remains clean and continuous."
+        ]
+      },
+      {
+        label: "Step 4",
+        title: "Multi-Asset Merge and Portfolio Wiring",
+        bullets: [
+          "Stitch each ticker independently, merge all tickers into wide-format price and return tables, and aggregate the aligned returns into a baseline portfolio series for downstream risk use."
+        ]
+      },
+      {
+        label: "Step 5",
+        title: "Reporting and Verification",
+        bullets: [
+          "Record chunk-level outcomes in download artifacts, preserve run parameters for traceability, and verify the patch through dedicated unit tests and compile checks."
+        ]
+      }
+    ],
+    resultsPrimaryHeading: "Project Outcomes",
+    results: [
+      "implemented a chunked and cache-backed yfinance download layer for multi-asset workflows",
+      "reduced fragility from rate-limit failures through retry logic and per-chunk recovery",
+      "preserved the existing VaR/CVaR and backtest compute path by isolating the patch to the data layer",
+      "extended the CLI pipeline to support multi-ticker inputs and wide-format outputs",
+      "added chunk-level reporting artifacts for traceability and reproducibility",
+      "verified the patch through dedicated unit tests and local validation checks"
+    ],
+    benchmarkChartsHeading: "Infrastructure Charts",
+    benchmarkChartsIntro: "These charts summarize the reliability improvements, workflow structure, and reproducibility outputs introduced by the data-layer patch.",
+    benchmarkCharts: [
+      {
+        kind: "infraChunkFlow",
+        title: "Chunking and Stitching Flow",
+        description: "Show how a full ticker date range is split into 3-month chunks, downloaded independently, and stitched back into a single chronological series.",
+        caption: "The patch treats each 1 ticker × 3 months window as an atomic download unit, making retries, caching, and reconstruction easier to control."
+      },
+      {
+        kind: "infraBeforeAfter",
+        title: "Before vs After Data-Layer Workflow",
+        description: "Compare the pre-patch single-request flow versus the patched chunked-download, cached-retry, stitched-output workflow.",
+        caption: "The updated data layer improves reliability and traceability without changing the downstream risk-computation logic."
+      },
+      {
+        kind: "infraMultiAssetStructure",
+        title: "Multi-Asset Output Structure",
+        description: "Show ticker-level stitching, wide-table merging, and baseline portfolio aggregation into downstream risk inputs.",
+        caption: "Each ticker is stitched independently, merged into aligned wide tables, and then converted into a baseline portfolio return series for reuse by the existing risk pipeline."
+      },
+      {
+        kind: "infraVerificationSummary",
+        title: "Verification and Artifact Summary",
+        description: "Summarize tests passed, compile checks, and the main reproducibility artifacts emitted by the patched workflow.",
+        caption: "The patch is supported by dedicated verification checks and explicit artifacts that record chunk-level outcomes and runtime settings."
+      }
+    ],
+    resultsSecondaryHeading: "Recorded Outputs",
+    resultsGroups: [
+      {
+        heading: "Patch Scope",
+        items: [
+          "chunked download",
+          "per-chunk retry",
+          "local caching",
+          "chronological stitching",
+          "multi-asset merging",
+          "explicit download reporting"
+        ]
+      },
+      {
+        heading: "Chunk Rule",
+        items: [
+          "atomic download unit: 1 ticker × 3 months",
+          "controlled by chunk_months for tuning"
+        ]
+      },
+      {
+        heading: "Verification Run",
+        items: [
+          "tickers: SPY, QQQ, TLT",
+          "date range: 2025-01-01 to 2026-01-01",
+          "chunk size: 3 months",
+          "expected chunks: 12 (3 tickers × 4 windows)"
+        ]
+      },
+      {
+        heading: "New or Extended Artifacts",
+        items: [
+          "download_report.json",
+          "params.json extended with tickers, chunk_months, cache_dir, retry settings, and weights_mode",
+          "prices_aligned.csv kept in wide format",
+          "returns.csv kept in wide format"
+        ]
+      },
+      {
+        heading: "Validation",
+        items: [
+          "added unit tests for window generation",
+          "added stitching dedupe tests",
+          "added caching behavior tests with yfinance mocked",
+          "added multi-asset merge verification",
+          "confirmed local test run passed: 5 passed",
+          "completed syntax compile check for risk_pipeline and tests"
+        ]
+      }
+    ],
+    runSummary: {
+      sections: [
+        {
+          heading: "Configuration",
+          rows: [
+            ["Verification Tickers", "SPY, QQQ, TLT"],
+            ["Date Range", "2025-01-01 to 2026-01-01"],
+            ["Chunk Rule", "1 ticker × 3 months"],
+            ["Expected Chunks", "12"],
+            ["Cache Support", "Yes"],
+            ["Retry Logic", "Exponential backoff with jitter"],
+            ["Output Tables", "Wide-format prices and returns"],
+            ["Portfolio Wiring", "Equal-weight baseline portfolio"]
+          ]
+        },
+        {
+          heading: "CLI Patch Controls",
+          rows: [
+            ["--enable-download-patch", "enable chunked download path"],
+            ["--chunk-months", "control chunk size"],
+            ["--cache-dir", "configure local chunk cache"],
+            ["--download-retries", "configure retry count"],
+            ["--download-base-sleep", "configure retry base delay"],
+            ["--download-jitter", "configure retry randomness"]
+          ]
+        }
+      ]
+    },
+    constraints: [
+      "the workflow still depends on yfinance as an external data source, so provider-side instability cannot be eliminated entirely",
+      "chunk size, retry count, and sleep parameters may need retuning under different ticker universes or date ranges",
+      "cached data improves reproducibility and rerun stability, but cache policy must remain explicit so stale data is not confused with fresh downloads",
+      "this patch improves data-layer resilience, but it does not by itself validate the economic correctness of downstream risk estimates"
+    ],
+    nextStep: "The next step is to extend this infrastructure patch into a broader multi-asset data-ingestion benchmark. From here, the project can be tested on larger ticker universes, expanded with more detailed cache-hit and retry statistics, integrated into release dashboards, and paired with future runtime reporting so the club can compare not only model behavior but also data-layer reliability across workflows.",
+    artifactsIntro: "Machine-readable outputs and reproducibility files for chunked download behavior, stitched multi-asset inputs, and patched pipeline runs.",
+    artifacts: [
+      { label: "summary.md" },
+      { label: "summary.json" },
+      { label: "params.json" },
+      { label: "download_report.json" },
+      { label: "prices_aligned.csv" },
+      { label: "returns.csv" },
+      { label: "backtest.json" },
+      { label: "backtest_detail.csv" },
+      { label: "tests/test_download_patch.py" }
+    ]
+  },
+  {
     id: "dtcnumpy",
     title: "dtcnumpy",
-    summary: "Curated package line focused on reproducible numerical workflows for club-scale quantitative experimentation.",
-    tags: ["Infrastructure", "Curated", "Completed"],
-    overview: "dtcnumpy packages reusable numerical components and project scaffolding so teams can move from idea to testable implementation faster.",
-    why: "Shared tooling reduces setup friction and increases consistency across student contributors.",
+    summary: "Develops a NumPy-like semantic comparison package that makes cross-dtype numerical drift visible before it is hidden inside larger quantitative workflows.",
+    cardSummary: "This project builds a dtype-semantics comparison package for quantitative computation, with controlled support for cross-dtype drift analysis, higher-level numerical operations, demo workflows, and a staged path toward publishable package distribution.",
+    tags: [],
+    overview: "This project develops `dtcnumpy`, a small NumPy-like package for comparing how different dtype semantics affect quantitative computation under one shared interface. Rather than simulating CUDA hardware or benchmarking throughput, the project focuses on numerical behavior: one logical input is mapped into multiple dtype versions, FP64 is used as the reference path, FP32 is treated as the practical baseline, and reduced-precision or quantized formats are compared through their output drift. The result is a controlled package line for studying how dtype choices can affect aggregation, tail estimation, matrix operations, and other quant-style kernels before those effects are buried inside larger projects.",
+    why: "In financial engineering and quantitative computation, small numerical differences can compound through reductions, tail cutoffs, and matrix-based transformations. Lower-precision or quantized formats may appear harmless at the input level but drift more meaningfully after dot products, quantiles, or matrix multiplication. `dtcnumpy` matters because it creates a controlled environment for comparing those semantic differences directly: outputs remain anchored to an FP64 reference, FP32 provides a practical baseline, and reduced-precision behavior becomes visible before it affects later risk, portfolio, or scenario-generation workflows.",
+    approachIntro: "We structured `dtcnumpy` as a staged semantics-comparison package rather than as a hardware simulator or full NumPy replacement.",
     approach: [
-      "Package core utilities with clear versioning and usage notes.",
-      "Define integration patterns for benchmark and release workflows.",
-      "Maintain lightweight QA checks before distribution."
+      "fixed the project boundary around numeric semantics rather than throughput or device execution",
+      "defined a shared `DTCArray` object model that stores one logical input across multiple dtype versions",
+      "anchored reporting to FP64 while treating FP32 as the practical baseline",
+      "extended the public operation surface in stages from conversion and reporting to higher-level numerical ops",
+      "prepared advanced linalg and random-module work as the bridge toward later risk-kernel integration",
+      "added meeting-ready example scripts and usage notes to support onboarding and demos",
+      "positioned the package for future distribution through PyPI and Conda as it matures into a reusable user-facing tool"
+    ],
+    resultsPrimaryHeading: "Project Outcomes",
+    results: [
+      "established a bounded semantic-comparison package for quantitative computation",
+      "implemented a reusable `DTCArray` object model with shared per-dtype storage",
+      "published a documented public API covering conversion, reporting, reductions, algebra, and selected utilities",
+      "fixed clear scope limits so the package does not drift into hardware simulation or full NumPy replacement",
+      "added user-facing examples and documentation suitable for meeting demos and onboarding",
+      "prepared the project for outward-facing package distribution and future feature versioning beyond the current published line"
+    ],
+    resultsSecondaryHeading: "Stages",
+    resultsSecondary: [
+      "Stage 1 — Scope Definition and Data-Type Semantics Design: defined `dtcnumpy` as a precision-semantics simulator for quantitative computation, fixed the v0.1 project boundary, selected the initial supported dtype set, and froze the lightweight `import dtcnumpy as dnp` API direction.",
+      "Stage 2 — Base Container and Conversion API: implemented the package structure, built the base `DTCArray` container, and added the first `array(...)`, `asarray(...)`, and `astype(...)` conversion interface together with the initial FP64-based reporting layer.",
+      "Stage 3 — Higher-Level Numerical Ops and Reporting: extended the operation surface to include reductions, algebra, and utility helpers, and documented the correct `DTCArray.from_versions(...)` construction path so operation outputs do not double-round through the earlier conversion path.",
+      "Stage 4 — Advanced Linear Algebra and Random Preparation: defined the preparation layer for advanced linear algebra and controlled random sampling as the first bridge toward risk-kernel-critical workflows, while explicitly keeping hardware execution out of scope.",
+      "Stage 5 — User Examples and Demo Workflows: published meeting-ready demo scripts and usage notes covering array creation, dtype comparison, `astype(...)`, operation-level drift, and lightweight quant-style examples as the first onboarding-oriented stage of the project."
+    ],
+    benchmarkChartsHeading: "Package Charts",
+    benchmarkChartsIntro: "These charts summarize supported dtype roles, the internal object model, roadmap progression, and example-facing usability under the current published package line.",
+    benchmarkCharts: [
+      {
+        kind: "dtcDtypeRoles",
+        title: "Supported Dtype Families and Roles",
+        description: "A structured comparison of `fp64`, `fp32`, `fp16`, `bf16`, `tf32`, `int8`, `int16`, and `int32`, showing which paths serve as reference precision, practical baseline, reduced-precision comparison, or quantized comparison.",
+        caption: "Dtype roles are explicitly separated so drift analysis remains interpretable before outputs are reused in larger workflows."
+      },
+      {
+        kind: "dtcObjectModel",
+        title: "DTCArray Object Model",
+        description: "A structural view of one logical input stored as an FP64 reference, a dictionary of per-dtype versions, and one active dtype label that controls the current viewing path.",
+        caption: "One logical input can be inspected across multiple dtype versions under a shared shape and active-view context."
+      },
+      {
+        kind: "dtcStageProgression",
+        title: "Stage Progression View",
+        description: "A roadmap view of Stage 1 through Stage 5, showing the transition from semantics design to package structure, higher-level operations, advanced preparation work, and user-facing demos.",
+        caption: "The package matured through staged delivery from semantics boundary-setting to example-oriented usability."
+      },
+      {
+        kind: "dtcExampleWorkflowSummary",
+        title: "Example Workflow Summary",
+        description: "A compact summary of the published example set, covering basic array comparison, dtype switching, operation-level drift, and lightweight quant-style workflows.",
+        caption: "Examples are intentionally small and meeting-ready so users can observe semantic drift clearly before full project integration."
+      }
+    ],
+    resultsGroups: [
+      {
+        heading: "Example Workflows",
+        items: [
+          "The current Stage 5 usage layer is designed for meetings, onboarding, and internal explanation. The examples are intentionally small and are meant to show semantic drift clearly before full project integration.",
+        ]
+      },
+      {
+        heading: "Example 1 — `demo_basic.py`",
+        items: [
+          "Purpose: introduces scalar and vector comparison plus `astype(...)`-based active-dtype switching.",
+          "Run: `python3 examples/demo_basic.py`.",
+          "Code excerpt: `scalar = dnp.array(1.234567)`, `vector = dnp.array([1.2, 3.4, 5.6])`, `vector_fp16 = vector.astype(\"fp16\")`.",
+          "Takeaway: `fp16`, `bf16`, and `tf32` round `1.234567` to `1.234375`; `bf16` drifts more strongly while `int16` / `int32` remain closer to FP64."
+        ]
+      },
+      {
+        heading: "Example 2 — `demo_ops.py`",
+        items: [
+          "Purpose: shows operation-level drift through `mean`, `dot`, and `quantile`.",
+          "Run: `python3 examples/demo_ops.py`.",
+          "Focus: mean, dot product, quantile.",
+          "Takeaway: operation-level drift is more informative than raw-input drift; `bf16` distorts aggregated outputs more visibly while `tf32` sits between coarse reduced precision and the FP32 baseline."
+        ]
+      },
+      {
+        heading: "Example 3 — `demo_quant.py`",
+        items: [
+          "Purpose: applies the comparison flow to lightweight quant-style workflows such as weighted return, tail-style quantile checking, and `matmul + mean`.",
+          "Run: `python3 examples/demo_quant.py`.",
+          "Focus: portfolio weighted return, tail-style quantile checking, small matrix aggregation based on `matmul` plus `mean`.",
+          "Takeaway: `bf16` and `int8` are the most drift-prone formats in current small examples, while `int16` / `int32` remain much closer to FP64."
+        ]
+      },
+      {
+        heading: "Recorded Outputs",
+        items: [
+          "Supported Dtype Families: `fp64`, `fp32`, `fp16`, `bf16`, `tf32`, `int8`, `int16`, `int32`.",
+          "Core Object Model: `raw_fp64`, `versions`, `active_dtype`, shared `shape` across stored versions.",
+          "Current Public API Surface: creation/conversion (`array`, `asarray`, `astype`), reporting (`print`), reductions/statistics (`sum`, `mean`, `std`, `quantile`), algebra (`dot`, `matmul`, `outer`, restricted `einsum`), utilities (`reshape`, `transpose`, `.T`, `diag`, `eye`, `clip`, `isfinite`).",
+          "Example Set: `demo_basic.py`, `demo_ops.py`, `demo_quant.py`, `README_examples.md`."
+        ]
+      },
+      {
+        heading: "Install",
+        items: [
+          "`dtcnumpy` is being prepared for package distribution through PyPI and Conda so the project can move from meeting demos into a reusable user-facing workflow. The current package is already usable through source-based examples and manual; package distribution is the next outward-facing step rather than a change in core design.",
+          "PyPI: `pip install <PYPI_PACKAGE_NAME>`",
+          "Conda: `conda install -c <CONDA_CHANNEL> <CONDA_PACKAGE_NAME>`",
+          "Current source-based usage: `python3 examples/demo_basic.py`, `python3 examples/demo_ops.py`, `python3 examples/demo_quant.py`.",
+          "Notes: replace `<PYPI_PACKAGE_NAME>` with final published name; replace `<CONDA_CHANNEL>` and `<CONDA_PACKAGE_NAME>` after Conda publish; keep source-based example commands available during transition."
+        ]
+      },
+      {
+        heading: "Release Roadmap",
+        items: [
+          "v1 — Current: establishes the semantics-comparison package with table-first dtype reporting, core numerical operations, and demo workflows.",
+          "v2 — Planned: extends the package with SIMD-oriented support.",
+          "v3 — Planned: adds graph-based visualization tools for comparison and VaR-style workflows, moving beyond table-only output toward richer visual reporting."
+        ]
+      }
     ],
     constraints: [
-      "Backward compatibility must be managed across active workstreams.",
-      "Documentation quality determines actual adoption."
+      "`dtcnumpy` compares semantic behavior, not hardware throughput or device execution",
+      "it is not a CUDA simulator, Tensor Core simulator, performance benchmark tool, or full NumPy replacement",
+      "advanced linalg, random, and full risk-project integration remain limited or preparatory in the current published stage",
+      "integer paths are comparison-oriented quantize/dequantize flows rather than a full integer tensor runtime",
+      "examples are intentionally small and controlled relative to full project workflows"
     ],
-    results: [
-      "Reduced duplicated setup work across projects.",
-      "Provided stable base layer for reproducible experiments."
-    ],
-    nextStep: "Add focused examples that map package primitives to active risk-model projects.",
+    nextStep: "The next step is to extend `dtcnumpy` from a semantics-comparison package into a more risk-kernel-ready numerical layer. From here, the project can deepen advanced linalg and controlled random support, broaden example coverage, publish package distribution through PyPI and Conda, and later add SIMD-aware and graph-based comparison tools without changing its core semantics-first design.",
+    artifactsIntro: "Reference materials, examples, and stage documents for reproducible semantics-comparison review.",
     artifacts: [
-      { label: "Open Legacy Release", href: "./archive.html" },
-      { label: "Open Download Files", href: "./download.html" }
+      { label: "dtcnumpy_manual_2026-02-02.md" },
+      { label: "README_examples.md" },
+      { label: "demo_basic.py" },
+      { label: "demo_ops.py" },
+      { label: "demo_quant.py" },
+      { label: "Stage 1 summary" },
+      { label: "Stage 2 summary" },
+      { label: "Stage 3 summary" },
+      { label: "Stage 4 summary" },
+      { label: "Stage 5 summary" }
     ]
   }
 ];
@@ -1221,6 +1532,421 @@ function buildRiskModelStageProgressionChart(modelComparison) {
   );
 }
 
+function buildInfrastructureChunkFlowBlock() {
+  const rows = [
+    ["SPY", "2025-01-01", "2025-04-01", "60", "No", "0", "Success"],
+    ["SPY", "2025-04-01", "2025-07-01", "62", "No", "0", "Success"],
+    ["SPY", "2025-07-01", "2025-10-01", "64", "No", "0", "Success"],
+    ["SPY", "2025-10-01", "2026-01-01", "64", "No", "0", "Success"],
+    ["QQQ", "2025-01-01", "2025-04-01", "60", "No", "0", "Success"],
+    ["QQQ", "2025-04-01", "2025-07-01", "62", "No", "0", "Success"],
+    ["QQQ", "2025-07-01", "2025-10-01", "64", "No", "0", "Success"],
+    ["QQQ", "2025-10-01", "2026-01-01", "64", "No", "0", "Success"],
+    ["TLT", "2025-01-01", "2025-04-01", "60", "No", "0", "Success"],
+    ["TLT", "2025-04-01", "2025-07-01", "62", "No", "0", "Success"],
+    ["TLT", "2025-07-01", "2025-10-01", "64", "No", "0", "Success"],
+    ["TLT", "2025-10-01", "2026-01-01", "64", "No", "0", "Success"],
+    ["GLD", "2025-01-01", "2025-04-01", "60", "No", "0", "Success"],
+    ["GLD", "2025-04-01", "2025-07-01", "62", "No", "0", "Success"],
+    ["GLD", "2025-07-01", "2025-10-01", "64", "No", "0", "Success"],
+    ["GLD", "2025-10-01", "2026-01-01", "64", "No", "0", "Success"]
+  ];
+
+  const summary = [
+    ["Total chunks", "16"],
+    ["Succeeded", "16"],
+    ["Failed", "0"],
+    ["Cache hits", "0"],
+    ["Total retries", "0"]
+  ];
+
+  return `
+    <div class="space-y-3 text-xs text-gray-700">
+      <div class="overflow-x-auto rounded-[0.7rem] border border-slate-200/60 bg-white/55">
+        <table class="min-w-[760px] w-full text-left">
+          <thead class="bg-white/45 text-[11px] uppercase tracking-[0.08em] text-gray-500">
+            <tr>
+              <th class="px-3 py-2 font-semibold">Ticker</th>
+              <th class="px-3 py-2 font-semibold">Chunk Start</th>
+              <th class="px-3 py-2 font-semibold">Chunk End</th>
+              <th class="px-3 py-2 font-semibold text-right">Rows</th>
+              <th class="px-3 py-2 font-semibold">Cache Hit</th>
+              <th class="px-3 py-2 font-semibold text-right">Retries</th>
+              <th class="px-3 py-2 font-semibold">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map((row) => `
+              <tr class="border-t border-slate-200/45">
+                <td class="px-3 py-2 font-medium text-gray-800">${escapeProjectHtml(row[0])}</td>
+                <td class="px-3 py-2">${escapeProjectHtml(row[1])}</td>
+                <td class="px-3 py-2">${escapeProjectHtml(row[2])}</td>
+                <td class="px-3 py-2 text-right">${escapeProjectHtml(row[3])}</td>
+                <td class="px-3 py-2">${escapeProjectHtml(row[4])}</td>
+                <td class="px-3 py-2 text-right">${escapeProjectHtml(row[5])}</td>
+                <td class="px-3 py-2"><span class="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">${escapeProjectHtml(row[6])}</span></td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+      <div class="grid grid-cols-2 gap-2 md:grid-cols-5">
+        ${summary.map(([label, value]) => `
+          <div class="rounded-[0.65rem] border border-slate-200/60 bg-white/55 px-2.5 py-1.5">
+            <p class="text-[10px] uppercase tracking-[0.08em] text-gray-500">${escapeProjectHtml(label)}</p>
+            <p class="mt-0.5 text-sm font-semibold text-gray-800">${escapeProjectHtml(value)}</p>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function buildInfrastructureBeforeAfterBlock() {
+  const rows = [
+    ["Request granularity", "full-range request", "3-month chunks"],
+    ["Retry behavior", "limited", "per chunk"],
+    ["Cache support", "none", "chunk-level cache"],
+    ["Stitching", "none", "chronological stitching + dedupe"],
+    ["Multi-asset handling", "weaker", "wide-table merge"],
+    ["Reporting", "limited", "download_report.json"]
+  ];
+
+  return `
+    <div class="overflow-x-auto rounded-[0.7rem] border border-slate-200/60 bg-white/55 text-xs text-gray-700">
+      <table class="min-w-[640px] w-full text-left">
+        <thead class="bg-white/45 text-[11px] uppercase tracking-[0.08em] text-gray-500">
+          <tr>
+            <th class="px-3 py-2 font-semibold">Feature</th>
+            <th class="px-3 py-2 font-semibold">Before Patch</th>
+            <th class="px-3 py-2 font-semibold">After Patch</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map((row) => `
+            <tr class="border-t border-slate-200/45">
+              <td class="px-3 py-2 font-medium text-gray-800">${escapeProjectHtml(row[0])}</td>
+              <td class="px-3 py-2">${escapeProjectHtml(row[1])}</td>
+              <td class="px-3 py-2 font-medium text-slate-800">${escapeProjectHtml(row[2])}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function buildInfrastructureMultiAssetBlock() {
+  const structureRows = [
+    ["Per-ticker stitched series", "ticker-level time series", "narrow"],
+    ["Merged price table", "prices_aligned.csv", "wide"],
+    ["Merged return table", "returns.csv", "wide"],
+    ["Portfolio aggregation", "baseline portfolio return series", "single series"]
+  ];
+
+  const previewRows = [
+    ["2025-01-03", "0.01242590647447570", "0.016232693172044800", "-0.0032025694728575", "-0.007895124609843820"],
+    ["2025-01-06", "0.005744095465350350", "0.011427274955048300", "-0.004477988204457690", "-0.0012328556129918100"],
+    ["2025-01-07", "-0.011368408960579700", "-0.01800516696068930", "-0.01134123338739900", "0.0056176267350635500"],
+    ["2025-01-08", "0.0014598802903946700", "0.0001745476855967100", "0.0012792710756081500", "0.0053016031219844300"],
+    ["2025-01-10", "-0.015385234727999800", "-0.015805322862999900", "-0.006647773243786650", "0.009512918374949770"]
+  ];
+
+  const pricesPreviewRows = [
+    ["2025-01-02", "577.854187", "507.655396", "83.560860", "245.419998"],
+    ["2025-01-03", "585.079346", "515.963257", "83.293678", "243.490005"],
+    ["2025-01-06", "588.449768", "521.893127", "82.921524", "243.190002"],
+    ["2025-01-07", "581.797913", "512.580444", "81.986404", "244.559998"],
+    ["2025-01-08", "582.647888", "512.669922", "82.091354", "245.860001"]
+  ];
+
+  return `
+    <div class="space-y-3 text-xs text-gray-700">
+      <div class="overflow-x-auto rounded-[0.7rem] border border-slate-200/60 bg-white/55">
+        <table class="min-w-[620px] w-full text-left">
+          <thead class="bg-white/45 text-[11px] uppercase tracking-[0.08em] text-gray-500">
+            <tr>
+              <th class="px-3 py-2 font-semibold">Stage</th>
+              <th class="px-3 py-2 font-semibold">Output</th>
+              <th class="px-3 py-2 font-semibold">Format</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${structureRows.map((row) => `
+              <tr class="border-t border-slate-200/45">
+                <td class="px-3 py-2 font-medium text-gray-800">${escapeProjectHtml(row[0])}</td>
+                <td class="px-3 py-2">${escapeProjectHtml(row[1])}</td>
+                <td class="px-3 py-2">${escapeProjectHtml(row[2])}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+      <section class="rounded-[0.7rem] border border-slate-200/60 bg-white/55 p-2.5">
+        <p class="text-[10px] font-semibold uppercase tracking-[0.1em] text-gray-500">prices_aligned.csv preview</p>
+        <div class="mt-2 overflow-x-auto">
+          <table class="min-w-[760px] w-full text-left">
+            <thead class="bg-white/45 text-[11px] uppercase tracking-[0.08em] text-gray-500">
+              <tr>
+                <th class="px-2.5 py-2 font-semibold">date</th>
+                <th class="px-2.5 py-2 font-semibold text-right">SPY</th>
+                <th class="px-2.5 py-2 font-semibold text-right">QQQ</th>
+                <th class="px-2.5 py-2 font-semibold text-right">TLT</th>
+                <th class="px-2.5 py-2 font-semibold text-right">GLD</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${pricesPreviewRows.map((row) => `
+                <tr class="border-t border-slate-200/45">
+                  <td class="px-2.5 py-1.5 font-medium text-gray-800">${escapeProjectHtml(row[0])}</td>
+                  <td class="px-2.5 py-1.5 text-right font-mono text-[11px]">${escapeProjectHtml(row[1])}</td>
+                  <td class="px-2.5 py-1.5 text-right font-mono text-[11px]">${escapeProjectHtml(row[2])}</td>
+                  <td class="px-2.5 py-1.5 text-right font-mono text-[11px]">${escapeProjectHtml(row[3])}</td>
+                  <td class="px-2.5 py-1.5 text-right font-mono text-[11px]">${escapeProjectHtml(row[4])}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section class="rounded-[0.7rem] border border-slate-200/60 bg-white/55 p-2.5">
+        <p class="text-[10px] font-semibold uppercase tracking-[0.1em] text-gray-500">returns.csv preview</p>
+        <div class="mt-2 overflow-x-auto">
+          <table class="min-w-[760px] w-full text-left">
+            <thead class="bg-white/45 text-[11px] uppercase tracking-[0.08em] text-gray-500">
+              <tr>
+                <th class="px-2.5 py-2 font-semibold">date</th>
+                <th class="px-2.5 py-2 font-semibold text-right">SPY</th>
+                <th class="px-2.5 py-2 font-semibold text-right">QQQ</th>
+                <th class="px-2.5 py-2 font-semibold text-right">TLT</th>
+                <th class="px-2.5 py-2 font-semibold text-right">GLD</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${previewRows.map((row) => `
+                <tr class="border-t border-slate-200/45">
+                  <td class="px-2.5 py-1.5 font-medium text-gray-800">${escapeProjectHtml(row[0])}</td>
+                  <td class="px-2.5 py-1.5 text-right font-mono text-[11px]">${escapeProjectHtml(row[1])}</td>
+                  <td class="px-2.5 py-1.5 text-right font-mono text-[11px]">${escapeProjectHtml(row[2])}</td>
+                  <td class="px-2.5 py-1.5 text-right font-mono text-[11px]">${escapeProjectHtml(row[3])}</td>
+                  <td class="px-2.5 py-1.5 text-right font-mono text-[11px]">${escapeProjectHtml(row[4])}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  `;
+}
+
+function buildInfrastructureVerificationBlock() {
+  const verificationRows = [
+    ["Window generation", "Pass", "chunk windows generated correctly"],
+    ["Stitching dedupe", "Pass", "overlap handling verified"],
+    ["Caching behavior", "Pass", "yfinance mocked"],
+    ["Multi-asset merge", "Pass", "verified across multi-ticker workflow"],
+    ["Local test run", "Pass", "5 passed"],
+    ["Compile check", "Pass", "syntax compile check completed"]
+  ];
+  const artifactRows = [
+    ["download_report.json", "chunk-level outcomes"],
+    ["params.json", "runtime and patch settings"],
+    ["prices_aligned.csv", "merged wide price table"],
+    ["returns.csv", "merged wide return table"],
+    ["summary.md", "human-readable run summary"],
+    ["summary.json", "machine-readable run summary"],
+    ["backtest.json", "downstream coverage metrics"],
+    ["backtest_detail.csv", "day-level backtest rows"]
+  ];
+
+  return `
+    <div class="grid grid-cols-1 gap-3 xl:grid-cols-2 text-xs text-gray-700">
+      <section class="rounded-[0.7rem] border border-slate-200/60 bg-white/55 p-2.5">
+        <p class="text-[10px] font-semibold uppercase tracking-[0.1em] text-gray-500">Verification</p>
+        <div class="mt-2 overflow-x-auto">
+          <table class="min-w-[420px] w-full text-left">
+            <thead class="bg-white/45 text-[11px] uppercase tracking-[0.08em] text-gray-500">
+              <tr>
+                <th class="px-2.5 py-2 font-semibold">Check</th>
+                <th class="px-2.5 py-2 font-semibold">Status</th>
+                <th class="px-2.5 py-2 font-semibold">Note</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${verificationRows.map((row) => `
+                <tr class="border-t border-slate-200/45">
+                  <td class="px-2.5 py-1.5 font-medium text-gray-800">${escapeProjectHtml(row[0])}</td>
+                  <td class="px-2.5 py-1.5"><span class="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">${escapeProjectHtml(row[1])}</span></td>
+                  <td class="px-2.5 py-1.5">${escapeProjectHtml(row[2])}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section class="rounded-[0.7rem] border border-slate-200/60 bg-white/55 p-2.5">
+        <p class="text-[10px] font-semibold uppercase tracking-[0.1em] text-gray-500">Artifacts</p>
+        <div class="mt-2 overflow-x-auto">
+          <table class="min-w-[360px] w-full text-left">
+            <thead class="bg-white/45 text-[11px] uppercase tracking-[0.08em] text-gray-500">
+              <tr>
+                <th class="px-2.5 py-2 font-semibold">Artifact</th>
+                <th class="px-2.5 py-2 font-semibold">Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${artifactRows.map((row) => `
+                <tr class="border-t border-slate-200/45">
+                  <td class="px-2.5 py-1.5 font-medium text-gray-800">${escapeProjectHtml(row[0])}</td>
+                  <td class="px-2.5 py-1.5">${escapeProjectHtml(row[1])}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  `;
+}
+
+function buildDtcnumpyDtypeRolesBlock() {
+  const rows = [
+    ["fp64", "reference precision"],
+    ["fp32", "practical baseline"],
+    ["fp16", "reduced-precision comparison"],
+    ["bf16", "reduced-precision comparison"],
+    ["tf32", "reduced-precision comparison"],
+    ["int8", "quantized comparison"],
+    ["int16", "quantized comparison"],
+    ["int32", "quantized comparison"]
+  ];
+  return `
+    <div class="overflow-x-auto rounded-[0.7rem] border border-slate-200/60 bg-white/55 text-xs text-gray-700">
+      <table class="min-w-[420px] w-full text-left">
+        <thead class="bg-white/45 text-[11px] uppercase tracking-[0.08em] text-gray-500">
+          <tr>
+            <th class="px-3 py-2 font-semibold">Dtype</th>
+            <th class="px-3 py-2 font-semibold">Role</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map((row) => `
+            <tr class="border-t border-slate-200/45">
+              <td class="px-3 py-2 font-mono text-[11px] font-semibold text-gray-800">${escapeProjectHtml(row[0])}</td>
+              <td class="px-3 py-2">${escapeProjectHtml(row[1])}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function buildDtcnumpyObjectModelBlock() {
+  const inputLayerRows = [
+    ["Logical input", "one shared input tensor / vector entering `DTCArray`"],
+    ["Reference path", "FP64 storage used as the comparison anchor"],
+    ["Baseline path", "FP32 used as the practical baseline for interpretation"]
+  ];
+  const storedComponentRows = [
+    ["`raw_fp64`", "reference-value storage"],
+    ["`versions`", "dictionary of per-dtype stored views"],
+    ["`active_dtype`", "current default view selector"],
+    ["`shape`", "shared logical shape across stored versions"]
+  ];
+  const comparisonFlowRows = [
+    ["FP64", "reference precision"],
+    ["FP32", "practical baseline"],
+    ["reduced precision / quantized paths", "drift inspection against the reference"]
+  ];
+
+  function renderTableBlock(title, leftHeader, rightHeader, rows) {
+    return `
+      <section class="rounded-[0.7rem] border border-slate-200/60 bg-white/55 p-2.5">
+        <p class="text-[10px] font-semibold uppercase tracking-[0.1em] text-gray-500">${escapeProjectHtml(title)}</p>
+        <div class="mt-2 overflow-x-auto">
+          <table class="min-w-[420px] w-full text-left text-xs text-gray-700">
+            <thead class="bg-white/45 text-[11px] uppercase tracking-[0.08em] text-gray-500">
+              <tr>
+                <th class="px-2.5 py-2 font-semibold">${escapeProjectHtml(leftHeader)}</th>
+                <th class="px-2.5 py-2 font-semibold">${escapeProjectHtml(rightHeader)}</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows.map((row) => `
+                <tr class="border-t border-slate-200/45">
+                  <td class="px-2.5 py-1.5 font-medium text-gray-800">${escapeProjectHtml(row[0])}</td>
+                  <td class="px-2.5 py-1.5">${escapeProjectHtml(row[1])}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    `;
+  }
+
+  return `
+    <div class="space-y-3 text-xs text-gray-700">
+      ${renderTableBlock("Input Layer", "Element", "Role", inputLayerRows)}
+      ${renderTableBlock("Stored Components", "Component", "Role", storedComponentRows)}
+      ${renderTableBlock("Comparison Flow", "Stage", "Meaning", comparisonFlowRows)}
+    </div>
+  `;
+}
+
+function buildDtcnumpyStageProgressionBlock() {
+  const stages = [
+    "Stage 1 Scope",
+    "Stage 2 Container/API",
+    "Stage 3 Ops/Reporting",
+    "Stage 4 Advanced Prep",
+    "Stage 5 Demos"
+  ];
+  return `
+    <div class="space-y-2 text-xs text-gray-700">
+      <div class="grid grid-cols-1 gap-2 md:grid-cols-5">
+        ${stages.map((stage, idx) => `
+          <div class="rounded-[0.7rem] border ${idx === 4 ? "border-blue-300 bg-blue-50/65" : "border-slate-200/60 bg-white/55"} px-2.5 py-2">
+            <p class="text-[10px] font-semibold uppercase tracking-[0.08em] ${idx === 4 ? "text-blue-700" : "text-gray-500"}">${escapeProjectHtml(stage)}</p>
+          </div>
+        `).join("")}
+      </div>
+      <p class="text-[11px] text-gray-600">Progression moved from semantics boundary-setting to user-facing examples while keeping hardware simulation explicitly out of scope.</p>
+    </div>
+  `;
+}
+
+function buildDtcnumpyExampleWorkflowSummaryBlock() {
+  const rows = [
+    ["demo_basic.py", "scalar/vector comparison + astype switching"],
+    ["demo_ops.py", "operation-level drift: mean, dot, quantile"],
+    ["demo_quant.py", "portfolio-style return, tail checks, matmul+mean"],
+    ["README_examples.md", "meeting/onboarding usage guide"]
+  ];
+  return `
+    <div class="overflow-x-auto rounded-[0.7rem] border border-slate-200/60 bg-white/55 text-xs text-gray-700">
+      <table class="min-w-[520px] w-full text-left">
+        <thead class="bg-white/45 text-[11px] uppercase tracking-[0.08em] text-gray-500">
+          <tr>
+            <th class="px-3 py-2 font-semibold">Example</th>
+            <th class="px-3 py-2 font-semibold">Focus</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map((row) => `
+            <tr class="border-t border-slate-200/45">
+              <td class="px-3 py-2 font-medium text-gray-800">${escapeProjectHtml(row[0])}</td>
+              <td class="px-3 py-2">${escapeProjectHtml(row[1])}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
 function parseBacktestCsv(csvText) {
   const lines = String(csvText || "").trim().split(/\r?\n/);
   if (lines.length < 2) {
@@ -1384,7 +2110,39 @@ async function renderBenchmarkChartsWithFigures(hostId, project) {
       figure.innerHTML = buildRiskModelStageProgressionChart(chartData.modelComparison);
       continue;
     }
-    figure.innerHTML = `<div class="project-chart-placeholder"><p class="text-sm text-gray-600">Chart data placeholder ready for later binding.</p></div>`;
+    if (kind === "infraChunkFlow") {
+      figure.innerHTML = buildInfrastructureChunkFlowBlock();
+      continue;
+    }
+    if (kind === "infraBeforeAfter") {
+      figure.innerHTML = buildInfrastructureBeforeAfterBlock();
+      continue;
+    }
+    if (kind === "infraMultiAssetStructure") {
+      figure.innerHTML = buildInfrastructureMultiAssetBlock();
+      continue;
+    }
+    if (kind === "infraVerificationSummary") {
+      figure.innerHTML = buildInfrastructureVerificationBlock();
+      continue;
+    }
+    if (kind === "dtcDtypeRoles") {
+      figure.innerHTML = buildDtcnumpyDtypeRolesBlock();
+      continue;
+    }
+    if (kind === "dtcObjectModel") {
+      figure.innerHTML = buildDtcnumpyObjectModelBlock();
+      continue;
+    }
+    if (kind === "dtcStageProgression") {
+      figure.innerHTML = buildDtcnumpyStageProgressionBlock();
+      continue;
+    }
+    if (kind === "dtcExampleWorkflowSummary") {
+      figure.innerHTML = buildDtcnumpyExampleWorkflowSummaryBlock();
+      continue;
+    }
+    figure.innerHTML = `<div class="project-chart-placeholder"><p class="text-sm text-gray-600">Structured chart content is not available in this view.</p></div>`;
   }
 }
 
@@ -1707,14 +2465,6 @@ function openProjectModal(projectId) {
     if (hasRunSummary) {
       renderRunSummarySections("project-modal-run-summary-sections", sections);
     }
-  }
-
-  const tagsHost = document.getElementById("project-modal-tags");
-  if (tagsHost) {
-    const tags = Array.isArray(project.tags) ? project.tags : [];
-    tagsHost.innerHTML = tags.map((tag) => `
-      <span class="project-tag rounded-full px-2.5 py-1 text-xs font-medium text-gray-600">${escapeProjectHtml(tag)}</span>
-    `).join("");
   }
 
   const artifactsHost = document.getElementById("project-modal-artifacts");

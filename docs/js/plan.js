@@ -33,7 +33,7 @@ function getMeetingTrackIds(meeting) {
 
   const meetingYm = String(meeting?.ym || "");
   if (meetingYm && meetingYm <= "2025-12" && (meeting?.detail || getMeetingViews(meeting).length)) {
-    return ["algorithm"];
+    return ["algorithm", "infrastructure"];
   }
 
   return [];

@@ -131,6 +131,25 @@ function renderContributorsSection(contributors) {
   );
 }
 
+function renderAcknowledgmentSection() {
+  const cardMarkup = `
+    <article class="glass-subpanel rounded-[1.1rem] border border-slate-200/70 bg-white/45 p-5 shadow-sm">
+      <h3 class="text-base font-semibold text-gray-900">Zhijie Zhuo</h3>
+      <p class="mt-1 text-sm text-gray-600">Technical Guidance and Special Thanks</p>
+      <p class="mt-3 text-sm leading-6 text-gray-700">
+        Provided valuable guidance, thoughtful feedback, and support that helped strengthen the club&apos;s technical direction, benchmarking mindset, and project development.
+      </p>
+    </article>
+  `;
+
+  return renderStageSection(
+    "Technical Guidance and Special Thanks",
+    "The club also benefits from external guidance and thoughtful support that strengthen project quality, technical direction, and long-term development.",
+    `<div class="grid grid-cols-1 gap-5">${cardMarkup}</div>`,
+    "team-acknowledgment"
+  );
+}
+
 function renderWorkflowSection() {
   const steps = [
     {
@@ -236,6 +255,7 @@ function buildTeamPageMarkup(data) {
     renderStructureSection(structure),
     renderLeadershipSection(leads),
     renderContributorsSection(contributors),
+    renderAcknowledgmentSection(),
     renderWorkflowSection(),
     renderInvolvementSection(participation)
   ].join("");
