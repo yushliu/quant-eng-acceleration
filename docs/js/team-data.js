@@ -1,7 +1,7 @@
 window.TEAM_DATA = {
   hero: {
     title: "Team",
-    description: "Meet the people behind the club's algorithm work, engineering support, and shared team structure for reproducible benchmarking."
+    description: "Meet the people behind the club’s algorithm work, engineering support, and shared benchmarking structure."
   },
   sections: [
     {
@@ -49,8 +49,8 @@ window.TEAM_DATA = {
       columns: "lg",
       members: [
         {
-          initials: "NP",
-          name: "Noah Park",
+          initials: "CZ",
+          name: "Chenzixi Zhao",
           role: "Track Lead - CPU",
           discipline: "CPU Evaluation · Parallel Methods",
           tags: ["CPU"],
@@ -90,7 +90,7 @@ window.TEAM_DATA = {
       cards: [
         {
           title: "Infrastructure",
-          description: "Infrastructure keeps the club's engineering workflows stable, reviewable, and reusable.",
+          description: "Keeps engineering workflows stable, reviewable, and reusable across club projects.",
           bullets: [
             "tooling and environments",
             "workflow support",

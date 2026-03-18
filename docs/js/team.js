@@ -10,6 +10,9 @@ function escapeHtml(value) {
 function renderMemberCard(member, sectionId) {
   const paddingClass = sectionId === "leads" ? "p-6" : "p-5";
   const avatarSizeClass = sectionId === "leads" ? "h-11 w-11" : "h-10 w-10";
+  const cardWeightClass = sectionId === "leads"
+    ? "border-white/70 bg-white/68 shadow-[0_10px_22px_rgba(15,23,42,0.05)]"
+    : "border-white/55 bg-white/54 shadow-[0_8px_16px_rgba(15,23,42,0.035)]";
   const disciplineMarkup = member.discipline
     ? `<p class="mt-4 text-xs text-gray-500">${escapeHtml(member.discipline)}</p>`
     : "";
@@ -22,7 +25,7 @@ function renderMemberCard(member, sectionId) {
     : "";
 
   return `
-    <article class="glass-subpanel rounded-[1.1rem] ${paddingClass} transition hover:border-gray-300 hover:shadow">
+    <article class="glass-subpanel rounded-[1.1rem] ${paddingClass} ${cardWeightClass} transition hover:border-gray-300 hover:shadow">
       <div class="flex items-center gap-4">
         <div class="flex ${avatarSizeClass} items-center justify-center rounded-full bg-gray-200 text-sm font-semibold text-gray-700">${escapeHtml(member.initials)}</div>
         <div>
@@ -57,9 +60,8 @@ function renderStageSection(title, intro, innerMarkup, sectionId, headingTag = "
 }
 
 function renderHeroSection(hero) {
-  const overviewLine1 = hero.description
-    || "Meet the people behind the club's algorithm work, engineering support, and reproducible benchmarking system.";
-  const overviewLine2 = "This page outlines team structure, leadership, collaboration flow, and practical contribution paths.";
+  const overviewLine1 = "Meet the people behind the club’s algorithm work, engineering support, and shared benchmarking structure.";
+  const overviewLine2 = "This page introduces the club’s team structure, leadership, contribution paths, and how work moves from implementation to publication.";
 
   return renderStageSection(
     hero.title || "Team",
@@ -126,7 +128,7 @@ function renderContributorsSection(contributors) {
   return renderStageSection(
     "Contributors",
     "Contributors execute implementation tasks, benchmark checks, and workflow support under shared evaluation conventions.",
-    `<div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">${cardsMarkup}</div>`,
+    `<div class="grid grid-cols-1 gap-5 md:grid-cols-2">${cardsMarkup}</div>`,
     "team-contributors"
   );
 }
@@ -143,7 +145,7 @@ function renderAcknowledgmentSection() {
   `;
 
   return renderStageSection(
-    "Technical Guidance and Special Thanks",
+    "Special Thanks",
     "The club also benefits from external guidance and thoughtful support that strengthen project quality, technical direction, and long-term development.",
     `<div class="grid grid-cols-1 gap-5">${cardMarkup}</div>`,
     "team-acknowledgment"
@@ -236,7 +238,7 @@ function renderInvolvementSection(participation) {
 
   return renderStageSection(
     "How to Get Involved",
-    participation?.intro || "Use this section to find your entry point into algorithm, infrastructure, and benchmark support work.",
+    participation?.intro || "Use this section as a starting point for joining the club’s algorithm, infrastructure, and benchmark-support work.",
     `<div class="grid grid-cols-1 gap-5 lg:grid-cols-3">${cardMarkup}</div>`,
     "team-involved"
   );
