@@ -79,6 +79,14 @@
           "discipline": "Electrical Engineering · Systems",
           "tags": ["FPGA-sim"],
           "bio": "Contributes simulation checks and summarizes latency results for technical review."
+        },
+        {
+          "initials": "JO",
+          "name": "Jason OYang",
+          "role": "Contributor",
+          "discipline": "Algorithm Support · Benchmarking",
+          "tags": ["Algorithm"],
+          "bio": "Supports implementation tasks, comparison checks, and benchmark-oriented project execution."
         }
       ]
     },
