@@ -688,7 +688,7 @@ function injectThemeTokens() {
       padding-right: 0.35rem;
     }
 
-    body[data-page="projects"] .project-workflow-module {
+    body[data-page="projects"] .project-workflow-module:not(.hidden) {
       border-radius: 0.85rem;
       border: 1px solid rgba(255, 255, 255, 0.64);
       background: linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.54));
@@ -700,6 +700,10 @@ function injectThemeTokens() {
       display: flex;
       flex-direction: column;
       gap: 0.65rem;
+    }
+
+    body[data-page="projects"] .project-approach-layout.project-approach-layout--single {
+      grid-template-columns: minmax(0, 1fr);
     }
 
     body[data-page="projects"] .project-workflow-selector {
@@ -910,6 +914,58 @@ function injectThemeTokens() {
       box-shadow:
         0 10px 24px rgba(15, 23, 42, 0.035),
         inset 0 1px 0 rgba(255, 255, 255, 0.62);
+    }
+
+    body[data-page="projects"] .example-surface {
+      border-radius: 0.8rem;
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      padding: 0.65rem;
+      transition: background-color 160ms ease, border-color 160ms ease;
+    }
+
+    body[data-page="projects"] .example-surface--code {
+      background: rgba(255, 255, 255, 0.74);
+      border-color: rgba(148, 163, 184, 0.24);
+    }
+
+    body[data-page="projects"] .example-surface--run {
+      background: #140f22;
+      border-color: rgba(109, 40, 217, 0.52);
+    }
+
+    body[data-page="projects"] .example-panel {
+      min-height: 18rem;
+      max-height: 18rem;
+      overflow: auto;
+      border-radius: 0.65rem;
+      padding: 0.75rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12.5px;
+      line-height: 1.72;
+      white-space: pre;
+    }
+
+    body[data-page="projects"] .example-panel--code {
+      background: #f3f0ff;
+      border: 1px solid rgba(165, 180, 252, 0.48);
+      color: #1f2937;
+    }
+
+    body[data-page="projects"] .example-panel--code code {
+      color: #1f2937;
+      opacity: 1;
+    }
+
+    body[data-page="projects"] .example-panel--run {
+      background: #0b0913;
+      border: 1px solid rgba(109, 40, 217, 0.6);
+      color: #f4f6ff;
+      text-shadow: none;
+    }
+
+    body[data-page="projects"] .example-panel--run code {
+      color: #f4f6ff !important;
+      opacity: 1 !important;
     }
 
     body[data-page="projects"] .project-support-row {

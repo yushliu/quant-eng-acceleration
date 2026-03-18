@@ -900,6 +900,7 @@ const PROJECTS_CATALOG = [
     summary: "Develops a NumPy-like semantic comparison package that makes cross-dtype numerical drift visible before it is hidden inside larger quantitative workflows.",
     cardSummary: "This project builds a dtype-semantics comparison package for quantitative computation, with controlled support for cross-dtype drift analysis, higher-level numerical operations, demo workflows, and a staged path toward publishable package distribution.",
     tags: [],
+    disableWorkflow: true,
     overview: "This project develops `dtcnumpy`, a small NumPy-like package for comparing how different dtype semantics affect quantitative computation under one shared interface. Rather than simulating CUDA hardware or benchmarking throughput, the project focuses on numerical behavior: one logical input is mapped into multiple dtype versions, FP64 is used as the reference path, FP32 is treated as the practical baseline, and reduced-precision or quantized formats are compared through their output drift. The result is a controlled package line for studying how dtype choices can affect aggregation, tail estimation, matrix operations, and other quant-style kernels before those effects are buried inside larger projects.",
     why: "In financial engineering and quantitative computation, small numerical differences can compound through reductions, tail cutoffs, and matrix-based transformations. Lower-precision or quantized formats may appear harmless at the input level but drift more meaningfully after dot products, quantiles, or matrix multiplication. `dtcnumpy` matters because it creates a controlled environment for comparing those semantic differences directly: outputs remain anchored to an FP64 reference, FP32 provides a practical baseline, and reduced-precision behavior becomes visible before it affects later risk, portfolio, or scenario-generation workflows.",
     approachIntro: "We structured `dtcnumpy` as a staged semantics-comparison package rather than as a hardware simulator or full NumPy replacement.",
@@ -959,36 +960,237 @@ const PROJECTS_CATALOG = [
     ],
     resultsGroups: [
       {
-        heading: "Example Workflows",
-        items: [
-          "The current Stage 5 usage layer is designed for meetings, onboarding, and internal explanation. The examples are intentionally small and are meant to show semantic drift clearly before full project integration.",
-        ]
-      },
-      {
-        heading: "Example 1 — `demo_basic.py`",
-        items: [
-          "Purpose: introduces scalar and vector comparison plus `astype(...)`-based active-dtype switching.",
-          "Run: `python3 examples/demo_basic.py`.",
-          "Code excerpt: `scalar = dnp.array(1.234567)`, `vector = dnp.array([1.2, 3.4, 5.6])`, `vector_fp16 = vector.astype(\"fp16\")`.",
-          "Takeaway: `fp16`, `bf16`, and `tf32` round `1.234567` to `1.234375`; `bf16` drifts more strongly while `int16` / `int32` remain closer to FP64."
-        ]
-      },
-      {
-        heading: "Example 2 — `demo_ops.py`",
-        items: [
-          "Purpose: shows operation-level drift through `mean`, `dot`, and `quantile`.",
-          "Run: `python3 examples/demo_ops.py`.",
-          "Focus: mean, dot product, quantile.",
-          "Takeaway: operation-level drift is more informative than raw-input drift; `bf16` distorts aggregated outputs more visibly while `tf32` sits between coarse reduced precision and the FP32 baseline."
-        ]
-      },
-      {
-        heading: "Example 3 — `demo_quant.py`",
-        items: [
-          "Purpose: applies the comparison flow to lightweight quant-style workflows such as weighted return, tail-style quantile checking, and `matmul + mean`.",
-          "Run: `python3 examples/demo_quant.py`.",
-          "Focus: portfolio weighted return, tail-style quantile checking, small matrix aggregation based on `matmul` plus `mean`.",
-          "Takeaway: `bf16` and `int8` are the most drift-prone formats in current small examples, while `int16` / `int32` remain much closer to FP64."
+        kind: "exampleViewer",
+        heading: "Example Viewer",
+        intro: "A lightweight example browser for meetings, onboarding, and internal explanation. Switch between code excerpts and recorded runs to inspect how `dtcnumpy` behaves across representative usage patterns.",
+        cards: [
+          {
+            file: "demo_basic.py",
+            focus: "Scalar / vector comparison and `astype(...)`-based active-dtype switching.",
+            codePlaceholder: [
+              "python3 -m examples.demo_basic",
+              "",
+              "\"\"\"Basic dtcnumpy examples for meeting demos.\"\"\"",
+              "",
+              "from __future__ import annotations",
+              "",
+              "import dtcnumpy as dnp",
+              "",
+              "",
+              "def section(title: str) -> None:",
+              "    print(f\"\\n=== {title} ===\")",
+              "",
+              "",
+              "def main() -> None:",
+              "    section(\"Scalar Example\")",
+              "    scalar = dnp.array(1.234567)",
+              "    dnp.print(scalar)",
+              "",
+              "    section(\"Vector Example\")",
+              "    vector = dnp.array([1.2, 3.4, 5.6])",
+              "    dnp.print(vector)",
+              "",
+              "    section(\"Astype Example\")",
+              "    vector_fp16 = vector.astype(\"fp16\")",
+              "    print(f\"Active dtype after astype: {vector_fp16.active_dtype}\")",
+              "    dnp.print(vector_fp16)",
+              "",
+              "",
+              "if __name__ == \"__main__\":",
+              "    main()"
+            ].join("\n"),
+            runPlaceholder: [
+              "=== Scalar Example ===",
+              "datatype              value     diff_vs_fp64   diff_pct_vs_fp64",
+              "fp64               1.234567                0                  0",
+              "fp32               1.234567    4.6165466e-08      3.7394055e-06",
+              "fp16               1.234375        -0.000192        0.015552011",
+              "bf16               1.234375        -0.000192        0.015552011",
+              "tf32               1.234375        -0.000192        0.015552011",
+              "int8               1.234567                0                  0",
+              "int16              1.234567                0                  0",
+              "int32              1.234567                0                  0",
+              "",
+              "=== Vector Example ===",
+              "datatype          shape    mean_abs_diff_vs_fp64   max_abs_diff_vs_fp64   mean_rel_diff_pct_vs_fp64",
+              "fp64               (3,)                        0                      0                           0",
+              "fp32               (3,)             7.947286e-08          9.5367432e-08               2.8271858e-06",
+              "fp16               (3,)            0.00071614583              0.0015625                 0.018555599",
+              "bf16               (3,)             0.0067708333               0.009375                  0.25932248",
+              "tf32               (3,)                0.0015625             0.00234375                 0.050970909",
+              "int8               (3,)             0.0047244094           0.0094488189                  0.30878493",
+              "int16              (3,)            4.2725913e-05          8.5451827e-05                0.0027925434",
+              "int32              (3,)             2.793968e-10          5.5879346e-10               1.8261226e-08",
+              "",
+              "=== Astype Example ===",
+              "Active dtype after astype: fp16",
+              "datatype          shape    mean_abs_diff_vs_fp64   max_abs_diff_vs_fp64   mean_rel_diff_pct_vs_fp64",
+              "fp64               (3,)                        0                      0                           0",
+              "fp32               (3,)             7.947286e-08          9.5367432e-08               2.8271858e-06",
+              "fp16               (3,)            0.00071614583              0.0015625                 0.018555599",
+              "bf16               (3,)             0.0067708333               0.009375                  0.25932248",
+              "tf32               (3,)                0.0015625             0.00234375                 0.050970909",
+              "int8               (3,)             0.0047244094           0.0094488189                  0.30878493",
+              "int16              (3,)            4.2725913e-05          8.5451827e-05                0.0027925434",
+              "int32              (3,)             2.793968e-10          5.5879346e-10               1.8261226e-08"
+            ].join("\n"),
+            takeaway: "`demo_basic.py` shows the first layer of semantic drift under a shared comparison interface. In the scalar example, `fp16`, `bf16`, and `tf32` all round `1.234567` to `1.234375`, while the vector example makes relative drift more visible across reduced-precision and quantized paths. The `astype(\"fp16\")` step then shows that active-dtype switching changes the current viewing path without changing the underlying multi-dtype comparison structure."
+          },
+          {
+            file: "demo_ops.py",
+            focus: "Operation-level drift through reductions and algebra such as `mean`, `dot`, and `quantile`.",
+            codePlaceholder: [
+              "python3 -m examples.demo_ops",
+              "",
+              "\"\"\"Operation-level dtcnumpy examples for meeting demos.\"\"\"",
+              "",
+              "from __future__ import annotations",
+              "",
+              "import dtcnumpy as dnp",
+              "",
+              "",
+              "def section(title: str) -> None:",
+              "    print(f\"\\n=== {title} ===\")",
+              "",
+              "",
+              "def main() -> None:",
+              "    section(\"Mean on a Small Vector\")",
+              "    x = dnp.array([1.001, 1.002, 1.003, 1.004])",
+              "    mean_result = dnp.mean(x)",
+              "    dnp.print(mean_result)",
+              "",
+              "    section(\"Dot Product Drift\")",
+              "    weights = dnp.array([0.10, 0.25, 0.30, 0.35])",
+              "    returns = dnp.array([0.0123, -0.0045, 0.0088, 0.0151])",
+              "    dot_result = dnp.dot(weights, returns)",
+              "    dnp.print(dot_result)",
+              "",
+              "    section(\"Quantile on a Loss-Like Vector\")",
+              "    losses = dnp.array([-0.02, 0.01, -0.05, 0.03, -0.08, 0.00, -0.015])",
+              "    tail_cut = dnp.quantile(losses, 0.10)",
+              "    dnp.print(tail_cut)",
+              "",
+              "",
+              "if __name__ == \"__main__\":",
+              "    main()"
+            ].join("\n"),
+            runPlaceholder: [
+              "=== Mean on a Small Vector ===",
+              "datatype              value     diff_vs_fp64   diff_pct_vs_fp64",
+              "fp64                 1.0025                0                  0",
+              "fp32                 1.0025   -2.3841857e-09      2.3782401e-07",
+              "fp16              1.0024414    -5.859375e-05       0.0058447631",
+              "bf16                      1          -0.0025         0.24937656",
+              "tf32              1.0024414    -5.859375e-05       0.0058447631",
+              "int8                  1.004           0.0015         0.14962594",
+              "int16             1.0024986   -1.3885922e-06      0.00013851294",
+              "int32                1.0025   -4.5401904e-11      4.5288683e-09",
+              "",
+              "=== Dot Product Drift ===",
+              "datatype              value     diff_vs_fp64   diff_pct_vs_fp64",
+              "fp64                0.00803                0                  0",
+              "fp32           0.0080300002    1.7598271e-10      2.1915655e-06",
+              "fp16           0.0080296341   -3.6586702e-07       0.0045562518",
+              "bf16           0.0079975128   -3.2487183e-05         0.40457264",
+              "tf32            0.008024754   -5.2459973e-06        0.065329979",
+              "int8           0.0080099092    -2.009083e-05         0.25019714",
+              "int16               0.00803                0                  0",
+              "int32               0.00803    9.5693418e-13      1.1916989e-08",
+              "",
+              "=== Quantile on a Loss-Like Vector ===",
+              "datatype              value     diff_vs_fp64   diff_pct_vs_fp64",
+              "fp64                 -0.062                0                  0",
+              "fp32                 -0.062     2.682209e-10      4.3261436e-07",
+              "fp16           -0.061999512    4.8828125e-07       0.0007875504",
+              "bf16            -0.06171875       0.00028125         0.45362903",
+              "tf32           -0.061975098    2.4902344e-05        0.040165071",
+              "int8           -0.061858268    0.00014173228         0.22860046",
+              "int16          -0.061999451    5.4933317e-07      0.00088602124",
+              "int32                -0.062    8.3819063e-12      1.3519204e-08"
+            ].join("\n"),
+            takeaway: "Key interpretation will appear here after code and output are added."
+          },
+          {
+            file: "demo_quant.py",
+            focus: "Lightweight quant-style workflows such as weighted return, tail-style quantile checking, and small matrix aggregation.",
+            codePlaceholder: [
+              "python3 -m examples.demo_quant",
+              "",
+              "\"\"\"Lightweight quant-style dtcnumpy examples.\"\"\"",
+              "",
+              "from __future__ import annotations",
+              "",
+              "import dtcnumpy as dnp",
+              "",
+              "",
+              "def section(title: str) -> None:",
+              "    print(f\"\\n=== {title} ===\")",
+              "",
+              "",
+              "def main() -> None:",
+              "    section(\"Portfolio Weighted Return\")",
+              "    print(\"This shows how dtype semantics can change a portfolio-style aggregation.\")",
+              "    weights = dnp.array([0.15, 0.20, 0.25, 0.40])",
+              "    asset_returns = dnp.array([0.0115, -0.0062, 0.0048, 0.0131])",
+              "    portfolio_return = dnp.dot(weights, asset_returns)",
+              "    dnp.print(portfolio_return)",
+              "",
+              "    section(\"Tail-Style Quantile Check\")",
+              "    print(\"This highlights how reduced precision can move a downside quantile.\")",
+              "    scenario_pnl = dnp.array([-0.031, 0.014, -0.022, -0.087, 0.009, -0.041, 0.003, -0.065])",
+              "    tail_quantile = dnp.quantile(scenario_pnl, 0.10)",
+              "    dnp.print(tail_quantile)",
+              "",
+              "    section(\"Small Matrix Aggregation\")",
+              "    print(\"This is a compact matrix example relevant to factor-style transformations.\")",
+              "    exposures = dnp.array([[1.10, -0.25], [0.80, 0.40], [1.35, -0.10]])",
+              "    shocks = dnp.array([[0.015, -0.020, 0.010], [-0.005, 0.012, 0.018]])",
+              "    aggregated = dnp.mean(dnp.matmul(exposures, shocks))",
+              "    dnp.print(aggregated)",
+              "",
+              "",
+              "if __name__ == \"__main__\":",
+              "    main()"
+            ].join("\n"),
+            runPlaceholder: [
+              "=== Portfolio Weighted Return ===",
+              "This shows how dtype semantics can change a portfolio-style aggregation.",
+              "datatype              value     diff_vs_fp64   diff_pct_vs_fp64",
+              "fp64               0.006925                0                  0",
+              "fp32           0.0069250002    1.9222498e-10       2.775812e-06",
+              "fp16           0.0069237426   -1.2574077e-06        0.018157511",
+              "bf16           0.0068823099   -4.2690086e-05         0.61646334",
+              "tf32           0.0069223391   -2.6609108e-06        0.038424704",
+              "int8           0.0069491971    2.4197098e-05         0.34941658",
+              "int16          0.0069249782   -2.1820064e-08      0.00031509117",
+              "int32              0.006925    6.7520642e-14      9.7502732e-10",
+              "",
+              "=== Tail-Style Quantile Check ===",
+              "This highlights how reduced precision can move a downside quantile.",
+              "datatype              value     diff_vs_fp64   diff_pct_vs_fp64",
+              "fp64                -0.0716                0                  0",
+              "fp32           -0.071599998    2.4199486e-09      3.3798164e-06",
+              "fp16           -0.071594238    5.7617187e-06       0.0080470932",
+              "bf16           -0.071533203    6.6796875e-05        0.093291725",
+              "tf32           -0.071551514    4.8486328e-05        0.067718335",
+              "int8           -0.071655118    -5.511811e-05        0.076980601",
+              "int16          -0.071599829    1.7090365e-07      0.00023869225",
+              "int32               -0.0716    6.5192574e-12       9.105108e-09",
+              "",
+              "=== Small Matrix Aggregation ===",
+              "This is a compact matrix example relevant to factor-style transformations.",
+              "datatype              value     diff_vs_fp64   diff_pct_vs_fp64",
+              "fp64           0.0019444444                0                  0",
+              "fp32           0.0019444444    2.0696045e-12       1.064368e-07",
+              "fp16           0.0019427366   -1.7078821e-06        0.087833937",
+              "bf16           0.0019338992   -1.0545254e-05         0.54232734",
+              "tf32            0.001945385     9.405406e-07        0.048370659",
+              "int8           0.0019623039     1.785948e-05         0.91848755",
+              "int16          0.0019445318    8.7315631e-08       0.0044905181",
+              "int32          0.0019444444   -3.2337581e-12      1.6630756e-07"
+            ].join("\n"),
+            takeaway: "Key interpretation will appear here after code and output are added."
+          }
         ]
       },
       {
@@ -1001,13 +1203,27 @@ const PROJECTS_CATALOG = [
         ]
       },
       {
+        kind: "installBlocks",
         heading: "Install",
-        items: [
-          "`dtcnumpy` is being prepared for package distribution through PyPI and Conda so the project can move from meeting demos into a reusable user-facing workflow. The current package is already usable through source-based examples and manual; package distribution is the next outward-facing step rather than a change in core design.",
-          "PyPI: `pip install <PYPI_PACKAGE_NAME>`",
-          "Conda: `conda install -c <CONDA_CHANNEL> <CONDA_PACKAGE_NAME>`",
-          "Current source-based usage: `python3 examples/demo_basic.py`, `python3 examples/demo_ops.py`, `python3 examples/demo_quant.py`.",
-          "Notes: replace `<PYPI_PACKAGE_NAME>` with final published name; replace `<CONDA_CHANNEL>` and `<CONDA_PACKAGE_NAME>` after Conda publish; keep source-based example commands available during transition."
+        intro: "`dtcnumpy` is being prepared for package distribution through PyPI and Conda so the project can move from meeting demos into a reusable user-facing workflow. The current package is already usable through source-based examples and manual; package distribution is the next outward-facing step rather than a change in core design.",
+        blocks: [
+          {
+            title: "PyPI",
+            code: "pip install <PYPI_PACKAGE_NAME>"
+          },
+          {
+            title: "Conda",
+            code: "conda install -c <CONDA_CHANNEL> <CONDA_PACKAGE_NAME>"
+          },
+          {
+            title: "Current source-based usage",
+            code: "python3 examples/demo_basic.py\npython3 examples/demo_ops.py\npython3 examples/demo_quant.py"
+          }
+        ],
+        notes: [
+          "replace `<PYPI_PACKAGE_NAME>` with the final published package name",
+          "replace `<CONDA_CHANNEL>` and `<CONDA_PACKAGE_NAME>` after the Conda package is published",
+          "keep the source-based example commands available during the transition"
         ]
       },
       {
@@ -1027,10 +1243,11 @@ const PROJECTS_CATALOG = [
       "examples are intentionally small and controlled relative to full project workflows"
     ],
     nextStep: "The next step is to extend `dtcnumpy` from a semantics-comparison package into a more risk-kernel-ready numerical layer. From here, the project can deepen advanced linalg and controlled random support, broaden example coverage, publish package distribution through PyPI and Conda, and later add SIMD-aware and graph-based comparison tools without changing its core semantics-first design.",
+    artifactsHeading: "Documentation & Artifacts",
     artifactsIntro: "Reference materials, examples, and stage documents for reproducible semantics-comparison review.",
     artifacts: [
-      { label: "dtcnumpy_manual_2026-02-02.md" },
-      { label: "README_examples.md" },
+      { label: "Open Documentation", href: "dtcnumpy_manual_2026-02-02.md" },
+      { label: "Open Examples Guide", href: "README_examples.md" },
       { label: "demo_basic.py" },
       { label: "demo_ops.py" },
       { label: "demo_quant.py" },
@@ -2155,11 +2372,154 @@ function renderResultsGroups(hostId, groups) {
   host.innerHTML = rows.map((group) => `
     <article class="project-results-group rounded-[0.95rem] p-3.5">
       <p class="text-xs font-semibold uppercase tracking-[0.12em] text-gray-500">${escapeProjectHtml(group.heading || "")}</p>
-      <ul class="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-gray-700">
-        ${(Array.isArray(group.items) ? group.items : []).map((item) => `<li>${escapeProjectHtml(item)}</li>`).join("")}
-      </ul>
+      ${group.kind === "exampleViewer" ? `
+        <p class="mt-2 text-sm leading-6 text-gray-700">${escapeProjectHtml(group.intro || "")}</p>
+        <section class="mt-3 rounded-[0.95rem] border border-slate-200/65 bg-white/55 p-3.5" data-example-viewer data-active-file="0" data-active-mode="code">
+          <div class="flex flex-wrap gap-2">
+            ${(Array.isArray(group.cards) ? group.cards : []).map((card, index) => `
+              <button
+                type="button"
+                data-example-file="${index}"
+                aria-selected="${index === 0 ? "true" : "false"}"
+                class="rounded-full border px-3 py-1.5 text-xs font-semibold tracking-[0.08em] ${index === 0 ? "border-indigo-300/80 bg-indigo-100/85 text-indigo-900 shadow-sm" : "border-slate-200/70 bg-white/70 text-gray-600"}"
+              >
+                ${escapeProjectHtml(card.file || "")}
+              </button>
+            `).join("")}
+          </div>
+          <div class="mt-3 inline-flex rounded-full border border-slate-200/70 bg-white/75 p-1">
+            <button
+              type="button"
+              data-example-mode="code"
+              aria-selected="true"
+              class="rounded-full border border-indigo-300/80 bg-indigo-100/85 px-3 py-1 text-xs font-semibold tracking-[0.08em] text-indigo-900 shadow-sm"
+            >
+              Code
+            </button>
+            <button
+              type="button"
+              data-example-mode="run"
+              aria-selected="false"
+              class="rounded-full border border-transparent bg-transparent px-3 py-1 text-xs font-semibold tracking-[0.08em] text-gray-500"
+            >
+              Run
+            </button>
+          </div>
+          <div class="mt-3">
+            ${(Array.isArray(group.cards) ? group.cards : []).map((card, index) => `
+              <section data-example-file-panel="${index}" class="${index === 0 ? "" : "hidden"}">
+                <div class="example-surface example-surface--code" data-example-surface>
+                  <pre class="example-panel example-panel--code ${index === 0 ? "" : "hidden "}" data-example-content="code"><code>${escapeProjectHtml(card.codePlaceholder || "")}</code></pre>
+                  <pre class="example-panel example-panel--run hidden" data-example-content="run"><code>${escapeProjectHtml(card.runPlaceholder || "")}</code></pre>
+                </div>
+                <section class="mt-3 rounded-[0.75rem] border border-slate-200/65 bg-white/66 p-2.5">
+                  <p class="text-[10px] font-semibold uppercase tracking-[0.08em] text-gray-500">Focus</p>
+                  <p class="mt-1 text-sm leading-6 text-gray-700">${escapeProjectHtml(card.focus || "")}</p>
+                </section>
+                <section class="mt-2 rounded-[0.75rem] border border-indigo-200/65 bg-[#f2edff]/68 p-2.5">
+                  <p class="text-[10px] font-semibold uppercase tracking-[0.08em] text-indigo-700">Takeaway</p>
+                  <p class="mt-1 text-sm leading-6 text-gray-700">${escapeProjectHtml(card.takeaway || "")}</p>
+                </section>
+              </section>
+            `).join("")}
+          </div>
+        </div>
+        </section>
+      ` : group.kind === "installBlocks" ? `
+        <p class="mt-2 text-sm leading-6 text-gray-700">${escapeProjectHtml(group.intro || "")}</p>
+        <div class="mt-3 space-y-3">
+          ${(Array.isArray(group.blocks) ? group.blocks : []).map((block) => `
+            <section class="rounded-[0.85rem] border border-slate-200/65 bg-white/55 p-3">
+              <p class="text-xs font-semibold uppercase tracking-[0.08em] text-gray-500">${escapeProjectHtml(block.title || "")}</p>
+              <pre class="mt-1 overflow-x-auto rounded-[0.7rem] border border-slate-200/70 bg-white/70 px-3 py-2 text-[12px] leading-5 text-gray-800"><code>${escapeProjectHtml(block.code || "")}</code></pre>
+            </section>
+          `).join("")}
+          ${(Array.isArray(group.notes) && group.notes.length) ? `
+            <section class="rounded-[0.85rem] border border-slate-200/65 bg-white/55 p-3">
+              <p class="text-xs font-semibold uppercase tracking-[0.08em] text-gray-500">Notes</p>
+              <ul class="mt-1 list-disc space-y-1 pl-5 text-sm leading-6 text-gray-700">
+                ${group.notes.map((item) => `<li>${escapeProjectHtml(item)}</li>`).join("")}
+              </ul>
+            </section>
+          ` : ""}
+        </div>
+      ` : `
+        <ul class="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-gray-700">
+          ${(Array.isArray(group.items) ? group.items : []).map((item) => `<li>${escapeProjectHtml(item)}</li>`).join("")}
+        </ul>
+      `}
     </article>
   `).join("");
+
+  host.onclick = (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
+    const fileButton = target.closest("[data-example-file]");
+    const modeButton = target.closest("[data-example-mode]");
+    if (!fileButton && !modeButton) {
+      return;
+    }
+
+    const viewer = target.closest("[data-example-viewer]");
+    if (!(viewer instanceof HTMLElement)) {
+      return;
+    }
+
+    if (fileButton) {
+      const fileIndex = fileButton.getAttribute("data-example-file") || "0";
+      viewer.setAttribute("data-active-file", fileIndex);
+      viewer.querySelectorAll("[data-example-file]").forEach((btn) => {
+        const isActive = btn.getAttribute("data-example-file") === fileIndex;
+        btn.setAttribute("aria-selected", isActive ? "true" : "false");
+        btn.classList.toggle("border-indigo-300/80", isActive);
+        btn.classList.toggle("bg-indigo-100/85", isActive);
+        btn.classList.toggle("text-indigo-900", isActive);
+        btn.classList.toggle("shadow-sm", isActive);
+        btn.classList.toggle("border-slate-200/70", !isActive);
+        btn.classList.toggle("bg-white/70", !isActive);
+        btn.classList.toggle("text-gray-600", !isActive);
+      });
+      viewer.querySelectorAll("[data-example-file-panel]").forEach((panel) => {
+        panel.classList.toggle("hidden", panel.getAttribute("data-example-file-panel") !== fileIndex);
+      });
+    }
+
+    if (modeButton) {
+      const mode = modeButton.getAttribute("data-example-mode") || "code";
+      viewer.setAttribute("data-active-mode", mode);
+    }
+
+    const activeMode = viewer.getAttribute("data-active-mode") || "code";
+    viewer.querySelectorAll("[data-example-mode]").forEach((btn) => {
+      const isActive = btn.getAttribute("data-example-mode") === activeMode;
+      btn.setAttribute("aria-selected", isActive ? "true" : "false");
+      btn.classList.toggle("text-indigo-900", isActive);
+      btn.classList.toggle("text-gray-500", !isActive);
+      btn.classList.toggle("bg-indigo-100/85", isActive);
+      btn.classList.toggle("bg-transparent", !isActive);
+      btn.classList.toggle("border-indigo-300/80", isActive);
+      btn.classList.toggle("border-transparent", !isActive);
+      btn.classList.toggle("shadow-sm", isActive);
+    });
+
+    const activeFile = viewer.getAttribute("data-active-file") || "0";
+    const activePanel = viewer.querySelector(`[data-example-file-panel="${activeFile}"]`);
+    if (activePanel instanceof HTMLElement) {
+      const codePanel = activePanel.querySelector("[data-example-content=\"code\"]");
+      const runPanel = activePanel.querySelector("[data-example-content=\"run\"]");
+      const surface = activePanel.querySelector("[data-example-surface]");
+      if (codePanel instanceof HTMLElement && runPanel instanceof HTMLElement) {
+        codePanel.classList.toggle("hidden", activeMode !== "code");
+        runPanel.classList.toggle("hidden", activeMode !== "run");
+      }
+      if (surface instanceof HTMLElement) {
+        surface.classList.toggle("example-surface--code", activeMode === "code");
+        surface.classList.toggle("example-surface--run", activeMode === "run");
+      }
+    }
+  };
 }
 
 function renderRunSummarySections(hostId, sections) {
@@ -2437,10 +2797,13 @@ function openProjectModal(projectId) {
   document.getElementById("project-modal-benchmark-charts-wrap")?.classList.toggle("hidden", !(Array.isArray(project.benchmarkCharts) && project.benchmarkCharts.length));
 
   const workflowWrap = document.getElementById("project-modal-workflow-wrap");
+  const approachLayout = document.querySelector("#project-modal .project-approach-layout");
   if (workflowWrap) {
-    activeWorkflowSteps = getWorkflowSteps(project);
+    const workflowDisabled = Boolean(project?.disableWorkflow);
+    activeWorkflowSteps = workflowDisabled ? [] : getWorkflowSteps(project);
     const hasWorkflow = activeWorkflowSteps.length > 0;
     workflowWrap.classList.toggle("hidden", !hasWorkflow);
+    approachLayout?.classList.toggle("project-approach-layout--single", !hasWorkflow);
     if (hasWorkflow) {
       activeWorkflowStepIndex = 0;
       renderWorkflowSelector("project-modal-workflow-selector", activeWorkflowSteps);
@@ -2469,6 +2832,10 @@ function openProjectModal(projectId) {
 
   const artifactsHost = document.getElementById("project-modal-artifacts");
   const artifactsIntroHost = document.getElementById("project-modal-artifacts-intro");
+  const artifactsHeadingHost = document.getElementById("project-modal-artifacts-heading");
+  if (artifactsHeadingHost) {
+    artifactsHeadingHost.textContent = String(project.artifactsHeading || "Artifacts");
+  }
   if (artifactsIntroHost) {
     const intro = String(project.artifactsIntro || "").trim();
     artifactsIntroHost.textContent = intro;
