@@ -10,36 +10,14 @@ window.TEAM_DATA = {
       columns: "lg",
       members: [
         {
-          initials: "AL",
-          name: "Avery Lin",
-          role: "Organizer / Lead",
+          name: "Yu-Hsien Liu",
           discipline: "Computer Engineering · Mathematics",
-          tags: ["Infra"],
-          bio: "Leads club direction, review conventions, and shared engineering workflows across projects."
+          bio: "NA"
         },
         {
-          initials: "MT",
-          name: "Morgan Tate",
-          role: "Tech Lead (Infra)",
+          name: "Yuexin Jiang",
           discipline: "Systems Engineering · Compute Workflows",
-          tags: ["Infra", "CPU"],
-          bio: "Defines engineering baselines and maintains reproducible environment standards for implementation work."
-        },
-        {
-          initials: "RK",
-          name: "Riley Kim",
-          role: "Benchmark Lead",
-          discipline: "Statistics · Computer Science",
-          tags: ["CPU"],
-          bio: "Owns benchmark methodology, evaluation framing, and reporting standards across comparison work."
-        },
-        {
-          initials: "JS",
-          name: "Jordan Shaw",
-          role: "FPGA-sim Lead",
-          discipline: "Electrical and Computer Engineering",
-          tags: ["FPGA-sim"],
-          bio: "Develops FPGA-simulation tooling and validates latency-focused measurement workflows."
+          bio: "NA"
         }
       ]
     },
@@ -49,44 +27,44 @@ window.TEAM_DATA = {
       columns: "lg",
       members: [
         {
-          initials: "CZ",
+          name: "Chengfeng Diao",
+          discipline: "Statistics · Computer Science",
+          bio: "NA"
+        },
+        {
+          name: "Jordan Shaw",
+          discipline: "Electrical and Computer Engineering",
+          bio: "NA"
+        },
+        {
           name: "Chenzixi Zhao",
-          role: "Track Lead - CPU",
           discipline: "CPU Evaluation · Parallel Methods",
-          tags: ["CPU"],
-          bio: "Builds CPU baselines and contributes benchmark-ready implementation updates."
+          bio: "NA"
         },
         {
-          initials: "EV",
           name: "Elliot Vega",
-          role: "Track Lead - GPU",
           discipline: "Data Science · Applied Math",
-          tags: ["GPU"],
-          bio: "Develops GPU-oriented paths and tracks performance behavior under shared evaluation settings."
+          bio: "NA"
         },
         {
-          initials: "CG",
           name: "Casey Grant",
-          role: "Contributor",
           discipline: "Workflow Automation · Validation",
-          tags: ["Infra", "GPU"],
-          bio: "Supports automation, validation, and artifact checks before benchmark outputs are published."
+          bio: "NA"
         },
         {
-          initials: "PT",
           name: "Parker Tran",
-          role: "Contributor",
           discipline: "Electrical Engineering · Systems",
-          tags: ["FPGA-sim"],
-          bio: "Contributes simulation checks and summarizes latency results for technical review."
+          bio: "NA"
         },
         {
-          initials: "JO",
           name: "Jason OYang",
-          role: "Contributor",
           discipline: "Algorithm Support · Benchmarking",
-          tags: ["Algorithm"],
-          bio: "Supports implementation tasks, comparison checks, and benchmark-oriented project execution."
+          bio: "NA"
+        },
+        {
+          name: "Zhijie Zhuo",
+          discipline: "Technical Guidance · Mentorship",
+          bio: "NA"
         }
       ]
     },

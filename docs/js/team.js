@@ -9,33 +9,18 @@ function escapeHtml(value) {
 
 function renderMemberCard(member, sectionId) {
   const paddingClass = sectionId === "leads" ? "p-6" : "p-5";
-  const avatarSizeClass = sectionId === "leads" ? "h-11 w-11" : "h-10 w-10";
   const cardWeightClass = sectionId === "leads"
     ? "border-white/70 bg-white/68 shadow-[0_10px_22px_rgba(15,23,42,0.05)]"
     : "border-white/55 bg-white/54 shadow-[0_8px_16px_rgba(15,23,42,0.035)]";
   const disciplineMarkup = member.discipline
-    ? `<p class="mt-4 text-xs text-gray-500">${escapeHtml(member.discipline)}</p>`
-    : "";
-  const tagsMarkup = Array.isArray(member.tags) && member.tags.length > 0
-    ? `
-      <div class="mt-3 flex flex-wrap gap-2">
-        ${member.tags.map((tag) => `<span class="rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs text-gray-600">${escapeHtml(tag)}</span>`).join("")}
-      </div>
-    `
+    ? `<p class="mt-2 text-sm text-gray-600">${escapeHtml(member.discipline)}</p>`
     : "";
 
   return `
     <article class="glass-subpanel rounded-[1.1rem] ${paddingClass} ${cardWeightClass} transition hover:border-gray-300 hover:shadow">
-      <div class="flex items-center gap-4">
-        <div class="flex ${avatarSizeClass} items-center justify-center rounded-full bg-gray-200 text-sm font-semibold text-gray-700">${escapeHtml(member.initials)}</div>
-        <div>
-          <h3 class="text-base font-semibold text-gray-900">${escapeHtml(member.name)}</h3>
-          <p class="text-sm text-gray-600">${escapeHtml(member.role)}</p>
-        </div>
-      </div>
+      <h3 class="text-base font-semibold text-gray-900">${escapeHtml(member.name)}</h3>
       ${disciplineMarkup}
-      ${tagsMarkup}
-      <p class="mt-4 text-sm leading-6 text-gray-700">${escapeHtml(member.bio)}</p>
+      <p class="mt-4 text-sm leading-6 text-gray-700">NA</p>
     </article>
   `;
 }
