@@ -20,7 +20,6 @@ function renderMemberCard(member, sectionId) {
     <article class="glass-subpanel rounded-[1.1rem] ${paddingClass} ${cardWeightClass} transition hover:border-gray-300 hover:shadow">
       <h3 class="text-base font-semibold text-gray-900">${escapeHtml(member.name)}</h3>
       ${disciplineMarkup}
-      <p class="mt-4 text-sm leading-6 text-gray-700">NA</p>
     </article>
   `;
 }
