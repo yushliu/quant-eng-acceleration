@@ -65,6 +65,11 @@ window.TEAM_DATA = {
           name: "Zhijie Zhuo",
           discipline: "Technical Guidance · Mentorship",
           bio: "NA"
+        },
+        {
+          name: "Youqi Liu",
+          discipline: "Applied Statistic",
+          bio: "NA"
         }
       ]
     },
