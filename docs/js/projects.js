@@ -2115,21 +2115,47 @@ function buildDtcnumpyObjectModelBlock() {
 
 function buildDtcnumpyStageProgressionBlock() {
   const stages = [
-    "Stage 1 Scope",
-    "Stage 2 Container/API",
-    "Stage 3 Ops/Reporting",
-    "Stage 4 Advanced Prep",
-    "Stage 5 Demos"
+    {
+      stage: "Stage 1",
+      title: "Scope",
+      detail: "Semantics boundary and dtype roles were defined."
+    },
+    {
+      stage: "Stage 2",
+      title: "Container/API",
+      detail: "DTCArray core structure and conversion APIs were implemented."
+    },
+    {
+      stage: "Stage 3",
+      title: "Ops/Reporting",
+      detail: "Higher-level ops and reporting behavior were stabilized."
+    },
+    {
+      stage: "Stage 4",
+      title: "Advanced Prep",
+      detail: "Advanced linalg and controlled random preparation were added."
+    },
+    {
+      stage: "Stage 5",
+      title: "Demos",
+      detail: "Meeting-ready examples and usage docs were published."
+    }
   ];
   return `
     <div class="space-y-2 text-xs text-gray-700">
-      <div class="grid grid-cols-1 gap-2 md:grid-cols-5">
-        ${stages.map((stage, idx) => `
-          <div class="rounded-[0.7rem] border ${idx === 4 ? "border-blue-300 bg-blue-50/65" : "border-slate-200/60 bg-white/55"} px-2.5 py-2">
-            <p class="text-[10px] font-semibold uppercase tracking-[0.08em] ${idx === 4 ? "text-blue-700" : "text-gray-500"}">${escapeProjectHtml(stage)}</p>
-          </div>
-        `).join("")}
+      <div class="overflow-x-auto pb-1">
+        <div class="flex min-w-max snap-x snap-mandatory gap-2">
+          ${stages.map((stage, idx) => `
+            <article class="snap-start shrink-0 w-[11.5rem] rounded-[0.7rem] border ${idx === 4 ? "border-blue-300 bg-blue-50/65" : "border-slate-200/60 bg-white/55"} px-2.5 py-2">
+              ${idx === 4 ? `<p class="text-[10px] font-semibold tracking-[0.06em] text-blue-700">Current Stage (Completed)</p>` : ""}
+              <p class="text-[10px] font-semibold uppercase tracking-[0.08em] ${idx === 4 ? "text-blue-700" : "text-gray-500"}">${escapeProjectHtml(stage.stage)}</p>
+              <p class="mt-1 text-[11px] font-semibold text-gray-800">${escapeProjectHtml(stage.title)}</p>
+              <p class="mt-1 text-[11px] leading-5 text-gray-600">${escapeProjectHtml(stage.detail)}</p>
+            </article>
+          `).join("")}
+        </div>
       </div>
+      <p class="text-[11px] text-gray-600">Swipe or scroll horizontally to review all five stages in order.</p>
       <p class="text-[11px] text-gray-600">Progression moved from semantics boundary-setting to user-facing examples while keeping hardware simulation explicitly out of scope.</p>
     </div>
   `;
